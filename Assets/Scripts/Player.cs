@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
+    private GameManager manager;
     private Camera mainCamera;
 
     private Sprite spriteEleWater;
@@ -23,6 +24,7 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        manager = GameObject.Find("Manager").GetComponent<GameManager>();
         mainCamera = Camera.main;
 
         spriteEleWater = Resources.Load<Sprite>("Images/ElementIcons/EleWater");
