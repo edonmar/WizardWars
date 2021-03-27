@@ -54,6 +54,7 @@ public class Player : MonoBehaviour
             MovePlayerForward();
 
         ElementInput();
+        CastInput();
     }
 
     private void RotatePlayerTowardsCamera()
@@ -370,6 +371,304 @@ public class Player : MonoBehaviour
                 "STE" => spriteEleSteam,
                 _ => imgCurrEle[i].sprite
             };
+        }
+    }
+
+    private void CastInput()
+    {
+        string castType = "";
+
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+            castType = "FOC";
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+            castType = "ARE";
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+            castType = "SEL";
+        else if (Input.GetKeyDown(KeyCode.Alpha4))
+            castType = "WEA";
+
+        switch (castType)
+        {
+            case "":
+                return;
+            case "WEA" when loadedElements.Count == 0:
+                // Ataque de arma
+                print("Ataque de arma");
+                return;
+        }
+
+        List<int> priorityList = GetPriorityList();
+        OrderLoadedElements(priorityList);
+        string spellType = GetSpellType(castType);
+
+        // Si intento hacer lanzamiento propio sin cargar ningún elemento, no hace nada
+        if (castType == "SEL" && spellType == "force")
+            return;
+
+        HandleCastSpell(castType, spellType);
+    }
+
+    // Obtengo un array con el valor de prioridad de cada elemento de loadedElements
+    // 1 = prioridad mas alta
+    private List<int> GetPriorityList()
+    {
+        List<int> priorityList = new List<int>();
+
+        for (int i = 0, len = loadedElements.Count; i < len; i++)
+        {
+            switch (loadedElements[i])
+            {
+                case "SHI":
+                    priorityList.Add(1);
+                    break;
+
+                case "EAR":
+                case "ICE":
+                    priorityList.Add(2);
+                    break;
+
+                case "LIF":
+                case "ARC":
+                    priorityList.Add(3);
+                    break;
+
+                case "STE":
+                    priorityList.Add(4);
+                    break;
+
+                case "LIG":
+                    priorityList.Add(5);
+                    break;
+
+                case "WAT":
+                case "COL":
+                case "FIR":
+                    priorityList.Add(6);
+                    break;
+            }
+        }
+
+        return priorityList;
+    }
+
+    // Tomando como referencia la lista de prioridad, ordena el array de elementos
+    // de mayor a menor prioridad usando el método de inserción
+    private void OrderLoadedElements(IList<int> priorityList)
+    {
+        for (int i = 1, len = priorityList.Count; i < len; i++)
+        {
+            int priority = priorityList[i];
+            string element = loadedElements[i];
+            int j = i - 1;
+
+            while (j >= 0 && priorityList[j] > priority)
+            {
+                priorityList[j + 1] = priorityList[j];
+                loadedElements[j + 1] = loadedElements[j];
+                j--;
+            }
+
+            priorityList[j + 1] = priority;
+            loadedElements[j + 1] = element;
+        }
+    }
+
+    private string GetSpellType(string castType)
+    {
+        string spellType;
+
+        if (loadedElements.Count == 0)
+            // force
+            spellType = "force";
+        else
+            spellType = castType switch
+            {
+                // Enfocado
+                "FOC" => GetSpellTypeForce(),
+                // Area
+                "ARE" => GetSpellTypeArea(),
+                // Lanzamiento propio
+                "SEL" => GetSpellTypeSelfCast(),
+                // Imbuir arma
+                "WEA" => GetSpellTypeImbueWeapon(),
+                _ => ""
+            };
+
+        return spellType;
+    }
+
+    private string GetSpellTypeForce()
+    {
+        string spellType = loadedElements[0] switch
+        {
+            // barrier / storm / mines / wall
+            "SHI" => GetSpellTypeShieldNotSelfCast(),
+            // icicles o rock
+            "ICE" => loadedElements.Contains("EAR") ? "rock" : "icicles",
+            // rock
+            "EAR" => "rock",
+            // beam
+            "LIF" => "beam",
+            "ARC" => "beam",
+            // lightning
+            "LIG" => "lightning",
+            _ => "spray"
+        };
+
+        return spellType;
+    }
+
+    private string GetSpellTypeArea()
+    {
+        string spellType = loadedElements[0] switch
+        {
+            // barrier / storm / mines / wall
+            "SHI" => GetSpellTypeShieldNotSelfCast(),
+            // lightning nova
+            "LIG" => "lightningNova",
+            // nova
+            _ => "nova"
+        };
+
+        return spellType;
+    }
+
+    private string GetSpellTypeSelfCast()
+    {
+        string spellType = loadedElements[0] switch
+        {
+            // ward
+            "SHI" => "ward",
+            // icicles o rock
+            "ICE" => loadedElements.Contains("EAR") ? "rock" : "icicles",
+            // rock
+            "EAR" => "rock",
+            // effect
+            _ => "effect"
+        };
+
+        return spellType;
+    }
+
+    private string GetSpellTypeImbueWeapon()
+    {
+        string spellType = loadedElements[0] switch
+        {
+            // barrier / storm / mines / wall
+            "SHI" => GetSpellTypeShieldNotSelfCast(),
+            // imbued vertical swing
+            "EAR" => "imbuedVerticalSwing",
+            "ICE" => "imbuedVerticalSwing",
+            // imbued horizontal swing
+            "LIF" => "imbuedHorizontalSwing",
+            "ARC" => "imbuedHorizontalSwing",
+            // imbued stab
+            _ => "imbuedStab"
+        };
+
+        return spellType;
+    }
+
+    // Hechizos que contengan el elemento Shield, con cualquier lanzamiento que no sea SelfCast
+    private string GetSpellTypeShieldNotSelfCast()
+    {
+        string spellType;
+
+        if (loadedElements.Count == 1)
+        {
+            // barrier
+            spellType = "barrier";
+            return spellType;
+        }
+
+        spellType = loadedElements[1] switch
+        {
+            // wall
+            "EAR" => "wall",
+            "ICE" => "wall",
+            // mines
+            "LIF" => "mines",
+            "ARC" => "mines",
+            // storm
+            _ => "storm"
+        };
+
+        return spellType;
+    }
+
+    private void HandleCastSpell(string castType, string spellType)
+    {
+        print(castType + ", " + spellType);
+
+        switch (spellType)
+        {
+            case "barrier":
+
+                break;
+
+            case "storm":
+
+                break;
+
+            case "mines":
+
+                break;
+
+            case "wall":
+
+                break;
+
+            case "rock":
+
+                break;
+
+            case "icicles":
+
+                break;
+
+            case "beam":
+
+                break;
+
+            case "lightning":
+
+                break;
+
+            case "spray":
+
+                break;
+
+            case "lightningNova":
+
+                break;
+
+            case "nova":
+
+                break;
+
+            case "force":
+
+                break;
+
+            case "ward":
+
+                break;
+
+            case "effect":
+
+                break;
+
+            case "imbuedVerticalSwing":
+
+                break;
+
+            case "imbuedHorizontalSwing":
+
+                break;
+
+            case "imbuedStab":
+
+                break;
         }
     }
 }
