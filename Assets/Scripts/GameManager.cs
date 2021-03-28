@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -6,9 +5,6 @@ using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private Transform playerTransform;
-    [SerializeField] private Transform playerShootPoint;
-
     public Material matWater;
     public Material matLife;
     public Material matShield;
@@ -27,8 +23,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject rockPrefab;
     [SerializeField] private GameObject iciclePrefab;
     [SerializeField] private GameObject novaPrefab;
+    [SerializeField] private GameObject beamPrefab;
+    [SerializeField] private GameObject sprayPrefab;
 
-    public void HandleInstantiateWall(List<string> elements, string castType)
+    public void HandleInstantiateWall(List<string> elements, string castType, Transform originTransform)
     {
         float distance = 2;
         float duration;
@@ -46,26 +44,26 @@ public class GameManager : MonoBehaviour
             case "FOC":
                 for (float i = 18f; i <= 54f; i += 36f)
                 {
-                    InstantiateWall(elements, playerTransform, distance, i, duration);
-                    InstantiateWall(elements, playerTransform, distance, -i, duration);
+                    InstantiateWall(elements, originTransform, distance, i, duration);
+                    InstantiateWall(elements, originTransform, distance, -i, duration);
                 }
 
                 break;
 
             case "ARE":
-                InstantiateWall(elements, playerTransform, distance, 0, duration);
+                InstantiateWall(elements, originTransform, distance, 0, duration);
                 for (float i = 36f; i <= 144f; i += 36f)
                 {
-                    InstantiateWall(elements, playerTransform, distance, i, duration);
-                    InstantiateWall(elements, playerTransform, distance, -i, duration);
+                    InstantiateWall(elements, originTransform, distance, i, duration);
+                    InstantiateWall(elements, originTransform, distance, -i, duration);
                 }
 
-                InstantiateWall(elements, playerTransform, distance, 180, duration);
+                InstantiateWall(elements, originTransform, distance, 180, duration);
                 break;
         }
     }
 
-    public void HandleInstantiateMines(List<string> elements, string castType)
+    public void HandleInstantiateMines(List<string> elements, string castType, Transform originTransform)
     {
         float distance = 2;
 
@@ -74,26 +72,26 @@ public class GameManager : MonoBehaviour
             case "FOC":
                 for (float i = 18f; i <= 54f; i += 36f)
                 {
-                    InstantiateMine(elements, playerTransform, distance, i);
-                    InstantiateMine(elements, playerTransform, distance, -i);
+                    InstantiateMine(elements, originTransform, distance, i);
+                    InstantiateMine(elements, originTransform, distance, -i);
                 }
 
                 break;
 
             case "ARE":
-                InstantiateMine(elements, playerTransform, distance, 0);
+                InstantiateMine(elements, originTransform, distance, 0);
                 for (float i = 30f; i <= 150f; i += 30f)
                 {
-                    InstantiateMine(elements, playerTransform, distance, i);
-                    InstantiateMine(elements, playerTransform, distance, -i);
+                    InstantiateMine(elements, originTransform, distance, i);
+                    InstantiateMine(elements, originTransform, distance, -i);
                 }
 
-                InstantiateMine(elements, playerTransform, distance, 180);
+                InstantiateMine(elements, originTransform, distance, 180);
                 break;
         }
     }
 
-    public void HandleInstantiateStorm(List<string> elements, string castType)
+    public void HandleInstantiateStorm(List<string> elements, string castType, Transform originTransform)
     {
         float distance = 2;
         int count = elements.Count(x => x.Equals(elements[1]));
@@ -104,40 +102,42 @@ public class GameManager : MonoBehaviour
             case "FOC":
                 for (float i = 11.25f; i <= 56.25f; i += 22.5f)
                 {
-                    InstantiateStorm(elements, playerTransform, distance, i, duration);
-                    InstantiateStorm(elements, playerTransform, distance, -i, duration);
+                    InstantiateStorm(elements, originTransform, distance, i, duration);
+                    InstantiateStorm(elements, originTransform, distance, -i, duration);
                 }
 
                 break;
 
             case "ARE":
-                InstantiateStorm(elements, playerTransform, distance, 0f, duration);
+                InstantiateStorm(elements, originTransform, distance, 0f, duration);
                 for (float i = 22.5f; i <= 157.5f; i += 22.5f)
                 {
-                    InstantiateStorm(elements, playerTransform, distance, i, duration);
-                    InstantiateStorm(elements, playerTransform, distance, -i, duration);
+                    InstantiateStorm(elements, originTransform, distance, i, duration);
+                    InstantiateStorm(elements, originTransform, distance, -i, duration);
                 }
 
-                InstantiateStorm(elements, playerTransform, distance, 180f, duration);
+                InstantiateStorm(elements, originTransform, distance, 180f, duration);
                 break;
         }
     }
 
-    public void HandleInstantiateRock(List<string> elements, string castType)
+    public void HandleInstantiateRock(List<string> elements, string castType, Transform casterTransform,
+        Transform casterShootPointTransform)
     {
         int size = elements.Count(x => x.Equals("EAR")) + elements.Count(x => x.Equals("ICE"));
         switch (castType)
         {
             case "FOC":
-                InstantiateRock(elements, playerShootPoint, size, 1000, castType);
+                InstantiateRock(elements, casterShootPointTransform, size, 1000, castType);
                 break;
             case "SEL":
-                InstantiateRock(elements, playerTransform, size, 1000, castType);
+                InstantiateRock(elements, casterTransform, size, 1000, castType);
                 break;
         }
     }
 
-    public void HandleInstantiateIcicles(List<string> elements, string castType)
+    public void HandleInstantiateIcicles(List<string> elements, string castType, Transform casterTransform,
+        Transform casterShootPointTransform)
     {
         int quantity = 3 * elements.Count(x => x.Equals("ICE"));
 
@@ -145,17 +145,17 @@ public class GameManager : MonoBehaviour
         {
             case "FOC":
                 for (int i = 0; i < quantity; i++)
-                    InstantiateIcicleFocus(playerShootPoint, 1000);
+                    InstantiateIcicleFocus(casterShootPointTransform, 1000);
                 break;
 
             case "SEL":
                 for (int i = 0; i < quantity; i++)
-                    InstantiateIcicleSelfCast(playerTransform, 1000);
+                    InstantiateIcicleSelfCast(casterTransform, 1000);
                 break;
         }
     }
 
-    public void HandleInstantiateNova(List<string> elements)
+    public void HandleInstantiateNova(List<string> elements, Transform originTransform)
     {
         string mainElement;
 
@@ -170,7 +170,20 @@ public class GameManager : MonoBehaviour
 
         int size = elements.Count(x => x.Equals(mainElement));
 
-        InstantiateNova(elements, playerTransform, size);
+        InstantiateNova(elements, originTransform, size);
+    }
+
+    public GameObject HandleInstantiateBeam(List<string> elements, Transform originTransform)
+    {
+        GameObject newObj = InstantiateBeam(elements, originTransform);
+        return newObj;
+    }
+
+    public GameObject HandleInstantiateSpray(List<string> elements, Transform originTransform)
+    {
+        int size = elements.Count - elements.Count(x => x.Equals("LIG"));
+        GameObject newObj = InstantiateSpray(elements, originTransform, size);
+        return newObj;
     }
 
     private void InstantiateWall(List<string> elements, Transform originTransform, float distance,
@@ -322,13 +335,30 @@ public class GameManager : MonoBehaviour
         ApplyMaterialNova(newObj, elements);
     }
 
-    // Si el origen de la nova es una roca explosiva
-    public void HandleInstantiateNova(List<string> elements, Transform rockOfOrigin)
+    private GameObject InstantiateBeam(List<string> elements, Transform originTransform)
     {
-        string mainElement = elements[0];
-        int size = elements.Count(x => x.Equals(mainElement));
+        GameObject newObj = Instantiate(beamPrefab, originTransform.position, originTransform.rotation);
+        newObj.transform.SetParent(originTransform);
 
-        InstantiateNova(elements, rockOfOrigin, size);
+        ApplyMaterialBeam(newObj, elements);
+
+        return newObj;
+    }
+
+    private GameObject InstantiateSpray(List<string> elements, Transform originTransform, int size)
+    {
+        float scale = 2 + (size - 1) * 1;
+        Vector3 spawnPos = originTransform.position + originTransform.forward * (scale / 2);
+
+        GameObject newObj = Instantiate(sprayPrefab, spawnPos, originTransform.rotation);
+        Transform activeSprayTransform = newObj.transform;
+        Vector3 activeSprayLocalScale = activeSprayTransform.localScale;
+        activeSprayTransform.localScale = new Vector3(activeSprayLocalScale.x, activeSprayLocalScale.y, scale);
+        activeSprayTransform.SetParent(originTransform);
+
+        ApplyMaterialSpray(newObj, elements);
+
+        return newObj;
     }
 
     private void ApplyMaterialWall(GameObject newObj, List<string> elements)
@@ -395,6 +425,32 @@ public class GameManager : MonoBehaviour
             "EAR" => matEarth,
             "FIR" => matFire,
             "ICE" => matIce,
+            "STE" => matSteam,
+            _ => newObj.GetComponent<MeshRenderer>().material
+        };
+    }
+
+    private void ApplyMaterialBeam(GameObject newObj, List<string> elements)
+    {
+        Color color = elements[0] switch
+        {
+            "LIF" => Color.green,
+            "ARC" => Color.red,
+            _ => Color.white
+        };
+
+        LineRenderer lineRenderer = newObj.GetComponent<LineRenderer>();
+        lineRenderer.startColor = color;
+        lineRenderer.endColor = color;
+    }
+
+    private void ApplyMaterialSpray(GameObject newObj, List<string> elements)
+    {
+        newObj.GetComponent<MeshRenderer>().material = elements[0] switch
+        {
+            "WAT" => matWater,
+            "COL" => matCold,
+            "FIR" => matFire,
             "STE" => matSteam,
             _ => newObj.GetComponent<MeshRenderer>().material
         };

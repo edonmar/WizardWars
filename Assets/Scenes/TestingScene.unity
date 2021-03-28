@@ -444,6 +444,8 @@ MonoBehaviour:
   rockPrefab: {fileID: 2725022227948465791, guid: cdcbce7a4de7b8a4cac600ee925cbec0, type: 3}
   iciclePrefab: {fileID: 284935705612498405, guid: 1204b05204a852242a543747aa504fc8, type: 3}
   novaPrefab: {fileID: 8581941222268966208, guid: ec48645504257b74188516622f1fef15, type: 3}
+  beamPrefab: {fileID: 8459016341948996305, guid: f3654f1c5d604f7458df3b869f472b17, type: 3}
+  sprayPrefab: {fileID: 788494856509777952, guid: ac50910dc86bb814faffdd26585e6f45, type: 3}
 --- !u!4 &1093825785
 Transform:
   m_ObjectHideFlags: 0

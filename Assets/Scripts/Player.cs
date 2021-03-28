@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,8 +8,6 @@ public class Player : MonoBehaviour
     private Camera mainCamera;
 
     [SerializeField] private Transform shootPoint;
-    [SerializeField] private GameObject beamPrefab;
-    [SerializeField] private GameObject sprayPrefab;
 
     private Sprite spriteEleWater;
     private Sprite spriteEleLife;
@@ -635,27 +632,28 @@ public class Player : MonoBehaviour
                 break;
 
             case "wall":
-                manager.HandleInstantiateWall(loadedElements, castType);
+                manager.HandleInstantiateWall(loadedElements, castType, transform);
                 break;
 
             case "mines":
-                manager.HandleInstantiateMines(loadedElements, castType);
+                manager.HandleInstantiateMines(loadedElements, castType, transform);
                 break;
 
             case "storm":
-                manager.HandleInstantiateStorm(loadedElements, castType);
+                manager.HandleInstantiateStorm(loadedElements, castType, transform);
                 break;
 
             case "rock":
-                manager.HandleInstantiateRock(loadedElements, castType);
+                manager.HandleInstantiateRock(loadedElements, castType, transform, shootPoint);
                 break;
 
             case "icicles":
-                manager.HandleInstantiateIcicles(loadedElements, castType);
+                manager.HandleInstantiateIcicles(loadedElements, castType, transform, shootPoint);
                 break;
 
             case "beam":
-                HandleInstantiateBeam(loadedElements);
+                activeBeam = manager.HandleInstantiateBeam(loadedElements, shootPoint);
+                isBeamActive = true;
                 break;
 
             case "lightning":
@@ -663,7 +661,8 @@ public class Player : MonoBehaviour
                 break;
 
             case "spray":
-                HandleInstantiateSpray(loadedElements);
+                activeSpray = manager.HandleInstantiateSpray(loadedElements, shootPoint);
+                isSprayActive = true;
                 break;
 
             case "lightningNova":
@@ -671,7 +670,7 @@ public class Player : MonoBehaviour
                 break;
 
             case "nova":
-                manager.HandleInstantiateNova(loadedElements);
+                manager.HandleInstantiateNova(loadedElements, transform);
                 break;
 
             case "force":
@@ -698,53 +697,5 @@ public class Player : MonoBehaviour
 
                 break;
         }
-    }
-
-    private void HandleInstantiateBeam(List<string> elements)
-    {
-        activeBeam = Instantiate(beamPrefab, shootPoint.position, shootPoint.rotation);
-        activeBeam.transform.SetParent(shootPoint);
-
-        Color color = elements[0] switch
-        {
-            "LIF" => Color.green,
-            "ARC" => Color.red,
-            _ => Color.white
-        };
-
-        LineRenderer lineRenderer = activeBeam.GetComponent<LineRenderer>();
-        lineRenderer.startColor = color;
-        lineRenderer.endColor = color;
-
-        isBeamActive = true;
-    }
-
-    private void HandleInstantiateSpray(List<string> elements)
-    {
-        int size = elements.Count - elements.Count(x => x.Equals("LIG"));
-        float scale = 2 + (size - 1) * 1;
-        Vector3 spawnPos = shootPoint.position + shootPoint.forward * (scale / 2);
-
-        activeSpray = Instantiate(sprayPrefab, spawnPos, shootPoint.rotation);
-        Transform activeSprayTransform = activeSpray.transform;
-        Vector3 activeSprayLocalScale = activeSprayTransform.localScale;
-        activeSprayTransform.localScale = new Vector3(activeSprayLocalScale.x, activeSprayLocalScale.y, scale);
-        activeSprayTransform.SetParent(shootPoint);
-
-        ApplyMaterialSpray(activeSpray, elements);
-        
-        isSprayActive = true;
-    }
-    
-    private void ApplyMaterialSpray(GameObject newObj, List<string> elements)
-    {
-        newObj.GetComponent<MeshRenderer>().material = elements[0] switch
-        {
-            "WAT" => manager.matWater,
-            "COL" => manager.matCold,
-            "FIR" => manager.matFire,
-            "STE" => manager.matSteam,
-            _ => newObj.GetComponent<MeshRenderer>().material
-        };
     }
 }
