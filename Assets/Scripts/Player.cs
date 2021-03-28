@@ -7,6 +7,9 @@ public class Player : MonoBehaviour
     private GameManager manager;
     private Camera mainCamera;
 
+    [SerializeField] private Transform shootPoint;
+    [SerializeField] private GameObject beamPrefab;
+
     private Sprite spriteEleWater;
     private Sprite spriteEleLife;
     private Sprite spriteEleShield;
@@ -21,6 +24,9 @@ public class Player : MonoBehaviour
     private Image[] imgCurrEle;
 
     private List<string> loadedElements;
+
+    private bool isBeamActive;
+    private GameObject activeBeam;
 
     private void Start()
     {
@@ -47,6 +53,7 @@ public class Player : MonoBehaviour
         imgCurrEle[4] = gameUITransform.transform.Find("CurrentElements/Ele4").GetComponent<Image>();
 
         loadedElements = new List<string>();
+        isBeamActive = false;
     }
 
     private void Update()
@@ -389,6 +396,13 @@ public class Player : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Alpha4))
             castType = "WEA";
 
+        // Si levanto el botón, desactivo el hechizo Beam
+        if (Input.GetKeyUp(KeyCode.Alpha1) && isBeamActive)
+        {
+            Destroy(activeBeam);
+            isBeamActive = false;
+        }
+
         switch (castType)
         {
             case "":
@@ -629,7 +643,7 @@ public class Player : MonoBehaviour
                 break;
 
             case "beam":
-
+                HandleInstantiateBeam(loadedElements);
                 break;
 
             case "lightning":
@@ -672,5 +686,24 @@ public class Player : MonoBehaviour
 
                 break;
         }
+    }
+
+    private void HandleInstantiateBeam(List<string> elements)
+    {
+        activeBeam = Instantiate(beamPrefab, shootPoint.position, shootPoint.rotation);
+        activeBeam.transform.SetParent(shootPoint);
+
+        Color color = elements[0] switch
+        {
+            "LIF" => Color.green,
+            "ARC" => Color.red,
+            _ => Color.white
+        };
+
+        LineRenderer lineRenderer = activeBeam.GetComponent<LineRenderer>();
+        lineRenderer.startColor = color;
+        lineRenderer.endColor = color;
+
+        isBeamActive = true;
     }
 }
