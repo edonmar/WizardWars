@@ -18,8 +18,46 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Material matIce;
     [SerializeField] private Material matSteam;
 
-    [SerializeField] private GameObject stormPrefab;
+    [SerializeField] private GameObject wallPrefab;
     [SerializeField] private GameObject minePrefab;
+    [SerializeField] private GameObject stormPrefab;
+
+    public void HandleIntantiateWall(List<string> elements, string castType)
+    {
+        float distance = 2;
+        float duration;
+
+        int countEarth = elements.Count(x => x.Equals("EAR"));
+        int countIce = elements.Count(x => x.Equals("ICE"));
+
+        if (countEarth != 0)
+            duration = 20 + 10 * (countEarth - 1);
+        else
+            duration = countIce;
+
+        switch (castType)
+        {
+            case "FOC":
+                for (float i = 18f; i <= 54f; i += 36f)
+                {
+                    InstantiateWall(elements, playerTransform, distance, i, duration);
+                    InstantiateWall(elements, playerTransform, distance, -i, duration);
+                }
+
+                break;
+
+            case "ARE":
+                InstantiateWall(elements, playerTransform, distance, 0, duration);
+                for (float i = 36f; i <= 144f; i += 36f)
+                {
+                    InstantiateWall(elements, playerTransform, distance, i, duration);
+                    InstantiateWall(elements, playerTransform, distance, -i, duration);
+                }
+
+                InstantiateWall(elements, playerTransform, distance, 180, duration);
+                break;
+        }
+    }
 
     public void HandleIntantiateMines(List<string> elements, string castType)
     {
@@ -48,7 +86,7 @@ public class GameManager : MonoBehaviour
                 break;
         }
     }
-    
+
     public void HandleIntantiateStorm(List<string> elements, string castType)
     {
         float distance = 2;
@@ -79,6 +117,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void InstantiateWall(List<string> elements, Transform originTransform, float distance,
+        float rotationAround, float duration)
+    {
+        Vector3 playerPosition = originTransform.position;
+        Vector3 spawnPos = playerPosition + originTransform.forward * distance;
+
+        GameObject newObj = Instantiate(wallPrefab, spawnPos, originTransform.rotation);
+        newObj.transform.RotateAround(playerPosition, Vector3.up, rotationAround);
+        newObj.GetComponent<DissapearIn>().duration = duration;
+
+        ApplyMaterialWall(newObj, elements);
+    }
+
     private void InstantiateMine(List<string> elements, Transform originTransform, float distance,
         float rotationAround)
     {
@@ -91,7 +142,7 @@ public class GameManager : MonoBehaviour
 
         ApplyMaterialMine(newObj, elements);
     }
-    
+
     private void InstantiateStorm(List<string> elements, Transform originTransform, float distance,
         float rotationAround, float duration)
     {
@@ -105,6 +156,11 @@ public class GameManager : MonoBehaviour
         ApplyMaterialStorm(newObj, elements);
     }
 
+    private void ApplyMaterialWall(GameObject newObj, List<string> elements)
+    {
+        newObj.GetComponent<MeshRenderer>().material = elements.Contains("EAR") ? matEarth : matIce;
+    }
+
     private void ApplyMaterialMine(GameObject newObj, List<string> elements)
     {
         newObj.GetComponent<MeshRenderer>().material = elements[1] switch
@@ -114,7 +170,7 @@ public class GameManager : MonoBehaviour
             _ => newObj.GetComponent<MeshRenderer>().material
         };
     }
-    
+
     private void ApplyMaterialStorm(GameObject newObj, List<string> elements)
     {
         newObj.GetComponent<MeshRenderer>().material = elements[1] switch

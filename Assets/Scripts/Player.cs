@@ -609,7 +609,7 @@ public class Player : MonoBehaviour
                 break;
 
             case "wall":
-
+                manager.HandleIntantiateWall(loadedElements, castType);
                 break;
 
             case "mines":
