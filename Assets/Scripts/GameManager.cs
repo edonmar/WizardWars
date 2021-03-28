@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject wallAuraPrefab;
     [SerializeField] private GameObject minePrefab;
     [SerializeField] private GameObject stormPrefab;
+    [SerializeField] private GameObject iciclePrefab;
 
     public void HandleIntantiateWall(List<string> elements, string castType)
     {
@@ -118,6 +119,24 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void HandleIntantiateIcicles(List<string> elements, string castType)
+    {
+        int quantity = 3 * elements.Count(x => x.Equals("ICE"));
+
+        switch (castType)
+        {
+            case "FOC":
+                for (int i = 0; i < quantity; i++)
+                    InstantiateIcicleFocus(playerShootPoint, 1000);
+                break;
+
+            case "SEL":
+                for (int i = 0; i < quantity; i++)
+                    InstantiateIcicleSelfCast(playerTransform, 1000);
+                break;
+        }
+    }
+
     private void InstantiateWall(List<string> elements, Transform originTransform, float distance,
         float rotationAround, float duration)
     {
@@ -176,6 +195,31 @@ public class GameManager : MonoBehaviour
         newObj.GetComponent<DissapearIn>().duration = duration;
 
         ApplyMaterialStorm(newObj, elements);
+    }
+
+    private void InstantiateIcicleFocus(Transform originTransform, float force)
+    {
+        Vector3 shootPointPosition = originTransform.position;
+        Vector3 spawnPos = shootPointPosition + originTransform.forward * iciclePrefab.transform.localScale.y;
+        Vector3 shootPointRotation = originTransform.eulerAngles;
+        float spreadingRotation = Random.Range(-45f, 45f);
+        spreadingRotation += shootPointRotation.y;
+        Quaternion spawnRot = Quaternion.Euler(90, spreadingRotation, shootPointRotation.z);
+
+        GameObject newObj = Instantiate(iciclePrefab, spawnPos, spawnRot);
+        Rigidbody rb = newObj.GetComponent<Rigidbody>();
+        rb.AddRelativeForce(Vector3.up * force);
+    }
+
+    private void InstantiateIcicleSelfCast(Transform originTransform, float force)
+    {
+        Vector3 shootPointPosition = originTransform.position;
+        Vector3 spawnPos = shootPointPosition + new Vector3(Random.Range(-2f, 2f), 3, Random.Range(-2f, 2f));
+        Quaternion spawnRot = Quaternion.Euler(0, 0, 0);
+
+        GameObject newObj = Instantiate(iciclePrefab, spawnPos, spawnRot);
+        Rigidbody rb = newObj.GetComponent<Rigidbody>();
+        rb.AddRelativeForce(Vector3.down * force);
     }
 
     private void ApplyMaterialWall(GameObject newObj, List<string> elements)

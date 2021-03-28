@@ -625,7 +625,7 @@ public class Player : MonoBehaviour
                 break;
 
             case "icicles":
-
+                manager.HandleIntantiateIcicles(loadedElements, castType);
                 break;
 
             case "beam":
