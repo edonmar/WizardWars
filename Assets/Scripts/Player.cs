@@ -621,7 +621,7 @@ public class Player : MonoBehaviour
                 break;
 
             case "rock":
-
+                manager.HandleIntantiateRock(loadedElements, castType);
                 break;
 
             case "icicles":

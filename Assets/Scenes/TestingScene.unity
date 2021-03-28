@@ -438,6 +438,7 @@ MonoBehaviour:
   wallAuraPrefab: {fileID: 4525695405561118062, guid: 009d190d29cd6de4eaf24645637c417d, type: 3}
   minePrefab: {fileID: 1874681338049451286, guid: fe8e1cd0083510c49bff23ae80c70dfd, type: 3}
   stormPrefab: {fileID: 4525695405561118062, guid: 47a58013a3e85e34ebec9e9b8f2ac463, type: 3}
+  rockPrefab: {fileID: 2725022227948465791, guid: cdcbce7a4de7b8a4cac600ee925cbec0, type: 3}
   iciclePrefab: {fileID: 284935705612498405, guid: 1204b05204a852242a543747aa504fc8, type: 3}
 --- !u!4 &1093825785
 Transform:

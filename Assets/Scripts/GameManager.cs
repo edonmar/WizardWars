@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
@@ -22,6 +24,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject wallAuraPrefab;
     [SerializeField] private GameObject minePrefab;
     [SerializeField] private GameObject stormPrefab;
+    [SerializeField] private GameObject rockPrefab;
     [SerializeField] private GameObject iciclePrefab;
 
     public void HandleIntantiateWall(List<string> elements, string castType)
@@ -119,6 +122,20 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void HandleIntantiateRock(List<string> elements, string castType)
+    {
+        int size = elements.Count(x => x.Equals("EAR")) + elements.Count(x => x.Equals("ICE"));
+        switch (castType)
+        {
+            case "FOC":
+                InstantiateRock(elements, playerShootPoint, size, 1000, castType);
+                break;
+            case "SEL":
+                InstantiateRock(elements, playerTransform, size, 1000, castType);
+                break;
+        }
+    }
+
     public void HandleIntantiateIcicles(List<string> elements, string castType)
     {
         int quantity = 3 * elements.Count(x => x.Equals("ICE"));
@@ -197,6 +214,52 @@ public class GameManager : MonoBehaviour
         ApplyMaterialStorm(newObj, elements);
     }
 
+    private void InstantiateRock(List<string> elements, Transform originTransform, float size, float force,
+        string castType)
+    {
+        float scale = 0.25f + size * 0.1375f;
+        Vector3 shootPointPosition = originTransform.position;
+        Vector3 spawnPos = shootPointPosition;
+
+        switch (castType)
+        {
+            case "FOC":
+                spawnPos += originTransform.forward * (scale / 2);
+                break;
+            case "SEL":
+                // Muevo la roca un poco en los ejes X y Z para evitar que se quede en equilibrio encima del jugador
+                float posX;
+                float posZ;
+
+                posX = Random.Range(-0.1f, 0.1f);
+                if (posX == 0)
+                    posX = 0.1f;
+
+                posZ = Random.Range(-0.1f, 0.1f);
+                if (posZ == 0)
+                    posZ = 0.1f;
+
+                spawnPos += new Vector3(posX, 5, posZ);
+                break;
+        }
+
+        GameObject newObj = Instantiate(rockPrefab, spawnPos, originTransform.rotation);
+        newObj.transform.localScale = new Vector3(scale, scale, scale);
+        Rigidbody rb = newObj.GetComponent<Rigidbody>();
+
+        switch (castType)
+        {
+            case "FOC":
+                rb.AddRelativeForce(Vector3.forward * force);
+                break;
+            case "SEL":
+                rb.AddRelativeForce(Vector3.down * force);
+                break;
+        }
+
+        ApplyMaterialRock(newObj, elements);
+    }
+
     private void InstantiateIcicleFocus(Transform originTransform, float force)
     {
         Vector3 shootPointPosition = originTransform.position;
@@ -268,5 +331,10 @@ public class GameManager : MonoBehaviour
             "STE" => matSteam,
             _ => newObj.GetComponent<MeshRenderer>().material
         };
+    }
+
+    private void ApplyMaterialRock(GameObject newObj, List<string> elements)
+    {
+        newObj.GetComponent<MeshRenderer>().material = elements.Contains("ICE") ? matIce : matEarth;
     }
 }
