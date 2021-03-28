@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -15,4 +17,62 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Material matFire;
     [SerializeField] private Material matIce;
     [SerializeField] private Material matSteam;
+
+    [SerializeField] private GameObject stormPrefab;
+
+    public void HandleIntantiateStorm(List<string> elements, string castType)
+    {
+        float distance = 2;
+        int count = elements.Count(x => x.Equals(elements[1]));
+        float duration = 4 + 2 * (count - 1);
+
+        switch (castType)
+        {
+            case "FOC":
+                for (float i = 11.25f; i <= 56.25f; i += 22.5f)
+                {
+                    InstantiateStorm(elements, playerTransform, distance, i, duration);
+                    InstantiateStorm(elements, playerTransform, distance, -i, duration);
+                }
+
+                break;
+
+            case "ARE":
+                InstantiateStorm(elements, playerTransform, distance, 0f, duration);
+                for (float i = 22.5f; i <= 157.5f; i += 22.5f)
+                {
+                    InstantiateStorm(elements, playerTransform, distance, i, duration);
+                    InstantiateStorm(elements, playerTransform, distance, -i, duration);
+                }
+
+                InstantiateStorm(elements, playerTransform, distance, 180f, duration);
+                break;
+        }
+    }
+
+    private void InstantiateStorm(List<string> elements, Transform originTransform, float distance,
+        float rotationAround, float duration)
+    {
+        Vector3 playerPosition = originTransform.position;
+        Vector3 spawnPos = playerPosition + originTransform.forward * distance;
+
+        GameObject newObj = Instantiate(stormPrefab, spawnPos, originTransform.rotation);
+        newObj.transform.RotateAround(playerPosition, Vector3.up, rotationAround);
+        newObj.GetComponent<DissapearIn>().duration = duration;
+
+        ApplyMaterialStorm(newObj, elements);
+    }
+
+    private void ApplyMaterialStorm(GameObject newObj, List<string> elements)
+    {
+        newObj.GetComponent<MeshRenderer>().material = elements[1] switch
+        {
+            "WAT" => matWater,
+            "COL" => matCold,
+            "LIG" => matLightning,
+            "FIR" => matFire,
+            "STE" => matSteam,
+            _ => newObj.GetComponent<MeshRenderer>().material
+        };
+    }
 }

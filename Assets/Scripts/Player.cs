@@ -609,7 +609,7 @@ public class Player : MonoBehaviour
                 break;
 
             case "storm":
-
+                manager.HandleIntantiateStorm(loadedElements, castType);
                 break;
 
             case "mines":
