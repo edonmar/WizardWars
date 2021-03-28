@@ -609,23 +609,23 @@ public class Player : MonoBehaviour
                 break;
 
             case "wall":
-                manager.HandleIntantiateWall(loadedElements, castType);
+                manager.HandleInstantiateWall(loadedElements, castType);
                 break;
 
             case "mines":
-                manager.HandleIntantiateMines(loadedElements, castType);
+                manager.HandleInstantiateMines(loadedElements, castType);
                 break;
 
             case "storm":
-                manager.HandleIntantiateStorm(loadedElements, castType);
+                manager.HandleInstantiateStorm(loadedElements, castType);
                 break;
 
             case "rock":
-                manager.HandleIntantiateRock(loadedElements, castType);
+                manager.HandleInstantiateRock(loadedElements, castType);
                 break;
 
             case "icicles":
-                manager.HandleIntantiateIcicles(loadedElements, castType);
+                manager.HandleInstantiateIcicles(loadedElements, castType);
                 break;
 
             case "beam":
@@ -645,7 +645,7 @@ public class Player : MonoBehaviour
                 break;
 
             case "nova":
-                manager.HandleIntantiateNova(loadedElements);
+                manager.HandleInstantiateNova(loadedElements);
                 break;
 
             case "force":

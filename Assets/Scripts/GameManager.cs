@@ -28,7 +28,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject iciclePrefab;
     [SerializeField] private GameObject novaPrefab;
 
-    public void HandleIntantiateWall(List<string> elements, string castType)
+    public void HandleInstantiateWall(List<string> elements, string castType)
     {
         float distance = 2;
         float duration;
@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void HandleIntantiateMines(List<string> elements, string castType)
+    public void HandleInstantiateMines(List<string> elements, string castType)
     {
         float distance = 2;
 
@@ -93,7 +93,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void HandleIntantiateStorm(List<string> elements, string castType)
+    public void HandleInstantiateStorm(List<string> elements, string castType)
     {
         float distance = 2;
         int count = elements.Count(x => x.Equals(elements[1]));
@@ -123,7 +123,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void HandleIntantiateRock(List<string> elements, string castType)
+    public void HandleInstantiateRock(List<string> elements, string castType)
     {
         int size = elements.Count(x => x.Equals("EAR")) + elements.Count(x => x.Equals("ICE"));
         switch (castType)
@@ -137,7 +137,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void HandleIntantiateIcicles(List<string> elements, string castType)
+    public void HandleInstantiateIcicles(List<string> elements, string castType)
     {
         int quantity = 3 * elements.Count(x => x.Equals("ICE"));
 
@@ -155,7 +155,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void HandleIntantiateNova(List<string> elements)
+    public void HandleInstantiateNova(List<string> elements)
     {
         string mainElement;
 
@@ -323,7 +323,7 @@ public class GameManager : MonoBehaviour
     }
 
     // Si el origen de la nova es una roca explosiva
-    public void HandleIntantiateNova(List<string> elements, Transform rockOfOrigin)
+    public void HandleInstantiateNova(List<string> elements, Transform rockOfOrigin)
     {
         string mainElement = elements[0];
         int size = elements.Count(x => x.Equals(mainElement));
