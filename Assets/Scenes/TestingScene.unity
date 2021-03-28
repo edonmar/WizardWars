@@ -237,6 +237,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shootPoint: {fileID: 1086566202}
   beamPrefab: {fileID: 8459016341948996305, guid: f3654f1c5d604f7458df3b869f472b17, type: 3}
+  sprayPrefab: {fileID: 788494856509777952, guid: ac50910dc86bb814faffdd26585e6f45, type: 3}
 --- !u!4 &605677557 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 17628892124413691, guid: 4351167357555b848b91ced0a04fcbda, type: 3}

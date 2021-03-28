@@ -9,16 +9,16 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Transform playerTransform;
     [SerializeField] private Transform playerShootPoint;
 
-    [SerializeField] private Material matWater;
-    [SerializeField] private Material matLife;
-    [SerializeField] private Material matShield;
-    [SerializeField] private Material matCold;
-    [SerializeField] private Material matLightning;
-    [SerializeField] private Material matArcane;
-    [SerializeField] private Material matEarth;
-    [SerializeField] private Material matFire;
-    [SerializeField] private Material matIce;
-    [SerializeField] private Material matSteam;
+    public Material matWater;
+    public Material matLife;
+    public Material matShield;
+    public Material matCold;
+    public Material matLightning;
+    public Material matArcane;
+    public Material matEarth;
+    public Material matFire;
+    public Material matIce;
+    public Material matSteam;
 
     [SerializeField] private GameObject wallPrefab;
     [SerializeField] private GameObject wallAuraPrefab;

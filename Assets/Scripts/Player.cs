@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +10,7 @@ public class Player : MonoBehaviour
 
     [SerializeField] private Transform shootPoint;
     [SerializeField] private GameObject beamPrefab;
+    [SerializeField] private GameObject sprayPrefab;
 
     private Sprite spriteEleWater;
     private Sprite spriteEleLife;
@@ -26,7 +28,9 @@ public class Player : MonoBehaviour
     private List<string> loadedElements;
 
     private bool isBeamActive;
+    private bool isSprayActive;
     private GameObject activeBeam;
+    private GameObject activeSpray;
 
     private void Start()
     {
@@ -397,10 +401,18 @@ public class Player : MonoBehaviour
             castType = "WEA";
 
         // Si levanto el botón, desactivo el hechizo Beam
-        if (Input.GetKeyUp(KeyCode.Alpha1) && isBeamActive)
+        if (Input.GetKeyUp(KeyCode.Alpha1))
         {
-            Destroy(activeBeam);
-            isBeamActive = false;
+            if (isBeamActive)
+            {
+                Destroy(activeBeam);
+                isBeamActive = false;
+            }
+            else if (isSprayActive)
+            {
+                Destroy(activeSpray);
+                isSprayActive = false;
+            }
         }
 
         switch (castType)
@@ -651,7 +663,7 @@ public class Player : MonoBehaviour
                 break;
 
             case "spray":
-
+                HandleInstantiateSpray(loadedElements);
                 break;
 
             case "lightningNova":
@@ -705,5 +717,34 @@ public class Player : MonoBehaviour
         lineRenderer.endColor = color;
 
         isBeamActive = true;
+    }
+
+    private void HandleInstantiateSpray(List<string> elements)
+    {
+        int size = elements.Count - elements.Count(x => x.Equals("LIG"));
+        float scale = 2 + (size - 1) * 1;
+        Vector3 spawnPos = shootPoint.position + shootPoint.forward * (scale / 2);
+
+        activeSpray = Instantiate(sprayPrefab, spawnPos, shootPoint.rotation);
+        Transform activeSprayTransform = activeSpray.transform;
+        Vector3 activeSprayLocalScale = activeSprayTransform.localScale;
+        activeSprayTransform.localScale = new Vector3(activeSprayLocalScale.x, activeSprayLocalScale.y, scale);
+        activeSprayTransform.SetParent(shootPoint);
+
+        ApplyMaterialSpray(activeSpray, elements);
+        
+        isSprayActive = true;
+    }
+    
+    private void ApplyMaterialSpray(GameObject newObj, List<string> elements)
+    {
+        newObj.GetComponent<MeshRenderer>().material = elements[0] switch
+        {
+            "WAT" => manager.matWater,
+            "COL" => manager.matCold,
+            "FIR" => manager.matFire,
+            "STE" => manager.matSteam,
+            _ => newObj.GetComponent<MeshRenderer>().material
+        };
     }
 }
