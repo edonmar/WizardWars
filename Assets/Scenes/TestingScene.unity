@@ -435,6 +435,7 @@ MonoBehaviour:
   matIce: {fileID: 2100000, guid: 9721eff1c8572424dadd9b5f4a1f6d74, type: 2}
   matSteam: {fileID: 2100000, guid: 16b36140d59cd324b875487145a4b22d, type: 2}
   wallPrefab: {fileID: 4525695405561118062, guid: 528f98469aeddcc4cad9373babf5c4ca, type: 3}
+  wallAuraPrefab: {fileID: 4525695405561118062, guid: 009d190d29cd6de4eaf24645637c417d, type: 3}
   minePrefab: {fileID: 1874681338049451286, guid: fe8e1cd0083510c49bff23ae80c70dfd, type: 3}
   stormPrefab: {fileID: 4525695405561118062, guid: 47a58013a3e85e34ebec9e9b8f2ac463, type: 3}
 --- !u!4 &1093825785

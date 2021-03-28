@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Material matSteam;
 
     [SerializeField] private GameObject wallPrefab;
+    [SerializeField] private GameObject wallAuraPrefab;
     [SerializeField] private GameObject minePrefab;
     [SerializeField] private GameObject stormPrefab;
 
@@ -128,6 +129,27 @@ public class GameManager : MonoBehaviour
         newObj.GetComponent<DissapearIn>().duration = duration;
 
         ApplyMaterialWall(newObj, elements);
+
+        List<string> subListElements = elements.Where(e => e != "SHI" && e != "EAR" && e != "ICE").ToList();
+        if (subListElements.Count > 0)
+            InstantiateWallAura(newObj.transform, subListElements);
+    }
+
+    private void InstantiateWallAura(Transform parentTransform, List<string> elements)
+    {
+        string moreRepeatedElement = elements.GroupBy(x => x)
+            .OrderByDescending(x => x.Count())
+            .First().Key;
+        int countMoreRepeatedElement = elements.Count(x => x.Equals(moreRepeatedElement));
+        float duration = 5 * countMoreRepeatedElement;
+
+        Vector3 parentPosition = parentTransform.position;
+
+        GameObject newObj = Instantiate(wallAuraPrefab, parentPosition, parentTransform.rotation);
+        newObj.transform.parent = parentTransform;
+        newObj.GetComponent<DissapearIn>().duration = duration;
+
+        ApplyMaterialWallAura(newObj, elements);
     }
 
     private void InstantiateMine(List<string> elements, Transform originTransform, float distance,
@@ -159,6 +181,26 @@ public class GameManager : MonoBehaviour
     private void ApplyMaterialWall(GameObject newObj, List<string> elements)
     {
         newObj.GetComponent<MeshRenderer>().material = elements.Contains("EAR") ? matEarth : matIce;
+    }
+
+    private void ApplyMaterialWallAura(GameObject newObj, List<string> elements)
+    {
+        MeshRenderer meshRenderer = newObj.GetComponent<MeshRenderer>();
+
+        meshRenderer.material = elements[0] switch
+        {
+            "WAT" => matWater,
+            "LIF" => matLife,
+            "COL" => matCold,
+            "LIG" => matLightning,
+            "ARC" => matArcane,
+            "FIR" => matFire,
+            "STE" => matSteam,
+            _ => meshRenderer.material
+        };
+
+        Color color = meshRenderer.material.color;
+        meshRenderer.material.color = new Color(color.r, color.g, color.b, 0.5f);
     }
 
     private void ApplyMaterialMine(GameObject newObj, List<string> elements)
