@@ -608,16 +608,16 @@ public class Player : MonoBehaviour
 
                 break;
 
-            case "storm":
-                manager.HandleIntantiateStorm(loadedElements, castType);
+            case "wall":
+
                 break;
 
             case "mines":
                 manager.HandleIntantiateMines(loadedElements, castType);
                 break;
 
-            case "wall":
-
+            case "storm":
+                manager.HandleIntantiateStorm(loadedElements, castType);
                 break;
 
             case "rock":
