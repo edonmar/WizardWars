@@ -645,7 +645,7 @@ public class Player : MonoBehaviour
                 break;
 
             case "nova":
-
+                manager.HandleIntantiateNova(loadedElements);
                 break;
 
             case "force":

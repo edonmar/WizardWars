@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject stormPrefab;
     [SerializeField] private GameObject rockPrefab;
     [SerializeField] private GameObject iciclePrefab;
+    [SerializeField] private GameObject novaPrefab;
 
     public void HandleIntantiateWall(List<string> elements, string castType)
     {
@@ -152,6 +153,24 @@ public class GameManager : MonoBehaviour
                     InstantiateIcicleSelfCast(playerTransform, 1000);
                 break;
         }
+    }
+
+    public void HandleIntantiateNova(List<string> elements)
+    {
+        string mainElement;
+
+        if (elements[0] == "EAR" || elements[0] == "ICE")
+        {
+            int countEarth = elements.Count(x => x.Equals("EAR"));
+            int countIce = elements.Count(x => x.Equals("ICE"));
+            mainElement = countEarth > countIce ? "EAR" : "ICE";
+        }
+        else
+            mainElement = elements[0];
+
+        int size = elements.Count(x => x.Equals(mainElement));
+
+        InstantiateNova(elements, playerTransform, size);
     }
 
     private void InstantiateWall(List<string> elements, Transform originTransform, float distance,
@@ -285,6 +304,19 @@ public class GameManager : MonoBehaviour
         rb.AddRelativeForce(Vector3.down * force);
     }
 
+    private void InstantiateNova(List<string> elements, Transform originTransform, int size)
+    {
+        float scale = size * 4f;
+        Vector3 originPosition = originTransform.position;
+        Vector3 spawnPos = new Vector3(originPosition.x, 0.2f, originPosition.z);
+        Quaternion spawnRot = Quaternion.Euler(0, 0, 0);
+
+        GameObject newObj = Instantiate(novaPrefab, spawnPos, spawnRot);
+        newObj.transform.localScale = new Vector3(scale, 0.2f, scale);
+
+        ApplyMaterialNova(newObj, elements);
+    }
+
     private void ApplyMaterialWall(GameObject newObj, List<string> elements)
     {
         newObj.GetComponent<MeshRenderer>().material = elements.Contains("EAR") ? matEarth : matIce;
@@ -336,5 +368,21 @@ public class GameManager : MonoBehaviour
     private void ApplyMaterialRock(GameObject newObj, List<string> elements)
     {
         newObj.GetComponent<MeshRenderer>().material = elements.Contains("ICE") ? matIce : matEarth;
+    }
+
+    private void ApplyMaterialNova(GameObject newObj, List<string> elements)
+    {
+        newObj.GetComponent<MeshRenderer>().material = elements[0] switch
+        {
+            "WAT" => matWater,
+            "LIF" => matLife,
+            "COL" => matCold,
+            "ARC" => matArcane,
+            "EAR" => matEarth,
+            "FIR" => matFire,
+            "ICE" => matIce,
+            "STE" => matSteam,
+            _ => newObj.GetComponent<MeshRenderer>().material
+        };
     }
 }
