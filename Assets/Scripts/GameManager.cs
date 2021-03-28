@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Material matSteam;
 
     [SerializeField] private GameObject stormPrefab;
+    [SerializeField] private GameObject minePrefab;
 
     public void HandleIntantiateStorm(List<string> elements, string castType)
     {
@@ -50,6 +51,34 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void HandleIntantiateMines(List<string> elements, string castType)
+    {
+        float distance = 2;
+
+        switch (castType)
+        {
+            case "FOC":
+                for (float i = 18f; i <= 54f; i += 36f)
+                {
+                    InstantiateMine(elements, playerTransform, distance, i);
+                    InstantiateMine(elements, playerTransform, distance, -i);
+                }
+
+                break;
+
+            case "ARE":
+                InstantiateMine(elements, playerTransform, distance, 0);
+                for (float i = 30f; i <= 150f; i += 30f)
+                {
+                    InstantiateMine(elements, playerTransform, distance, i);
+                    InstantiateMine(elements, playerTransform, distance, -i);
+                }
+
+                InstantiateMine(elements, playerTransform, distance, 180);
+                break;
+        }
+    }
+
     private void InstantiateStorm(List<string> elements, Transform originTransform, float distance,
         float rotationAround, float duration)
     {
@@ -63,6 +92,19 @@ public class GameManager : MonoBehaviour
         ApplyMaterialStorm(newObj, elements);
     }
 
+    private void InstantiateMine(List<string> elements, Transform originTransform, float distance,
+        float rotationAround)
+    {
+        Vector3 playerPosition = originTransform.position;
+        Vector3 spawnPos = playerPosition + originTransform.forward * distance;
+        spawnPos = new Vector3(spawnPos.x, 0.1f, spawnPos.z);
+
+        GameObject newObj = Instantiate(minePrefab, spawnPos, originTransform.rotation);
+        newObj.transform.RotateAround(playerPosition, Vector3.up, rotationAround);
+
+        ApplyMaterialMine(newObj, elements);
+    }
+
     private void ApplyMaterialStorm(GameObject newObj, List<string> elements)
     {
         newObj.GetComponent<MeshRenderer>().material = elements[1] switch
@@ -72,6 +114,16 @@ public class GameManager : MonoBehaviour
             "LIG" => matLightning,
             "FIR" => matFire,
             "STE" => matSteam,
+            _ => newObj.GetComponent<MeshRenderer>().material
+        };
+    }
+
+    private void ApplyMaterialMine(GameObject newObj, List<string> elements)
+    {
+        newObj.GetComponent<MeshRenderer>().material = elements[1] switch
+        {
+            "ARC" => matArcane,
+            "LIF" => matLife,
             _ => newObj.GetComponent<MeshRenderer>().material
         };
     }
