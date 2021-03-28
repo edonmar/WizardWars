@@ -250,13 +250,13 @@ public class GameManager : MonoBehaviour
                 float posX;
                 float posZ;
 
-                posX = Random.Range(-0.1f, 0.1f);
+                posX = Random.Range(-0.01f, 0.01f);
                 if (posX == 0)
-                    posX = 0.1f;
+                    posX = 0.01f;
 
-                posZ = Random.Range(-0.1f, 0.1f);
+                posZ = Random.Range(-0.01f, 0.01f);
                 if (posZ == 0)
-                    posZ = 0.1f;
+                    posZ = 0.01f;
 
                 spawnPos += new Vector3(posX, 5, posZ);
                 break;
@@ -277,6 +277,10 @@ public class GameManager : MonoBehaviour
         }
 
         ApplyMaterialRock(newObj, elements);
+
+        // Le paso a la roca los elementos con los que explotará
+        List<string> subListElements = elements.Where(e => e != "EAR" && e != "ICE").ToList();
+        newObj.GetComponent<Rock>().elements = subListElements;
     }
 
     private void InstantiateIcicleFocus(Transform originTransform, float force)
@@ -304,6 +308,7 @@ public class GameManager : MonoBehaviour
         rb.AddRelativeForce(Vector3.down * force);
     }
 
+    // Si el origen de la nova es el jugador
     private void InstantiateNova(List<string> elements, Transform originTransform, int size)
     {
         float scale = size * 4f;
@@ -315,6 +320,15 @@ public class GameManager : MonoBehaviour
         newObj.transform.localScale = new Vector3(scale, 0.2f, scale);
 
         ApplyMaterialNova(newObj, elements);
+    }
+
+    // Si el origen de la nova es una roca explosiva
+    public void HandleIntantiateNova(List<string> elements, Transform rockOfOrigin)
+    {
+        string mainElement = elements[0];
+        int size = elements.Count(x => x.Equals(mainElement));
+
+        InstantiateNova(elements, rockOfOrigin, size);
     }
 
     private void ApplyMaterialWall(GameObject newObj, List<string> elements)
