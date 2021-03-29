@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 9032571910847794326}
   - component: {fileID: 6153362709544795520}
   - component: {fileID: 2300369490216406476}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: WallAura
   m_TagString: Untagged
   m_Icon: {fileID: 0}

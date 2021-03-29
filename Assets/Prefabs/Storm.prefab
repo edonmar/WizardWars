@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 9032571910847794326}
   - component: {fileID: 6153362709544795520}
   - component: {fileID: 8136620202369033746}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Storm
-  m_TagString: Untagged
+  m_TagString: Storm
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

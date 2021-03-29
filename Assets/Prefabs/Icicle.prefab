@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 160725340582962828}
   - component: {fileID: 7808878969544255827}
   - component: {fileID: -6318454904849206429}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Icicle
   m_TagString: Untagged
   m_Icon: {fileID: 0}

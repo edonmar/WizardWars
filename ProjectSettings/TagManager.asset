@@ -3,7 +3,14 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Enemy
+  - Barrier
+  - Wall
+  - Mine
+  - Storm
+  - Nova
+  - Spray
   layers:
   - Default
   - TransparentFX
@@ -12,12 +19,12 @@ TagManager:
   - Water
   - UI
   - CameraRayCollider
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Terrain
+  - Characters
+  - Projectiles
+  - Beams
+  - SolidSpells
+  - NonSolidSpells
   - 
   - 
   - 

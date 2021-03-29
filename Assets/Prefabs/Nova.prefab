@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 1959072043360743981}
   - component: {fileID: 1986495849827496885}
   - component: {fileID: 5030315414615620027}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Nova
-  m_TagString: Untagged
+  m_TagString: Nova
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
