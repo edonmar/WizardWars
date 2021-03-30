@@ -199,11 +199,11 @@ public class GameManager : MonoBehaviour
         // Le paso al wall los elementos que tendrá
         List<string> subListElements = elements.Where(e => e != "SHI").ToList();
         newObj.GetComponent<Wall>().elements = subListElements;
-        
+
         ApplyMaterialWall(newObj, elements);
     }
 
-    public void InstantiateWallAura(Transform parentTransform, List<string> elements)
+    public GameObject InstantiateWallAura(Transform parentTransform, List<string> elements)
     {
         string moreRepeatedElement = elements.GroupBy(x => x)
             .OrderByDescending(x => x.Count())
@@ -219,8 +219,9 @@ public class GameManager : MonoBehaviour
 
         // Le paso al wallAura los elementos que tendrá
         newObj.GetComponent<WallAura>().elements = elements;
-        
+
         ApplyMaterialWallAura(newObj, elements);
+        return newObj;
     }
 
     private void InstantiateMine(List<string> elements, Transform originTransform, float distance,
@@ -236,7 +237,7 @@ public class GameManager : MonoBehaviour
         // Le paso a la mina los elementos con los que explotará
         List<string> subListElements = elements.Where(e => e != "SHI").ToList();
         newObj.GetComponent<Mine>().elements = subListElements;
-        
+
         ApplyMaterialMine(newObj, elements);
     }
 
@@ -253,7 +254,7 @@ public class GameManager : MonoBehaviour
         // Le paso al storm los elementos que tendrá
         List<string> subListElements = elements.Where(e => e != "SHI").ToList();
         newObj.GetComponent<Storm>().elements = subListElements;
-        
+
         ApplyMaterialStorm(newObj, elements);
     }
 
@@ -303,7 +304,7 @@ public class GameManager : MonoBehaviour
         // Le paso a la roca los elementos con los que explotará
         List<string> subListElements = elements.Where(e => e != "EAR" && e != "ICE").ToList();
         newObj.GetComponent<Rock>().elements = subListElements;
-        
+
         ApplyMaterialRock(newObj, elements);
     }
 
@@ -319,7 +320,7 @@ public class GameManager : MonoBehaviour
         GameObject newObj = Instantiate(iciclePrefab, spawnPos, spawnRot);
         Rigidbody rb = newObj.GetComponent<Rigidbody>();
         rb.AddRelativeForce(Vector3.up * force);
-        
+
         // Le paso al icicle los elementos que tendrá
         List<string> subListElements = elements.Where(e => e != "ICE").ToList();
         newObj.GetComponent<Icicle>().elements = subListElements;
@@ -334,7 +335,7 @@ public class GameManager : MonoBehaviour
         GameObject newObj = Instantiate(iciclePrefab, spawnPos, spawnRot);
         Rigidbody rb = newObj.GetComponent<Rigidbody>();
         rb.AddRelativeForce(Vector3.down * force);
-        
+
         // Le paso al icicle los elementos que tendrá
         List<string> subListElements = elements.Where(e => e != "ICE").ToList();
         newObj.GetComponent<Icicle>().elements = subListElements;
@@ -353,7 +354,7 @@ public class GameManager : MonoBehaviour
 
         // Le paso a la nova los elementos que tendrá
         newObj.GetComponent<Nova>().elements = elements;
-        
+
         ApplyMaterialNova(newObj, elements);
     }
 
@@ -364,7 +365,7 @@ public class GameManager : MonoBehaviour
 
         // Le paso al beam los elementos que tendrá
         newObj.GetComponent<Beam>().elements = elements;
-        
+
         ApplyMaterialBeam(newObj, elements);
 
         return newObj;
@@ -383,7 +384,7 @@ public class GameManager : MonoBehaviour
 
         // Le paso al spray los elementos que tendrá
         newObj.GetComponent<Spray>().elements = elements;
-        
+
         ApplyMaterialSpray(newObj, elements);
 
         return newObj;
