@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 9032571910847794326}
   - component: {fileID: 6153362709544795520}
   - component: {fileID: 8136620202369033746}
+  - component: {fileID: 9142312648418603814}
   m_Layer: 12
   m_Name: Storm
   m_TagString: Storm
@@ -110,3 +111,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   duration: 0
+--- !u!114 &9142312648418603814
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4525695405561118062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eae06ea10b3f6be4d93d2c8dbe347d3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  elements: []

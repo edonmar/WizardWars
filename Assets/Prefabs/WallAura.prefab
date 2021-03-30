@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 9032571910847794326}
   - component: {fileID: 6153362709544795520}
   - component: {fileID: 2300369490216406476}
+  - component: {fileID: 4035730844235330378}
   m_Layer: 12
   m_Name: WallAura
   m_TagString: Untagged
@@ -110,3 +111,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   duration: 0
+--- !u!114 &4035730844235330378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4525695405561118062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7e5391632fc8bf4ca39f8ffee69c9c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  elements: []

@@ -145,12 +145,12 @@ public class GameManager : MonoBehaviour
         {
             case "FOC":
                 for (int i = 0; i < quantity; i++)
-                    InstantiateIcicleFocus(casterShootPointTransform, 1000);
+                    InstantiateIcicleFocus(elements, casterShootPointTransform, 1000);
                 break;
 
             case "SEL":
                 for (int i = 0; i < quantity; i++)
-                    InstantiateIcicleSelfCast(casterTransform, 1000);
+                    InstantiateIcicleSelfCast(elements, casterTransform, 1000);
                 break;
         }
     }
@@ -196,14 +196,14 @@ public class GameManager : MonoBehaviour
         newObj.transform.RotateAround(playerPosition, Vector3.up, rotationAround);
         newObj.GetComponent<DissapearIn>().duration = duration;
 
+        // Le paso al wall los elementos que tendrá
+        List<string> subListElements = elements.Where(e => e != "SHI").ToList();
+        newObj.GetComponent<Wall>().elements = subListElements;
+        
         ApplyMaterialWall(newObj, elements);
-
-        List<string> subListElements = elements.Where(e => e != "SHI" && e != "EAR" && e != "ICE").ToList();
-        if (subListElements.Count > 0)
-            InstantiateWallAura(newObj.transform, subListElements);
     }
 
-    private void InstantiateWallAura(Transform parentTransform, List<string> elements)
+    public void InstantiateWallAura(Transform parentTransform, List<string> elements)
     {
         string moreRepeatedElement = elements.GroupBy(x => x)
             .OrderByDescending(x => x.Count())
@@ -217,6 +217,9 @@ public class GameManager : MonoBehaviour
         newObj.transform.parent = parentTransform;
         newObj.GetComponent<DissapearIn>().duration = duration;
 
+        // Le paso al wallAura los elementos que tendrá
+        newObj.GetComponent<WallAura>().elements = elements;
+        
         ApplyMaterialWallAura(newObj, elements);
     }
 
@@ -230,6 +233,10 @@ public class GameManager : MonoBehaviour
         GameObject newObj = Instantiate(minePrefab, spawnPos, originTransform.rotation);
         newObj.transform.RotateAround(playerPosition, Vector3.up, rotationAround);
 
+        // Le paso a la mina los elementos con los que explotará
+        List<string> subListElements = elements.Where(e => e != "SHI").ToList();
+        newObj.GetComponent<Mine>().elements = subListElements;
+        
         ApplyMaterialMine(newObj, elements);
     }
 
@@ -243,6 +250,10 @@ public class GameManager : MonoBehaviour
         newObj.transform.RotateAround(playerPosition, Vector3.up, rotationAround);
         newObj.GetComponent<DissapearIn>().duration = duration;
 
+        // Le paso al storm los elementos que tendrá
+        List<string> subListElements = elements.Where(e => e != "SHI").ToList();
+        newObj.GetComponent<Storm>().elements = subListElements;
+        
         ApplyMaterialStorm(newObj, elements);
     }
 
@@ -289,14 +300,14 @@ public class GameManager : MonoBehaviour
                 break;
         }
 
-        ApplyMaterialRock(newObj, elements);
-
         // Le paso a la roca los elementos con los que explotará
         List<string> subListElements = elements.Where(e => e != "EAR" && e != "ICE").ToList();
         newObj.GetComponent<Rock>().elements = subListElements;
+        
+        ApplyMaterialRock(newObj, elements);
     }
 
-    private void InstantiateIcicleFocus(Transform originTransform, float force)
+    private void InstantiateIcicleFocus(List<string> elements, Transform originTransform, float force)
     {
         Vector3 shootPointPosition = originTransform.position;
         Vector3 spawnPos = shootPointPosition + originTransform.forward * iciclePrefab.transform.localScale.y;
@@ -308,9 +319,13 @@ public class GameManager : MonoBehaviour
         GameObject newObj = Instantiate(iciclePrefab, spawnPos, spawnRot);
         Rigidbody rb = newObj.GetComponent<Rigidbody>();
         rb.AddRelativeForce(Vector3.up * force);
+        
+        // Le paso al icicle los elementos que tendrá
+        List<string> subListElements = elements.Where(e => e != "ICE").ToList();
+        newObj.GetComponent<Icicle>().elements = subListElements;
     }
 
-    private void InstantiateIcicleSelfCast(Transform originTransform, float force)
+    private void InstantiateIcicleSelfCast(List<string> elements, Transform originTransform, float force)
     {
         Vector3 shootPointPosition = originTransform.position;
         Vector3 spawnPos = shootPointPosition + new Vector3(Random.Range(-2f, 2f), 3, Random.Range(-2f, 2f));
@@ -319,6 +334,10 @@ public class GameManager : MonoBehaviour
         GameObject newObj = Instantiate(iciclePrefab, spawnPos, spawnRot);
         Rigidbody rb = newObj.GetComponent<Rigidbody>();
         rb.AddRelativeForce(Vector3.down * force);
+        
+        // Le paso al icicle los elementos que tendrá
+        List<string> subListElements = elements.Where(e => e != "ICE").ToList();
+        newObj.GetComponent<Icicle>().elements = subListElements;
     }
 
     // Si el origen de la nova es el jugador
@@ -332,6 +351,9 @@ public class GameManager : MonoBehaviour
         GameObject newObj = Instantiate(novaPrefab, spawnPos, spawnRot);
         newObj.transform.localScale = new Vector3(scale, 0.2f, scale);
 
+        // Le paso a la nova los elementos que tendrá
+        newObj.GetComponent<Nova>().elements = elements;
+        
         ApplyMaterialNova(newObj, elements);
     }
 
@@ -340,6 +362,9 @@ public class GameManager : MonoBehaviour
         GameObject newObj = Instantiate(beamPrefab, originTransform.position, originTransform.rotation);
         newObj.transform.SetParent(originTransform);
 
+        // Le paso al beam los elementos que tendrá
+        newObj.GetComponent<Beam>().elements = elements;
+        
         ApplyMaterialBeam(newObj, elements);
 
         return newObj;
@@ -356,6 +381,9 @@ public class GameManager : MonoBehaviour
         activeSprayTransform.localScale = new Vector3(activeSprayLocalScale.x, activeSprayLocalScale.y, scale);
         activeSprayTransform.SetParent(originTransform);
 
+        // Le paso al spray los elementos que tendrá
+        newObj.GetComponent<Spray>().elements = elements;
+        
         ApplyMaterialSpray(newObj, elements);
 
         return newObj;

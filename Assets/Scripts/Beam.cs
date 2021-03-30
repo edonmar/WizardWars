@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Beam : MonoBehaviour
 {
+    public List<string> elements;
     private LineRenderer lineRenderer;
 
     private void Start()
