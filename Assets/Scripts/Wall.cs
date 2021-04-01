@@ -7,8 +7,8 @@ public class Wall : MonoBehaviour
     private GameManager manager;
 
     public List<string> elements; // Después de eliminar SHI
-    private List<string> wallAuraElements;
-    private GameObject wallAura;
+    public List<string> wallAuraElements;
+    public GameObject wallAura;
 
     private void Start()
     {
@@ -40,6 +40,8 @@ public class Wall : MonoBehaviour
         return newObj;
     }
 
+    // Devuelve true si el aura de este hechizo debe ser destruida porque ha sido golpeado por determinados tipos de
+    // hechizos que contengan determinados elementos
     private bool OtherDestroysWallAura(GameObject otherGameObj, string otherGameObjTag)
     {
         bool destroys = false;
@@ -48,7 +50,7 @@ public class Wall : MonoBehaviour
 
         // Obtengo una lista con los elementos del hechizo que ha provocado el trigger
         // Sólo si ese hechizo es Nova o Spray
-        // TODO añadir Beam y Lightning a esta comprobación
+        // TODO añadir Lightning a esta comprobación
         otherElements = otherGameObjTag switch
         {
             "Nova" => otherGameObj.GetComponent<Nova>().elements,
@@ -81,7 +83,7 @@ public class Wall : MonoBehaviour
         return destroys;
     }
 
-    private void DestroyWallAura()
+    public void DestroyWallAura()
     {
         Destroy(wallAura);
     }
