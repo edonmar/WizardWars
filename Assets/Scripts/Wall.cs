@@ -6,8 +6,8 @@ public class Wall : MonoBehaviour
 {
     private GameManager manager;
 
-    public List<string> elements; // Después de eliminar SHI
-    public List<string> wallAuraElements;
+    public Dictionary<string, int> elements; // Después de eliminar SHI
+    public Dictionary<string, int> wallAuraElements;
     public GameObject wallAura;
 
     private void Start()
@@ -33,9 +33,11 @@ public class Wall : MonoBehaviour
         GameObject newObj = null;
 
         // Creo el aura que rodea al wall, si es que tiene
-        List<string> subListElements = elements.Where(e => e != "EAR" && e != "ICE").ToList();
-        if (subListElements.Count > 0)
-            newObj = manager.InstantiateWallAura(transform, subListElements);
+        Dictionary<string, int> subDictElements =
+            elements.Where(e => e.Key != "EAR" && e.Key != "ICE")
+                .ToDictionary(e => e.Key, e => e.Value);
+        if (subDictElements.Count > 0)
+            newObj = manager.InstantiateWallAura(transform, subDictElements);
 
         return newObj;
     }
@@ -45,7 +47,7 @@ public class Wall : MonoBehaviour
     private bool OtherDestroysWallAura(GameObject otherGameObj, string otherGameObjTag)
     {
         bool destroys = false;
-        List<string> otherElements = new List<string>();
+        Dictionary<string, int> otherElements = new Dictionary<string, int>();
         List<string> elementsThatDestroysThisWallAura = new List<string>();
 
         // Obtengo una lista con los elementos del hechizo que ha provocado el trigger
@@ -62,22 +64,22 @@ public class Wall : MonoBehaviour
             return false;
 
         // Según los elementos del aura este hechizo, obtengo una lista con los elementos que la destruyen
-        if (wallAuraElements.Contains("WAT"))
+        if (wallAuraElements.ContainsKey("WAT"))
             elementsThatDestroysThisWallAura.Add("FIR");
-        if (wallAuraElements.Contains("COL"))
+        if (wallAuraElements.ContainsKey("COL"))
         {
             elementsThatDestroysThisWallAura.Add("FIR");
             elementsThatDestroysThisWallAura.Add("STE");
         }
 
-        if (wallAuraElements.Contains("FIR"))
+        if (wallAuraElements.ContainsKey("FIR"))
             elementsThatDestroysThisWallAura.Add("WAT");
-        if (wallAuraElements.Contains("STE"))
+        if (wallAuraElements.ContainsKey("STE"))
             elementsThatDestroysThisWallAura.Add("COL");
 
         // Si la lista de elementos del otro hechizo contiene uno de los elementos que destruyen al aura de este
         // hechizo, devuelvo true
-        if (elementsThatDestroysThisWallAura.Any(e => otherElements.Contains(e)))
+        if (elementsThatDestroysThisWallAura.Any(e => otherElements.ContainsKey(e)))
             destroys = true;
 
         return destroys;

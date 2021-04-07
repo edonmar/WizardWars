@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Beam : MonoBehaviour
 {
-    public List<string> elements;
+    public Dictionary<string, int> elements;
     private int layerMask;
     private LineRenderer lineRenderer;
 
@@ -46,27 +46,27 @@ public class Beam : MonoBehaviour
 
     // Devuelve true si el aura del Wall con el que el Beam ha chocado debe ser destruida porque el beam contiene
     // determinados elementos
-    private bool BeamDestroysWallAura(List<string> wallAuraElements)
+    private bool BeamDestroysWallAura(Dictionary<string, int> wallAuraElements)
     {
         bool destroys = false;
         List<string> elementsThatDestroysWallAura = new List<string>();
 
         // Según los elementos del wallAura hechizo, obtengo una lista con los elementos que la destruyen
-        if (wallAuraElements.Contains("WAT"))
+        if (wallAuraElements.ContainsKey("WAT"))
             elementsThatDestroysWallAura.Add("FIR");
-        if (wallAuraElements.Contains("COL"))
+        if (wallAuraElements.ContainsKey("COL"))
         {
             elementsThatDestroysWallAura.Add("FIR");
             elementsThatDestroysWallAura.Add("STE");
         }
 
-        if (wallAuraElements.Contains("FIR"))
+        if (wallAuraElements.ContainsKey("FIR"))
             elementsThatDestroysWallAura.Add("WAT");
-        if (wallAuraElements.Contains("STE"))
+        if (wallAuraElements.ContainsKey("STE"))
             elementsThatDestroysWallAura.Add("COL");
 
         // Si la lista de elementos del beam contiene uno de los elementos que destruyen al wallAura, devuelvo true
-        if (elementsThatDestroysWallAura.Any(e => elements.Contains(e)))
+        if (elementsThatDestroysWallAura.Any(e => elements.ContainsKey(e)))
             destroys = true;
 
         return destroys;

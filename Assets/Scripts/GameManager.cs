@@ -26,13 +26,18 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject beamPrefab;
     [SerializeField] private GameObject sprayPrefab;
 
-    public void HandleInstantiateWall(List<string> elements, string castType, Transform originTransform)
+    public void HandleInstantiateWall(Dictionary<string, int> elements, string castType, Transform originTransform)
     {
         float distance = 2;
         float duration;
 
-        int countEarth = elements.Count(x => x.Equals("EAR"));
-        int countIce = elements.Count(x => x.Equals("ICE"));
+        int countEarth = 0;
+        int countIce = 0;
+
+        if (elements.ContainsKey("EAR"))
+            countEarth = elements["EAR"];
+        if (elements.ContainsKey("ICE"))
+            countIce = elements["ICE"];
 
         if (countEarth != 0)
             duration = 20 + 10 * (countEarth - 1);
@@ -63,7 +68,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void HandleInstantiateMines(List<string> elements, string castType, Transform originTransform)
+    public void HandleInstantiateMines(Dictionary<string, int> elements, string castType, Transform originTransform)
     {
         float distance = 2;
 
@@ -91,10 +96,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void HandleInstantiateStorm(List<string> elements, string castType, Transform originTransform)
+    public void HandleInstantiateStorm(Dictionary<string, int> elements, string castType, Transform originTransform)
     {
         float distance = 2;
-        int count = elements.Count(x => x.Equals(elements[1]));
+        int count = elements[elements.ElementAt(1).Key];
         float duration = 4 + 2 * (count - 1);
 
         switch (castType)
@@ -121,10 +126,18 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void HandleInstantiateRock(List<string> elements, string castType, Transform casterTransform,
+    public void HandleInstantiateRock(Dictionary<string, int> elements, string castType, Transform casterTransform,
         Transform casterShootPointTransform)
     {
-        int size = elements.Count(x => x.Equals("EAR")) + elements.Count(x => x.Equals("ICE"));
+        int countEarth = 0;
+        int countIce = 0;
+
+        if (elements.ContainsKey("EAR"))
+            countEarth = elements["EAR"];
+        if (elements.ContainsKey("ICE"))
+            countIce = elements["ICE"];
+
+        int size = countEarth + countIce;
         switch (castType)
         {
             case "FOC":
@@ -136,10 +149,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void HandleInstantiateIcicles(List<string> elements, string castType, Transform casterTransform,
+    public void HandleInstantiateIcicles(Dictionary<string, int> elements, string castType, Transform casterTransform,
         Transform casterShootPointTransform)
     {
-        int quantity = 3 * elements.Count(x => x.Equals("ICE"));
+        int quantity = 3 * elements["ICE"];
 
         switch (castType)
         {
@@ -155,38 +168,48 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void HandleInstantiateNova(List<string> elements, Transform originTransform)
+    public void HandleInstantiateNova(Dictionary<string, int> elements, Transform originTransform)
     {
         string mainElement;
+        string firstElement = elements.ElementAt(0).Key;
 
-        if (elements[0] == "EAR" || elements[0] == "ICE")
+        if (firstElement == "EAR" || firstElement == "ICE")
         {
-            int countEarth = elements.Count(x => x.Equals("EAR"));
-            int countIce = elements.Count(x => x.Equals("ICE"));
+            int countEarth = 0;
+            int countIce = 0;
+
+            if (elements.ContainsKey("EAR"))
+                countEarth = elements["EAR"];
+            if (elements.ContainsKey("ICE"))
+                countIce = elements["ICE"];
+
             mainElement = countEarth > countIce ? "EAR" : "ICE";
         }
         else
-            mainElement = elements[0];
+            mainElement = firstElement;
 
-        int size = elements.Count(x => x.Equals(mainElement));
+        int size = elements[mainElement];
 
         InstantiateNova(elements, originTransform, size);
     }
 
-    public GameObject HandleInstantiateBeam(List<string> elements, Transform originTransform)
+    public GameObject HandleInstantiateBeam(Dictionary<string, int> elements, Transform originTransform)
     {
         GameObject newObj = InstantiateBeam(elements, originTransform);
         return newObj;
     }
 
-    public GameObject HandleInstantiateSpray(List<string> elements, Transform originTransform)
+    public GameObject HandleInstantiateSpray(Dictionary<string, int> elements, Transform originTransform)
     {
-        int size = elements.Count - elements.Count(x => x.Equals("LIG"));
+        int size = elements.Sum(x => x.Value);
+        if (elements.ContainsKey("LIG"))
+            size -= elements["LIG"];
+
         GameObject newObj = InstantiateSpray(elements, originTransform, size);
         return newObj;
     }
 
-    private void InstantiateWall(List<string> elements, Transform originTransform, float distance,
+    private void InstantiateWall(Dictionary<string, int> elements, Transform originTransform, float distance,
         float rotationAround, float duration)
     {
         Vector3 playerPosition = originTransform.position;
@@ -197,18 +220,18 @@ public class GameManager : MonoBehaviour
         newObj.GetComponent<DissapearIn>().duration = duration;
 
         // Le paso al wall los elementos que tendrá
-        List<string> subListElements = elements.Where(e => e != "SHI").ToList();
-        newObj.GetComponent<Wall>().elements = subListElements;
+        Dictionary<string, int> subDictElements =
+            elements.Where(e => e.Key != "SHI")
+                .ToDictionary(e => e.Key, e => e.Value);
+        newObj.GetComponent<Wall>().elements = subDictElements;
 
         ApplyMaterialWall(newObj, elements);
     }
 
-    public GameObject InstantiateWallAura(Transform parentTransform, List<string> elements)
+    public GameObject InstantiateWallAura(Transform parentTransform, Dictionary<string, int> elements)
     {
-        string moreRepeatedElement = elements.GroupBy(x => x)
-            .OrderByDescending(x => x.Count())
-            .First().Key;
-        int countMoreRepeatedElement = elements.Count(x => x.Equals(moreRepeatedElement));
+        string moreRepeatedElement = elements.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
+        int countMoreRepeatedElement = elements[moreRepeatedElement];
         float duration = 5 * countMoreRepeatedElement;
 
         Vector3 parentPosition = parentTransform.position;
@@ -224,7 +247,7 @@ public class GameManager : MonoBehaviour
         return newObj;
     }
 
-    private void InstantiateMine(List<string> elements, Transform originTransform, float distance,
+    private void InstantiateMine(Dictionary<string, int> elements, Transform originTransform, float distance,
         float rotationAround)
     {
         Vector3 playerPosition = originTransform.position;
@@ -235,13 +258,15 @@ public class GameManager : MonoBehaviour
         newObj.transform.RotateAround(playerPosition, Vector3.up, rotationAround);
 
         // Le paso a la mina los elementos con los que explotará
-        List<string> subListElements = elements.Where(e => e != "SHI").ToList();
-        newObj.GetComponent<Mine>().elements = subListElements;
+        Dictionary<string, int> subDictElements =
+            elements.Where(e => e.Key != "SHI")
+                .ToDictionary(e => e.Key, e => e.Value);
+        newObj.GetComponent<Mine>().elements = subDictElements;
 
         ApplyMaterialMine(newObj, elements);
     }
 
-    private void InstantiateStorm(List<string> elements, Transform originTransform, float distance,
+    private void InstantiateStorm(Dictionary<string, int> elements, Transform originTransform, float distance,
         float rotationAround, float duration)
     {
         Vector3 playerPosition = originTransform.position;
@@ -252,13 +277,15 @@ public class GameManager : MonoBehaviour
         newObj.GetComponent<DissapearIn>().duration = duration;
 
         // Le paso al storm los elementos que tendrá
-        List<string> subListElements = elements.Where(e => e != "SHI").ToList();
-        newObj.GetComponent<Storm>().elements = subListElements;
+        Dictionary<string, int> subDictElements =
+            elements.Where(e => e.Key != "SHI")
+                .ToDictionary(e => e.Key, e => e.Value);
+        newObj.GetComponent<Storm>().elements = subDictElements;
 
         ApplyMaterialStorm(newObj, elements);
     }
 
-    private void InstantiateRock(List<string> elements, Transform originTransform, float size, float force,
+    private void InstantiateRock(Dictionary<string, int> elements, Transform originTransform, float size, float force,
         string castType)
     {
         float scale = 0.25f + size * 0.1375f;
@@ -302,13 +329,15 @@ public class GameManager : MonoBehaviour
         }
 
         // Le paso a la roca los elementos con los que explotará
-        List<string> subListElements = elements.Where(e => e != "EAR" && e != "ICE").ToList();
-        newObj.GetComponent<Rock>().elements = subListElements;
+        Dictionary<string, int> subDictElements =
+            elements.Where(e => e.Key != "EAR" && e.Key != "ICE")
+                .ToDictionary(e => e.Key, e => e.Value);
+        newObj.GetComponent<Rock>().elements = subDictElements;
 
         ApplyMaterialRock(newObj, elements);
     }
 
-    private void InstantiateIcicleFocus(List<string> elements, Transform originTransform, float force)
+    private void InstantiateIcicleFocus(Dictionary<string, int> elements, Transform originTransform, float force)
     {
         Vector3 shootPointPosition = originTransform.position;
         Vector3 spawnPos = shootPointPosition + originTransform.forward * iciclePrefab.transform.localScale.y;
@@ -322,11 +351,13 @@ public class GameManager : MonoBehaviour
         rb.AddRelativeForce(Vector3.up * force);
 
         // Le paso al icicle los elementos que tendrá
-        List<string> subListElements = elements.Where(e => e != "ICE").ToList();
-        newObj.GetComponent<Icicle>().elements = subListElements;
+        Dictionary<string, int> subDictElements =
+            elements.Where(e => e.Key != "ICE")
+                .ToDictionary(e => e.Key, e => e.Value);
+        newObj.GetComponent<Icicle>().elements = subDictElements;
     }
 
-    private void InstantiateIcicleSelfCast(List<string> elements, Transform originTransform, float force)
+    private void InstantiateIcicleSelfCast(Dictionary<string, int> elements, Transform originTransform, float force)
     {
         Vector3 shootPointPosition = originTransform.position;
         Vector3 spawnPos = shootPointPosition + new Vector3(Random.Range(-2f, 2f), 3, Random.Range(-2f, 2f));
@@ -337,12 +368,14 @@ public class GameManager : MonoBehaviour
         rb.AddRelativeForce(Vector3.down * force);
 
         // Le paso al icicle los elementos que tendrá
-        List<string> subListElements = elements.Where(e => e != "ICE").ToList();
-        newObj.GetComponent<Icicle>().elements = subListElements;
+        Dictionary<string, int> subDictElements =
+            elements.Where(e => e.Key != "ICE")
+                .ToDictionary(e => e.Key, e => e.Value);
+        newObj.GetComponent<Icicle>().elements = subDictElements;
     }
 
     // Si el origen de la nova es el jugador
-    private void InstantiateNova(List<string> elements, Transform originTransform, int size)
+    private void InstantiateNova(Dictionary<string, int> elements, Transform originTransform, int size)
     {
         float scale = size * 4f;
         Vector3 originPosition = originTransform.position;
@@ -358,7 +391,7 @@ public class GameManager : MonoBehaviour
         ApplyMaterialNova(newObj, elements);
     }
 
-    private GameObject InstantiateBeam(List<string> elements, Transform originTransform)
+    private GameObject InstantiateBeam(Dictionary<string, int> elements, Transform originTransform)
     {
         GameObject newObj = Instantiate(beamPrefab, originTransform.position, originTransform.rotation);
         newObj.transform.SetParent(originTransform);
@@ -371,7 +404,7 @@ public class GameManager : MonoBehaviour
         return newObj;
     }
 
-    private GameObject InstantiateSpray(List<string> elements, Transform originTransform, int size)
+    private GameObject InstantiateSpray(Dictionary<string, int> elements, Transform originTransform, int size)
     {
         float scale = 2 + (size - 1) * 1;
         Vector3 spawnPos = originTransform.position + originTransform.forward * (scale / 2);
@@ -390,16 +423,16 @@ public class GameManager : MonoBehaviour
         return newObj;
     }
 
-    private void ApplyMaterialWall(GameObject newObj, List<string> elements)
+    private void ApplyMaterialWall(GameObject newObj, Dictionary<string, int> elements)
     {
-        newObj.GetComponent<MeshRenderer>().material = elements.Contains("EAR") ? matEarth : matIce;
+        newObj.GetComponent<MeshRenderer>().material = elements.ContainsKey("EAR") ? matEarth : matIce;
     }
 
-    private void ApplyMaterialWallAura(GameObject newObj, List<string> elements)
+    private void ApplyMaterialWallAura(GameObject newObj, Dictionary<string, int> elements)
     {
         MeshRenderer meshRenderer = newObj.GetComponent<MeshRenderer>();
 
-        meshRenderer.material = elements[0] switch
+        meshRenderer.material = elements.ElementAt(0).Key switch
         {
             "WAT" => matWater,
             "LIF" => matLife,
@@ -415,9 +448,9 @@ public class GameManager : MonoBehaviour
         meshRenderer.material.color = new Color(color.r, color.g, color.b, 0.5f);
     }
 
-    private void ApplyMaterialMine(GameObject newObj, List<string> elements)
+    private void ApplyMaterialMine(GameObject newObj, Dictionary<string, int> elements)
     {
-        newObj.GetComponent<MeshRenderer>().material = elements[1] switch
+        newObj.GetComponent<MeshRenderer>().material = elements.ElementAt(1).Key switch
         {
             "ARC" => matArcane,
             "LIF" => matLife,
@@ -425,9 +458,9 @@ public class GameManager : MonoBehaviour
         };
     }
 
-    private void ApplyMaterialStorm(GameObject newObj, List<string> elements)
+    private void ApplyMaterialStorm(GameObject newObj, Dictionary<string, int> elements)
     {
-        newObj.GetComponent<MeshRenderer>().material = elements[1] switch
+        newObj.GetComponent<MeshRenderer>().material = elements.ElementAt(1).Key switch
         {
             "WAT" => matWater,
             "COL" => matCold,
@@ -438,14 +471,14 @@ public class GameManager : MonoBehaviour
         };
     }
 
-    private void ApplyMaterialRock(GameObject newObj, List<string> elements)
+    private void ApplyMaterialRock(GameObject newObj, Dictionary<string, int> elements)
     {
-        newObj.GetComponent<MeshRenderer>().material = elements.Contains("ICE") ? matIce : matEarth;
+        newObj.GetComponent<MeshRenderer>().material = elements.ContainsKey("ICE") ? matIce : matEarth;
     }
 
-    private void ApplyMaterialNova(GameObject newObj, List<string> elements)
+    private void ApplyMaterialNova(GameObject newObj, Dictionary<string, int> elements)
     {
-        newObj.GetComponent<MeshRenderer>().material = elements[0] switch
+        newObj.GetComponent<MeshRenderer>().material = elements.ElementAt(0).Key switch
         {
             "WAT" => matWater,
             "LIF" => matLife,
@@ -459,9 +492,9 @@ public class GameManager : MonoBehaviour
         };
     }
 
-    private void ApplyMaterialBeam(GameObject newObj, List<string> elements)
+    private void ApplyMaterialBeam(GameObject newObj, Dictionary<string, int> elements)
     {
-        Color color = elements[0] switch
+        Color color = elements.ElementAt(0).Key switch
         {
             "LIF" => Color.green,
             "ARC" => Color.red,
@@ -473,9 +506,9 @@ public class GameManager : MonoBehaviour
         lineRenderer.endColor = color;
     }
 
-    private void ApplyMaterialSpray(GameObject newObj, List<string> elements)
+    private void ApplyMaterialSpray(GameObject newObj, Dictionary<string, int> elements)
     {
-        newObj.GetComponent<MeshRenderer>().material = elements[0] switch
+        newObj.GetComponent<MeshRenderer>().material = elements.ElementAt(0).Key switch
         {
             "WAT" => matWater,
             "COL" => matCold,

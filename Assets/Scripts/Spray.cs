@@ -3,5 +3,5 @@ using UnityEngine;
 
 public class Spray : MonoBehaviour
 {
-    public List<string> elements;
+    public Dictionary<string, int> elements;
 }

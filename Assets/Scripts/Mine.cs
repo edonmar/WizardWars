@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Mine : MonoBehaviour
 {
-    public List<string> elements; // Después de eliminar SHI
+    public Dictionary<string, int> elements; // Después de eliminar SHI
 
     private void OnTriggerEnter(Collider other)
     {
@@ -20,7 +20,7 @@ public class Mine : MonoBehaviour
     private bool OtherDestroysThis(GameObject otherGameObj, string otherGameObjTag)
     {
         bool destroys = false;
-        List<string> otherElements = new List<string>();
+        Dictionary<string, int> otherElements = new Dictionary<string, int>();
         List<string> elementsThatDestroysThis = new List<string>();
         int otherGameLayer = otherGameObj.layer;
 
@@ -37,7 +37,6 @@ public class Mine : MonoBehaviour
             "Spray" => otherGameObj.GetComponent<Spray>().elements,
             _ => otherElements
         };
-
 
         // Según el tipo del otro hechizo, obtengo una lista con los elementos que necesita para destruir a este hechizo
         switch (otherGameObjTag)
@@ -63,7 +62,7 @@ public class Mine : MonoBehaviour
 
         // Si la lista de elementos del otro hechizo contiene uno de los elementos que destruyen a este hechizo,
         // devuelvo true
-        if (elementsThatDestroysThis.Any(e => otherElements.Contains(e)))
+        if (elementsThatDestroysThis.Any(e => otherElements.ContainsKey(e)))
             destroys = true;
 
         return destroys;

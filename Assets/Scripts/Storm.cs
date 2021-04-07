@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class Storm : MonoBehaviour
 {
-    public List<string> elements; // Después de eliminar SHI
+    public Dictionary<string, int> elements; // Después de eliminar SHI
 
     private void OnTriggerEnter(Collider other)
     {
         GameObject otherGameObj = other.gameObject;
         string otherGameObjTag = otherGameObj.tag;
-        
+
         if (OtherDestroysThis(otherGameObj, otherGameObjTag))
             DestroyThis();
     }
@@ -20,7 +20,7 @@ public class Storm : MonoBehaviour
     private bool OtherDestroysThis(GameObject otherGameObj, string otherGameObjTag)
     {
         bool destroys = false;
-        List<string> otherElements = new List<string>();
+        Dictionary<string, int> otherElements = new Dictionary<string, int>();
         List<string> elementsThatDestroysThis = new List<string>();
 
         // Obtengo una lista con los elementos del hechizo que ha provocado el trigger
@@ -36,11 +36,11 @@ public class Storm : MonoBehaviour
             return false;
 
         // Según los elementos de este hechizo, obtengo una lista con los elementos que lo destruyen
-        if (elements.Contains("LIG"))
+        if (elements.ContainsKey("LIG"))
             elementsThatDestroysThis.Add("WAT");
-        if (elements.Contains("WAT") || elements.Contains("COL"))
+        if (elements.ContainsKey("WAT") || elements.ContainsKey("COL"))
             elementsThatDestroysThis.Add("FIR");
-        if (elements.Contains("FIR"))
+        if (elements.ContainsKey("FIR"))
         {
             elementsThatDestroysThis.Add("WAT");
             elementsThatDestroysThis.Add("COL");
@@ -48,7 +48,7 @@ public class Storm : MonoBehaviour
 
         // Si la lista de elementos del otro hechizo contiene uno de los elementos que destruyen a este hechizo,
         // devuelvo true
-        if (elementsThatDestroysThis.Any(e => otherElements.Contains(e)))
+        if (elementsThatDestroysThis.Any(e => otherElements.ContainsKey(e)))
             destroys = true;
 
         return destroys;

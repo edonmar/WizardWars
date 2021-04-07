@@ -430,7 +430,8 @@ public class Player : MonoBehaviour
         if (castType == "SEL" && spellType == "force")
             return;
 
-        HandleCastSpell(castType, spellType);
+        Dictionary<string, int> elements = GetElementDictionary();
+        HandleCastSpell(elements, castType, spellType);
     }
 
     // Obtengo un array con el valor de prioridad de cada elemento de loadedElements
@@ -621,7 +622,22 @@ public class Player : MonoBehaviour
         return spellType;
     }
 
-    private void HandleCastSpell(string castType, string spellType)
+    private Dictionary<string, int> GetElementDictionary()
+    {
+        Dictionary<string, int> elements = new Dictionary<string, int>();
+
+        foreach (string e in loadedElements)
+        {
+            if (!elements.ContainsKey(e))
+                elements.Add(e, 1);
+            else
+                elements[e]++;
+        }
+
+        return elements;
+    }
+
+    private void HandleCastSpell(Dictionary<string, int> elements, string castType, string spellType)
     {
         print(castType + ", " + spellType);
 
@@ -632,27 +648,27 @@ public class Player : MonoBehaviour
                 break;
 
             case "wall":
-                manager.HandleInstantiateWall(loadedElements, castType, transform);
+                manager.HandleInstantiateWall(elements, castType, transform);
                 break;
 
             case "mines":
-                manager.HandleInstantiateMines(loadedElements, castType, transform);
+                manager.HandleInstantiateMines(elements, castType, transform);
                 break;
 
             case "storm":
-                manager.HandleInstantiateStorm(loadedElements, castType, transform);
+                manager.HandleInstantiateStorm(elements, castType, transform);
                 break;
 
             case "rock":
-                manager.HandleInstantiateRock(loadedElements, castType, transform, shootPoint);
+                manager.HandleInstantiateRock(elements, castType, transform, shootPoint);
                 break;
 
             case "icicles":
-                manager.HandleInstantiateIcicles(loadedElements, castType, transform, shootPoint);
+                manager.HandleInstantiateIcicles(elements, castType, transform, shootPoint);
                 break;
 
             case "beam":
-                activeBeam = manager.HandleInstantiateBeam(loadedElements, shootPoint);
+                activeBeam = manager.HandleInstantiateBeam(elements, shootPoint);
                 isBeamActive = true;
                 break;
 
@@ -661,7 +677,7 @@ public class Player : MonoBehaviour
                 break;
 
             case "spray":
-                activeSpray = manager.HandleInstantiateSpray(loadedElements, shootPoint);
+                activeSpray = manager.HandleInstantiateSpray(elements, shootPoint);
                 isSprayActive = true;
                 break;
 
@@ -670,7 +686,7 @@ public class Player : MonoBehaviour
                 break;
 
             case "nova":
-                manager.HandleInstantiateNova(loadedElements, transform);
+                manager.HandleInstantiateNova(elements, transform);
                 break;
 
             case "force":

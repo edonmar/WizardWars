@@ -3,5 +3,5 @@ using UnityEngine;
 
 public class WallAura : MonoBehaviour
 {
-    public List<string> elements; // Después de eliminar SHI, EAR e ICE
+    public Dictionary<string, int> elements; // Después de eliminar SHI, EAR e ICE
 }

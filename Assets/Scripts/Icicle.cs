@@ -3,5 +3,5 @@ using UnityEngine;
 
 public class Icicle : MonoBehaviour
 {
-    public List<string> elements; // Después de eliminar ICE
+    public Dictionary<string, int> elements; // Después de eliminar ICE
 }
