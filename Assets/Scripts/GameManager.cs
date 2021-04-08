@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -26,11 +27,16 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject beamPrefab;
     [SerializeField] private GameObject sprayPrefab;
 
-    public void HandleInstantiateWall(Dictionary<string, int> elements, string castType, Transform originTransform)
+    public IEnumerator CastWalls(Dictionary<string, int> elements, string castType,
+        Transform originTransform)
     {
-        float distance = 2;
+        Vector3 originPos = originTransform.position;
+        Vector3 originRot = originTransform.localEulerAngles;
+        float radius;
         float duration;
-
+        int numberOfObjects;
+        int numOfIterations;
+        bool evenNumberOfObjects;
         int countEarth = 0;
         int countIce = 0;
 
@@ -47,86 +53,228 @@ public class GameManager : MonoBehaviour
         switch (castType)
         {
             case "FOC":
-                for (float i = 18f; i <= 54f; i += 36f)
+                radius = 2f;
+                numberOfObjects = 4;
+
+                evenNumberOfObjects = numberOfObjects % 2 == 0;
+                numOfIterations = numberOfObjects / 2;
+                if (!evenNumberOfObjects)
+                    numOfIterations++;
+
+                for (int i = 0; i < numOfIterations; i++)
                 {
-                    InstantiateWall(elements, originTransform, distance, i, duration);
-                    InstantiateWall(elements, originTransform, distance, -i, duration);
+                    GameObject newObj = InstantiateObjCircularly(wallPrefab, "arc", false, originPos,
+                        originRot, numberOfObjects, radius, i);
+                    InitialStepsNewWall(newObj);
+
+                    if (i == 0 && !evenNumberOfObjects)
+                        continue;
+
+                    newObj = InstantiateObjCircularly(wallPrefab, "arc", true, originPos, originRot,
+                        numberOfObjects, radius, i);
+                    InitialStepsNewWall(newObj);
                 }
 
                 break;
 
             case "ARE":
-                InstantiateWall(elements, originTransform, distance, 0, duration);
-                for (float i = 36f; i <= 144f; i += 36f)
+                radius = 2f;
+                numberOfObjects = 10;
+                float secondsToWait = 0.5f / numberOfObjects;
+
+                evenNumberOfObjects = numberOfObjects % 2 == 0;
+                numOfIterations = numberOfObjects / 2 + 1;
+
+                for (int i = 0; i < numOfIterations; i++)
                 {
-                    InstantiateWall(elements, originTransform, distance, i, duration);
-                    InstantiateWall(elements, originTransform, distance, -i, duration);
+                    GameObject newObj = InstantiateObjCircularly(wallPrefab, "circle", false, originPos,
+                        originRot, numberOfObjects, radius, i);
+                    InitialStepsNewWall(newObj);
+
+                    if (i == 0 || evenNumberOfObjects && i == numOfIterations - 1)
+                        continue;
+
+                    newObj = InstantiateObjCircularly(wallPrefab, "circle", true, originPos,
+                        originRot, numberOfObjects, radius, i);
+                    InitialStepsNewWall(newObj);
+
+                    yield return new WaitForSeconds(secondsToWait);
                 }
 
-                InstantiateWall(elements, originTransform, distance, 180, duration);
                 break;
+        }
+
+        void InitialStepsNewWall(GameObject newObj)
+        {
+            newObj.GetComponent<DissapearIn>().duration = duration;
+
+            // Le paso al wall los elementos que tendrá
+            Dictionary<string, int> subDictElements =
+                elements.Where(e => e.Key != "SHI")
+                    .ToDictionary(e => e.Key, e => e.Value);
+            newObj.GetComponent<Wall>().elements = subDictElements;
+
+            ApplyMaterialWall(newObj, elements);
         }
     }
 
-    public void HandleInstantiateMines(Dictionary<string, int> elements, string castType, Transform originTransform)
+    public IEnumerator CastMines(Dictionary<string, int> elements, string castType,
+        Transform originTransform)
     {
-        float distance = 2;
+        Vector3 originPos = originTransform.position;
+        Vector3 originRot = originTransform.localEulerAngles;
+        float radius;
+        int numberOfObjects;
+        int numOfIterations;
+        bool evenNumberOfObjects;
 
         switch (castType)
         {
             case "FOC":
-                for (float i = 18f; i <= 54f; i += 36f)
+                radius = 2f;
+                numberOfObjects = 4;
+
+                evenNumberOfObjects = numberOfObjects % 2 == 0;
+                numOfIterations = numberOfObjects / 2;
+                if (!evenNumberOfObjects)
+                    numOfIterations++;
+
+                for (int i = 0; i < numOfIterations; i++)
                 {
-                    InstantiateMine(elements, originTransform, distance, i);
-                    InstantiateMine(elements, originTransform, distance, -i);
+                    GameObject newObj = InstantiateObjCircularly(minePrefab, "arc", false, originPos,
+                        originRot, numberOfObjects, radius, i);
+                    InitialStepsNewMine(newObj);
+
+                    if (i == 0 && !evenNumberOfObjects)
+                        continue;
+
+                    newObj = InstantiateObjCircularly(minePrefab, "arc", true, originPos, originRot,
+                        numberOfObjects, radius, i);
+                    InitialStepsNewMine(newObj);
                 }
 
                 break;
 
             case "ARE":
-                InstantiateMine(elements, originTransform, distance, 0);
-                for (float i = 30f; i <= 150f; i += 30f)
+                radius = 2f;
+                numberOfObjects = 12;
+                float secondsToWait = 0.5f / numberOfObjects;
+
+                evenNumberOfObjects = numberOfObjects % 2 == 0;
+                numOfIterations = numberOfObjects / 2 + 1;
+
+                for (int i = 0; i < numOfIterations; i++)
                 {
-                    InstantiateMine(elements, originTransform, distance, i);
-                    InstantiateMine(elements, originTransform, distance, -i);
+                    GameObject newObj = InstantiateObjCircularly(minePrefab, "circle", false, originPos,
+                        originRot, numberOfObjects, radius, i);
+                    InitialStepsNewMine(newObj);
+
+                    if (i == 0 || evenNumberOfObjects && i == numOfIterations - 1)
+                        continue;
+
+                    newObj = InstantiateObjCircularly(minePrefab, "circle", true, originPos,
+                        originRot, numberOfObjects, radius, i);
+                    InitialStepsNewMine(newObj);
+
+                    yield return new WaitForSeconds(secondsToWait);
                 }
 
-                InstantiateMine(elements, originTransform, distance, 180);
                 break;
+        }
+
+        void InitialStepsNewMine(GameObject newObj)
+        {
+            // Le paso a la mina los elementos con los que explotará
+            Dictionary<string, int> subDictElements =
+                elements.Where(e => e.Key != "SHI")
+                    .ToDictionary(e => e.Key, e => e.Value);
+            newObj.GetComponent<Mine>().elements = subDictElements;
+
+            ApplyMaterialMine(newObj, elements);
         }
     }
 
-    public void HandleInstantiateStorm(Dictionary<string, int> elements, string castType, Transform originTransform)
+    public IEnumerator CastStorms(Dictionary<string, int> elements, string castType,
+        Transform originTransform)
     {
-        float distance = 2;
+        Vector3 originPos = originTransform.position;
+        Vector3 originRot = originTransform.localEulerAngles;
+        float radius;
         int count = elements[elements.ElementAt(1).Key];
         float duration = 4 + 2 * (count - 1);
+        int numberOfObjects;
+        int numOfIterations;
+        bool evenNumberOfObjects;
 
         switch (castType)
         {
             case "FOC":
-                for (float i = 11.25f; i <= 56.25f; i += 22.5f)
+                radius = 2f;
+                numberOfObjects = 6;
+
+                evenNumberOfObjects = numberOfObjects % 2 == 0;
+                numOfIterations = numberOfObjects / 2;
+                if (!evenNumberOfObjects)
+                    numOfIterations++;
+
+                for (int i = 0; i < numOfIterations; i++)
                 {
-                    InstantiateStorm(elements, originTransform, distance, i, duration);
-                    InstantiateStorm(elements, originTransform, distance, -i, duration);
+                    GameObject newObj = InstantiateObjCircularly(stormPrefab, "arc", false, originPos,
+                        originRot, numberOfObjects, radius, i);
+                    InitialStepsNewStorm(newObj);
+
+                    if (i == 0 && !evenNumberOfObjects)
+                        continue;
+
+                    newObj = InstantiateObjCircularly(stormPrefab, "arc", true, originPos, originRot,
+                        numberOfObjects, radius, i);
+                    InitialStepsNewStorm(newObj);
                 }
 
                 break;
 
             case "ARE":
-                InstantiateStorm(elements, originTransform, distance, 0f, duration);
-                for (float i = 22.5f; i <= 157.5f; i += 22.5f)
+                radius = 2f;
+                numberOfObjects = 16;
+                float secondsToWait = 0.5f / numberOfObjects;
+
+                evenNumberOfObjects = numberOfObjects % 2 == 0;
+                numOfIterations = numberOfObjects / 2 + 1;
+
+                for (int i = 0; i < numOfIterations; i++)
                 {
-                    InstantiateStorm(elements, originTransform, distance, i, duration);
-                    InstantiateStorm(elements, originTransform, distance, -i, duration);
+                    GameObject newObj = InstantiateObjCircularly(stormPrefab, "circle", false, originPos,
+                        originRot, numberOfObjects, radius, i);
+                    InitialStepsNewStorm(newObj);
+
+                    if (i == 0 || evenNumberOfObjects && i == numOfIterations - 1)
+                        continue;
+
+                    newObj = InstantiateObjCircularly(stormPrefab, "circle", true, originPos,
+                        originRot, numberOfObjects, radius, i);
+                    InitialStepsNewStorm(newObj);
+
+                    yield return new WaitForSeconds(secondsToWait);
                 }
 
-                InstantiateStorm(elements, originTransform, distance, 180f, duration);
                 break;
+        }
+
+        void InitialStepsNewStorm(GameObject newObj)
+        {
+            newObj.GetComponent<DissapearIn>().duration = duration;
+
+            // Le paso al storm los elementos que tendrá
+            Dictionary<string, int> subDictElements =
+                elements.Where(e => e.Key != "SHI")
+                    .ToDictionary(e => e.Key, e => e.Value);
+            newObj.GetComponent<Storm>().elements = subDictElements;
+
+            ApplyMaterialStorm(newObj, elements);
         }
     }
 
-    public void HandleInstantiateRock(Dictionary<string, int> elements, string castType, Transform casterTransform,
+    public void CastRock(Dictionary<string, int> elements, string castType, Transform casterTransform,
         Transform casterShootPointTransform)
     {
         int countEarth = 0;
@@ -149,7 +297,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void HandleInstantiateIcicles(Dictionary<string, int> elements, string castType, Transform casterTransform,
+    public void CastIcicles(Dictionary<string, int> elements, string castType, Transform casterTransform,
         Transform casterShootPointTransform)
     {
         int quantity = 3 * elements["ICE"];
@@ -168,7 +316,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void HandleInstantiateNova(Dictionary<string, int> elements, Transform originTransform)
+    public void CastNova(Dictionary<string, int> elements, Transform originTransform)
     {
         string mainElement;
         string firstElement = elements.ElementAt(0).Key;
@@ -193,13 +341,13 @@ public class GameManager : MonoBehaviour
         InstantiateNova(elements, originTransform, size);
     }
 
-    public GameObject HandleInstantiateBeam(Dictionary<string, int> elements, Transform originTransform)
+    public GameObject CastBeam(Dictionary<string, int> elements, Transform originTransform)
     {
         GameObject newObj = InstantiateBeam(elements, originTransform);
         return newObj;
     }
 
-    public GameObject HandleInstantiateSpray(Dictionary<string, int> elements, Transform originTransform)
+    public GameObject CastSpray(Dictionary<string, int> elements, Transform originTransform)
     {
         int size = elements.Sum(x => x.Value);
         if (elements.ContainsKey("LIG"))
@@ -209,23 +357,48 @@ public class GameManager : MonoBehaviour
         return newObj;
     }
 
-    private void InstantiateWall(Dictionary<string, int> elements, Transform originTransform, float distance,
-        float rotationAround, float duration)
+    // Instancia un objeto en el círculo que rodea a otro
+    private GameObject InstantiateObjCircularly(GameObject prefab, string shape, bool mirrored,
+        Vector3 originPos, Vector3 originRot, int numberOfObjects, float radius, int i)
     {
-        Vector3 playerPosition = originTransform.position;
-        Vector3 spawnPos = playerPosition + originTransform.forward * distance;
+        float angleCircle = 0; // La rotación del objeto alrededor del círculo
+        float centerAngle = originRot.y * Mathf.PI / 180; // La rotación del objeto que hace de centro del círculo
 
-        GameObject newObj = Instantiate(wallPrefab, spawnPos, originTransform.rotation);
-        newObj.transform.RotateAround(playerPosition, Vector3.up, rotationAround);
-        newObj.GetComponent<DissapearIn>().duration = duration;
+        switch (shape)
+        {
+            // En forma de círculo completo
+            case "circle":
+                angleCircle = i * 2 * Mathf.PI / numberOfObjects;
+                break;
 
-        // Le paso al wall los elementos que tendrá
-        Dictionary<string, int> subDictElements =
-            elements.Where(e => e.Key != "SHI")
-                .ToDictionary(e => e.Key, e => e.Value);
-        newObj.GetComponent<Wall>().elements = subDictElements;
+            // En forma de arco
+            case "arc":
+                if (numberOfObjects % 2 == 0)
+                    angleCircle = (i + 0.5f) * 3f / 4f * Mathf.PI / numberOfObjects;
+                else
+                    angleCircle = i * 3f / 4f * Mathf.PI / numberOfObjects;
+                break;
+        }
 
-        ApplyMaterialWall(newObj, elements);
+        // Si mirrored es true, invierte el ángulo
+        if (mirrored)
+            angleCircle *= -1;
+
+        // Rotación del objeto + rotación del centro + reajuste
+        float finalAngle = angleCircle - centerAngle + 90 * Mathf.PI / 180;
+
+        // Posición donde se creará el objeto
+        float x = Mathf.Cos(finalAngle) * radius;
+        float z = Mathf.Sin(finalAngle) * radius;
+        float y = prefab.name == "Mine" ? -0.5f : 0;
+
+        Vector3 spawnPos = originPos + new Vector3(x, y, z);
+
+        // La rotación será mirando en la dirección contraria al centro del círculo
+        float angleDegrees = -finalAngle * Mathf.Rad2Deg + 90;
+        Quaternion spawnRot = Quaternion.Euler(0, angleDegrees, 0);
+
+        return Instantiate(prefab, spawnPos, spawnRot);
     }
 
     public GameObject InstantiateWallAura(Transform parentTransform, Dictionary<string, int> elements)
@@ -264,25 +437,6 @@ public class GameManager : MonoBehaviour
         newObj.GetComponent<Mine>().elements = subDictElements;
 
         ApplyMaterialMine(newObj, elements);
-    }
-
-    private void InstantiateStorm(Dictionary<string, int> elements, Transform originTransform, float distance,
-        float rotationAround, float duration)
-    {
-        Vector3 playerPosition = originTransform.position;
-        Vector3 spawnPos = playerPosition + originTransform.forward * distance;
-
-        GameObject newObj = Instantiate(stormPrefab, spawnPos, originTransform.rotation);
-        newObj.transform.RotateAround(playerPosition, Vector3.up, rotationAround);
-        newObj.GetComponent<DissapearIn>().duration = duration;
-
-        // Le paso al storm los elementos que tendrá
-        Dictionary<string, int> subDictElements =
-            elements.Where(e => e.Key != "SHI")
-                .ToDictionary(e => e.Key, e => e.Value);
-        newObj.GetComponent<Storm>().elements = subDictElements;
-
-        ApplyMaterialStorm(newObj, elements);
     }
 
     private void InstantiateRock(Dictionary<string, int> elements, Transform originTransform, float size, float force,

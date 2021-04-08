@@ -431,7 +431,7 @@ public class Player : MonoBehaviour
             return;
 
         Dictionary<string, int> elements = GetElementDictionary();
-        HandleCastSpell(elements, castType, spellType);
+        CastSpell(elements, castType, spellType);
     }
 
     // Obtengo un array con el valor de prioridad de cada elemento de loadedElements
@@ -637,7 +637,7 @@ public class Player : MonoBehaviour
         return elements;
     }
 
-    private void HandleCastSpell(Dictionary<string, int> elements, string castType, string spellType)
+    private void CastSpell(Dictionary<string, int> elements, string castType, string spellType)
     {
         print(castType + ", " + spellType);
 
@@ -648,27 +648,27 @@ public class Player : MonoBehaviour
                 break;
 
             case "wall":
-                manager.HandleInstantiateWall(elements, castType, transform);
+                StartCoroutine(manager.CastWalls(elements, castType, transform));
                 break;
 
             case "mines":
-                manager.HandleInstantiateMines(elements, castType, transform);
+                StartCoroutine(manager.CastMines(elements, castType, transform));
                 break;
 
             case "storm":
-                manager.HandleInstantiateStorm(elements, castType, transform);
+                StartCoroutine(manager.CastStorms(elements, castType, transform));
                 break;
 
             case "rock":
-                manager.HandleInstantiateRock(elements, castType, transform, shootPoint);
+                manager.CastRock(elements, castType, transform, shootPoint);
                 break;
 
             case "icicles":
-                manager.HandleInstantiateIcicles(elements, castType, transform, shootPoint);
+                manager.CastIcicles(elements, castType, transform, shootPoint);
                 break;
 
             case "beam":
-                activeBeam = manager.HandleInstantiateBeam(elements, shootPoint);
+                activeBeam = manager.CastBeam(elements, shootPoint);
                 isBeamActive = true;
                 break;
 
@@ -677,7 +677,7 @@ public class Player : MonoBehaviour
                 break;
 
             case "spray":
-                activeSpray = manager.HandleInstantiateSpray(elements, shootPoint);
+                activeSpray = manager.CastSpray(elements, shootPoint);
                 isSprayActive = true;
                 break;
 
@@ -686,7 +686,7 @@ public class Player : MonoBehaviour
                 break;
 
             case "nova":
-                manager.HandleInstantiateNova(elements, transform);
+                manager.CastNova(elements, transform);
                 break;
 
             case "force":

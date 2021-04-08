@@ -16,7 +16,7 @@ public class Rock : MonoBehaviour
     {
         if (elements.Count <= 0)
             return;
-        manager.HandleInstantiateNova(elements, transform);
+        manager.CastNova(elements, transform);
         Destroy(gameObject);
     }
 }
