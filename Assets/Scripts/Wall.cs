@@ -92,11 +92,13 @@ public class Wall : MonoBehaviour
 
     public void DestroyWallAura()
     {
-        Destroy(wallAura);
+        wallAura.GetComponent<WallAura>().DestroyThis();
     }
 
     public void DestroyThis()
     {
+        if (wallAura != null)
+            DestroyWallAura();
         Destroy(gameObject);
     }
 }
