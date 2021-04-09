@@ -4,7 +4,14 @@ using UnityEngine;
 
 public class Mine : MonoBehaviour
 {
+    private GameManager manager;
+
     public Dictionary<string, int> elements; // Después de eliminar SHI
+
+    private void Start()
+    {
+        manager = GameObject.Find("Manager").GetComponent<GameManager>();
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -70,6 +77,7 @@ public class Mine : MonoBehaviour
 
     private void DestroyThis()
     {
+        manager.InstantiateNova(elements, transform, 1);
         Destroy(gameObject);
     }
 }

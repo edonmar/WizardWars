@@ -529,7 +529,7 @@ public class GameManager : MonoBehaviour
     }
 
     // Si el origen de la nova es el jugador
-    private void InstantiateNova(Dictionary<string, int> elements, Transform originTransform, int size)
+    public void InstantiateNova(Dictionary<string, int> elements, Transform originTransform, int size)
     {
         float scale = size * 4f;
         Vector3 originPosition = originTransform.position;
