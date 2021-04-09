@@ -65,7 +65,9 @@ public class Wall : MonoBehaviour
             _ => otherElements
         };
 
-        if (otherElements.Count == 0)
+        // Detiene la comprobación si le WallAura contiene FID o ARC
+        // o si el otro hechizo es Force (hechizo todavía no implementado)
+        if (otherElements.Count == 0 || wallAuraElements.ContainsKey("LIF") || wallAuraElements.ContainsKey("ARC"))
             return false;
 
         // Según los elementos del aura este hechizo, obtengo una lista con los elementos que la destruyen

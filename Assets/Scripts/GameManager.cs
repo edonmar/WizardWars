@@ -403,20 +403,26 @@ public class GameManager : MonoBehaviour
 
     public GameObject InstantiateWallAura(Transform parentTransform, Dictionary<string, int> elements)
     {
-        string moreRepeatedElement = elements.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
-        int countMoreRepeatedElement = elements[moreRepeatedElement];
-        float duration = 5 * countMoreRepeatedElement;
-
         Vector3 parentPosition = parentTransform.position;
-
         GameObject newObj = Instantiate(wallAuraPrefab, parentPosition, parentTransform.rotation);
         newObj.transform.parent = parentTransform;
-        newObj.GetComponent<DestroyIn>().duration = duration;
+
+        // Si el WallAura contiene LIF o ARC, desactivo su script de destruirse automáticamente
+        if (elements.ContainsKey("LIF") || elements.ContainsKey("ARC"))
+            Destroy(newObj.GetComponent<DestroyIn>());
+        else // Si no contiene LIF ni ARC, calculo el tiempo que tardará en destruirse y lo aplico al script
+        {
+            string moreRepeatedElement = elements.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
+            int countMoreRepeatedElement = elements[moreRepeatedElement];
+            float duration = 5 * countMoreRepeatedElement;
+            newObj.GetComponent<DestroyIn>().duration = duration;
+        }
 
         // Le paso al wallAura los elementos que tendrá
         newObj.GetComponent<WallAura>().elements = elements;
 
         ApplyMaterialWallAura(newObj, elements);
+
         return newObj;
     }
 
