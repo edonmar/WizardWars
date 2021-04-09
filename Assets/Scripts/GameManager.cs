@@ -426,25 +426,6 @@ public class GameManager : MonoBehaviour
         return newObj;
     }
 
-    private void InstantiateMine(Dictionary<string, int> elements, Transform originTransform, float distance,
-        float rotationAround)
-    {
-        Vector3 playerPosition = originTransform.position;
-        Vector3 spawnPos = playerPosition + originTransform.forward * distance;
-        spawnPos = new Vector3(spawnPos.x, 0.1f, spawnPos.z);
-
-        GameObject newObj = Instantiate(minePrefab, spawnPos, originTransform.rotation);
-        newObj.transform.RotateAround(playerPosition, Vector3.up, rotationAround);
-
-        // Le paso a la mina los elementos con los que explotará
-        Dictionary<string, int> subDictElements =
-            elements.Where(e => e.Key != "SHI")
-                .ToDictionary(e => e.Key, e => e.Value);
-        newObj.GetComponent<Mine>().elements = subDictElements;
-
-        ApplyMaterialMine(newObj, elements);
-    }
-
     private void InstantiateRock(Dictionary<string, int> elements, Transform originTransform, float size, float force,
         string castType)
     {
