@@ -4,7 +4,15 @@ using UnityEngine;
 
 public class Storm : MonoBehaviour
 {
+    private GameManager manager;
+
     public Dictionary<string, int> elements; // Después de eliminar SHI
+
+    public void Start()
+    {
+        manager = GameObject.Find("Manager").GetComponent<GameManager>();
+        manager.CheckAndDestroyOverlappingSpells(gameObject, 0.25f);
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -54,7 +62,7 @@ public class Storm : MonoBehaviour
         return destroys;
     }
 
-    private void DestroyThis()
+    public void DestroyThis()
     {
         Destroy(gameObject);
     }

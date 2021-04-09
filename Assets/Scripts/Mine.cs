@@ -11,6 +11,7 @@ public class Mine : MonoBehaviour
     private void Start()
     {
         manager = GameObject.Find("Manager").GetComponent<GameManager>();
+        manager.CheckAndDestroyOverlappingSpells(gameObject, 0.5f);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -75,7 +76,7 @@ public class Mine : MonoBehaviour
         return destroys;
     }
 
-    private void DestroyThis()
+    public void DestroyThis()
     {
         manager.InstantiateNova(elements, transform, 1);
         Destroy(gameObject);

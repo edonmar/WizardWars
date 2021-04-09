@@ -17,6 +17,8 @@ public class Wall : MonoBehaviour
         wallAura = CreateWallAuraIfNecessary();
         if (wallAura != null)
             wallAuraElements = wallAura.GetComponent<WallAura>().elements;
+
+        manager.CheckAndDestroyOverlappingSpells(gameObject, 0.5f);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -88,5 +90,10 @@ public class Wall : MonoBehaviour
     public void DestroyWallAura()
     {
         Destroy(wallAura);
+    }
+
+    public void DestroyThis()
+    {
+        Destroy(gameObject);
     }
 }

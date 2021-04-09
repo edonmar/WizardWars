@@ -671,4 +671,54 @@ public class GameManager : MonoBehaviour
             _ => newObj.GetComponent<MeshRenderer>().material
         };
     }
+
+    public void CheckAndDestroyOverlappingSpells(GameObject originSpell, float radius)
+    {
+        Vector3 objPosition = originSpell.transform.position;
+        Vector3 sphereCenter = new Vector3(objPosition.x, 0, objPosition.z);
+        List<GameObject> overlappingSpells = OverlappingSpells(sphereCenter, 0.25f);
+        DestroyOverlappingSpells(overlappingSpells, originSpell);
+    }
+
+    // Obtiene una lista con todos los objetos de tipo Wall, Mine o Storm que ocupen la misma posición que este objeto
+    private List<GameObject> OverlappingSpells(Vector3 center, float radius)
+    {
+        List<GameObject> overlappingSpells = new List<GameObject>();
+
+        Collider[] hitColliders = Physics.OverlapSphere(center, radius);
+
+        foreach (Collider hitCollider in hitColliders)
+        {
+            GameObject hitObject = hitCollider.gameObject;
+            switch (hitObject.tag)
+            {
+                case "Wall":
+                case "Mine":
+                case "Storm":
+                    overlappingSpells.Add(hitObject);
+                    break;
+            }
+        }
+
+        return overlappingSpells;
+    }
+
+    private void DestroyOverlappingSpells(List<GameObject> overlappingSpells, GameObject originSpell)
+    {
+        foreach (GameObject spell in overlappingSpells.Where(spell => spell != originSpell))
+        {
+            switch (spell.tag)
+            {
+                case "Wall":
+                    spell.GetComponent<Wall>().DestroyThis();
+                    break;
+                case "Mine":
+                    spell.GetComponent<Mine>().DestroyThis();
+                    break;
+                case "Storm":
+                    spell.GetComponent<Storm>().DestroyThis();
+                    break;
+            }
+        }
+    }
 }
