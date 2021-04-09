@@ -7,15 +7,20 @@ public class Mine : MonoBehaviour
     private GameManager manager;
 
     public Dictionary<string, int> elements; // Después de eliminar SHI
+    public bool destroyed;
 
     private void Start()
     {
         manager = GameObject.Find("Manager").GetComponent<GameManager>();
+        destroyed = false;
         manager.CheckAndDestroyOverlappingSpells(gameObject, 0.5f);
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        if (destroyed)
+            return;
+
         GameObject otherGameObj = other.gameObject;
         string otherGameObjTag = otherGameObj.tag;
 
@@ -78,6 +83,7 @@ public class Mine : MonoBehaviour
 
     public void DestroyThis()
     {
+        destroyed = true;
         manager.InstantiateNova(elements, transform, 1);
         Destroy(gameObject);
     }

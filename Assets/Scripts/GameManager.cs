@@ -700,7 +700,8 @@ public class GameManager : MonoBehaviour
                     spell.GetComponent<Wall>().DestroyThis();
                     break;
                 case "Mine":
-                    spell.GetComponent<Mine>().DestroyThis();
+                    if(spell.GetComponent<Mine>().destroyed)
+                        spell.GetComponent<Mine>().DestroyThis();
                     break;
                 case "Storm":
                     spell.GetComponent<Storm>().DestroyThis();
