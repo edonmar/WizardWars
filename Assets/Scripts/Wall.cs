@@ -26,6 +26,9 @@ public class Wall : MonoBehaviour
         GameObject otherGameObj = other.gameObject;
         string otherGameObjTag = otherGameObj.tag;
 
+        if (wallAura == null)
+            return;
+
         if (OtherDestroysWallAura(otherGameObj, otherGameObjTag))
             DestroyWallAura();
     }
