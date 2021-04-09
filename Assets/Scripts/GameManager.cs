@@ -106,7 +106,7 @@ public class GameManager : MonoBehaviour
 
         void InitialStepsNewWall(GameObject newObj)
         {
-            newObj.GetComponent<DissapearIn>().duration = duration;
+            newObj.GetComponent<DestroyIn>().duration = duration;
 
             // Le paso al wall los elementos que tendrá
             Dictionary<string, int> subDictElements =
@@ -262,7 +262,7 @@ public class GameManager : MonoBehaviour
 
         void InitialStepsNewStorm(GameObject newObj)
         {
-            newObj.GetComponent<DissapearIn>().duration = duration;
+            newObj.GetComponent<DestroyIn>().duration = duration;
 
             // Le paso al storm los elementos que tendrá
             Dictionary<string, int> subDictElements =
@@ -411,7 +411,7 @@ public class GameManager : MonoBehaviour
 
         GameObject newObj = Instantiate(wallAuraPrefab, parentPosition, parentTransform.rotation);
         newObj.transform.parent = parentTransform;
-        newObj.GetComponent<DissapearIn>().duration = duration;
+        newObj.GetComponent<DestroyIn>().duration = duration;
 
         // Le paso al wallAura los elementos que tendrá
         newObj.GetComponent<WallAura>().elements = elements;

@@ -1,16 +1,16 @@
 using System.Collections;
 using UnityEngine;
 
-public class DissapearIn : MonoBehaviour
+public class DestroyIn : MonoBehaviour
 {
     public float duration;
-    
+
     private void Start()
     {
-        StartCoroutine(DissapearInMethod());
+        StartCoroutine(DestroyInMethod());
     }
-    
-    private IEnumerator DissapearInMethod()
+
+    private IEnumerator DestroyInMethod()
     {
         yield return new WaitForSeconds(duration);
         Destroy(gameObject);
