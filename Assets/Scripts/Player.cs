@@ -25,8 +25,10 @@ public class Player : MonoBehaviour
     private List<string> loadedElements;
 
     private bool isBeamActive;
+    private bool isLightningActive;
     private bool isSprayActive;
     private GameObject activeBeam;
+    private GameObject activeLightning;
     private GameObject activeSpray;
 
     private void Start()
@@ -55,6 +57,8 @@ public class Player : MonoBehaviour
 
         loadedElements = new List<string>();
         isBeamActive = false;
+        isLightningActive = false;
+        isSprayActive = false;
     }
 
     private void Update()
@@ -405,6 +409,12 @@ public class Player : MonoBehaviour
                 Destroy(activeBeam);
                 isBeamActive = false;
             }
+
+            if (isLightningActive)
+            {
+                Destroy(activeLightning);
+                isLightningActive = false;
+            }
             else if (isSprayActive)
             {
                 Destroy(activeSpray);
@@ -673,7 +683,8 @@ public class Player : MonoBehaviour
                 break;
 
             case "lightning":
-
+                activeLightning = manager.CastLightning(elements, shootPoint, gameObject);
+                isLightningActive = true;
                 break;
 
             case "spray":

@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject iciclePrefab;
     [SerializeField] private GameObject novaPrefab;
     [SerializeField] private GameObject beamPrefab;
+    [SerializeField] private GameObject lightningPrefab;
     [SerializeField] private GameObject sprayPrefab;
 
     public IEnumerator CastWalls(Dictionary<string, int> elements, string castType,
@@ -347,6 +348,15 @@ public class GameManager : MonoBehaviour
         return newObj;
     }
 
+    public GameObject CastLightning(Dictionary<string, int> elements, Transform originTransform, GameObject caster)
+    {
+        int ligCount = elements["LIG"];
+        float size = 3 + (ligCount - 1) * 1;
+
+        GameObject newObj = InstantiateLightning(elements, originTransform, caster, size);
+        return newObj;
+    }
+
     public GameObject CastSpray(Dictionary<string, int> elements, Transform originTransform)
     {
         int size = elements.Sum(x => x.Value);
@@ -545,6 +555,22 @@ public class GameManager : MonoBehaviour
         return newObj;
     }
 
+    private GameObject InstantiateLightning(Dictionary<string, int> elements, Transform originTransform,
+        GameObject caster, float size)
+    {
+        GameObject newObj = Instantiate(lightningPrefab, originTransform.position, originTransform.rotation);
+        newObj.transform.SetParent(originTransform);
+
+        // Le paso al lightning los elementos que tendrá
+        LightningManager lightningManagerScript = newObj.GetComponent<LightningManager>();
+        lightningManagerScript.elements = elements;
+        lightningManagerScript.caster = caster;
+        lightningManagerScript.size = size;
+        lightningManagerScript.color = GetLightningColor(elements);
+
+        return newObj;
+    }
+
     private GameObject InstantiateSpray(Dictionary<string, int> elements, Transform originTransform, int size)
     {
         float scale = 2 + (size - 1) * 1;
@@ -647,6 +673,22 @@ public class GameManager : MonoBehaviour
         lineRenderer.endColor = color;
     }
 
+    private Color GetLightningColor(Dictionary<string, int> elements)
+    {
+        Color color;
+
+        if (elements.ContainsKey("WAT"))
+            color = matWater.color;
+        else if (elements.ContainsKey("COL"))
+            color = matCold.color;
+        else if (elements.ContainsKey("FIR"))
+            color = matFire.color;
+        else
+            color = matLightning.color;
+
+        return color;
+    }
+
     private void ApplyMaterialSpray(GameObject newObj, Dictionary<string, int> elements)
     {
         newObj.GetComponent<MeshRenderer>().material = elements.ElementAt(0).Key switch
@@ -671,7 +713,6 @@ public class GameManager : MonoBehaviour
     private List<GameObject> OverlappingSpells(Vector3 center, float radius)
     {
         List<GameObject> overlappingSpells = new List<GameObject>();
-
         Collider[] hitColliders = Physics.OverlapSphere(center, radius);
 
         foreach (Collider hitCollider in hitColliders)
@@ -700,7 +741,7 @@ public class GameManager : MonoBehaviour
                     spell.GetComponent<Wall>().DestroyThis();
                     break;
                 case "Mine":
-                    if(spell.GetComponent<Mine>().destroyed)
+                    if (spell.GetComponent<Mine>().destroyed)
                         spell.GetComponent<Mine>().DestroyThis();
                     break;
                 case "Storm":
