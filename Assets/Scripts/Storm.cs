@@ -43,18 +43,13 @@ public class Storm : MonoBehaviour
             steamCount = elements["STE"];
 
         if (waterCount > 0)
-            dmgTypesDict.Add("WAT", 33 + 33 * waterCount);
+            dmgTypesDict.Add("WAT", 130 + 32 * waterCount);
         if (coldCount > 0)
             dmgTypesDict.Add("COL", 0);
         if (lightningCount > 0)
-            dmgTypesDict.Add("LIG", 33 + 33 * lightningCount);
+            dmgTypesDict.Add("LIG", 130 + 32 * lightningCount);
         if (fireCount > 0)
-        {
-            if (steamCount == 0)
-                dmgTypesDict.Add("FIR", 6 + 9 * fireCount);
-            else
-                dmgTypesDict.Add("FIR", 0);
-        }
+            dmgTypesDict.Add("FIR", 0);
         if (steamCount > 0)
             dmgTypesDict.Add("STE", 0);
 
