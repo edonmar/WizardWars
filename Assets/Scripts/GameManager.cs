@@ -709,7 +709,7 @@ public class GameManager : MonoBehaviour
     {
         Vector3 objPosition = originSpell.transform.position;
         Vector3 sphereCenter = new Vector3(objPosition.x, 0, objPosition.z);
-        List<GameObject> overlappingSpells = OverlappingSpells(sphereCenter, 0.25f);
+        List<GameObject> overlappingSpells = OverlappingSpells(sphereCenter, radius);
         DestroyOverlappingSpells(overlappingSpells, originSpell);
     }
 
@@ -745,7 +745,7 @@ public class GameManager : MonoBehaviour
                     spell.GetComponent<Wall>().DestroyThis();
                     break;
                 case "Mine":
-                    if (spell.GetComponent<Mine>().destroyed)
+                    if (!spell.GetComponent<Mine>().destroyed)
                         spell.GetComponent<Mine>().DestroyThis();
                     break;
                 case "Storm":
