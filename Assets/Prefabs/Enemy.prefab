@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: 17628892124413694}
   - component: {fileID: 17628892124413695}
   - component: {fileID: 7300658069021029040}
+  - component: {fileID: -8411171711324007638}
   m_Layer: 8
   m_Name: Enemy
   m_TagString: Enemy
@@ -162,6 +163,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shootPoint: {fileID: 17628892379456643}
+--- !u!114 &-8411171711324007638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 17628892124413665}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33b784f92011e0a4caa3696a6d9ba906, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 500
+  health: 0
+  physicPercentageTaken: 100
+  waterPercentageTaken: 0
+  lifePercentageTaken: 100
+  coldPercentageTaken: 100
+  lightningPercentageTaken: 100
+  arcanePercentageTaken: 100
+  firePercentageTaken: 100
+  icePercentageTaken: 100
+  steamPercentageTaken: 100
 --- !u!1 &17628892379456644
 GameObject:
   m_ObjectHideFlags: 0
