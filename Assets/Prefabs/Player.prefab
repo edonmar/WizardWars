@@ -148,7 +148,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 120
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!114 &-1911401302239457559
 MonoBehaviour:
@@ -179,7 +179,7 @@ MonoBehaviour:
   health: 0
   physicPercentageTaken: 100
   waterPercentageTaken: 0
-  lifePercentageTaken: 100
+  lifePercentageTaken: -100
   coldPercentageTaken: 100
   lightningPercentageTaken: 100
   arcanePercentageTaken: 100
