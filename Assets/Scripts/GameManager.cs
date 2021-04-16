@@ -317,7 +317,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void CastNova(Dictionary<string, int> elements, Transform originTransform)
+    public void CastNova(Dictionary<string, int> elements, Transform originTransform, string originType)
     {
         string mainElement;
         string firstElement = elements.ElementAt(0).Key;
@@ -339,7 +339,7 @@ public class GameManager : MonoBehaviour
 
         int size = elements[mainElement];
 
-        InstantiateNova(elements, originTransform, size);
+        InstantiateNova(elements, originTransform, originType, size);
     }
 
     public GameObject CastBeam(Dictionary<string, int> elements, Transform originTransform)
@@ -526,7 +526,8 @@ public class GameManager : MonoBehaviour
     }
 
     // Si el origen de la nova es el jugador
-    public void InstantiateNova(Dictionary<string, int> elements, Transform originTransform, int size)
+    public void InstantiateNova(Dictionary<string, int> elements, Transform originTransform, string originType,
+        int size)
     {
         float scale = size * 4f;
         Vector3 originPosition = originTransform.position;
@@ -537,7 +538,10 @@ public class GameManager : MonoBehaviour
         newObj.transform.localScale = new Vector3(scale, 0.2f, scale);
 
         // Le paso a la nova los elementos que tendrá
-        newObj.GetComponent<Nova>().elements = elements;
+        Nova nova = newObj.GetComponent<Nova>();
+        nova.elements = elements;
+        nova.originType = originType;
+        nova.caster = originType == "character" ? originTransform.gameObject : null;
 
         ApplyMaterialNova(newObj, elements);
     }

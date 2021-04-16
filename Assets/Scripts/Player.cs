@@ -697,7 +697,7 @@ public class Player : MonoBehaviour
                 break;
 
             case "nova":
-                manager.CastNova(elements, transform);
+                manager.CastNova(elements, transform, "character");
                 break;
 
             case "force":

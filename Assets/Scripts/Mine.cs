@@ -84,7 +84,7 @@ public class Mine : MonoBehaviour
     public void DestroyThis()
     {
         destroyed = true;
-        manager.InstantiateNova(elements, transform, 1);
+        manager.InstantiateNova(elements, transform, "mine", 1);
         Destroy(gameObject);
     }
 }

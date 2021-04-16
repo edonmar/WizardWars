@@ -94,7 +94,7 @@ public class WallAura : MonoBehaviour
     public void DestroyThis()
     {
         if (elements.ContainsKey("LIF") || elements.ContainsKey("ARC"))
-            manager.InstantiateNova(elements, transform, 1);
+            manager.InstantiateNova(elements, transform, "wallAura", 1);
 
         Destroy(gameObject);
     }
