@@ -21,7 +21,7 @@ public class LightningFragment : MonoBehaviour
     private void Update()
     {
         if (startTransform == null || endTransform == null)
-            lightningManagerScript.InterruptChain(gameObject);
+            lightningManagerScript.ResetLightningChain();
         else
             DrawLine();
     }

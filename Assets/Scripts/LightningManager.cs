@@ -19,12 +19,16 @@ public class LightningManager : MonoBehaviour
 
     private void Start()
     {
+        CreateLightningChain();
+        dmgTypes = GetDamageTypesDictionary();
+        StartCoroutine(HitTimer(0.25f));
+    }
+
+    private void CreateLightningChain()
+    {
         GetChainedCharacters();
         if (chainedCharacters.Count > 1)
             CreateLightningFragments();
-
-        dmgTypes = GetDamageTypesDictionary();
-        StartCoroutine(HitTimer(0.25f));
     }
 
     private Dictionary<string, int> GetDamageTypesDictionary()
@@ -134,22 +138,14 @@ public class LightningManager : MonoBehaviour
         return lightningFragment;
     }
 
-    // Si uno de los personajes por los que pasaba la cadena ha muerto, hago que la cadena de relámpagos se corte al
-    // llegar a él
-    public void InterruptChain(GameObject fragment)
+    // Si uno de los personajes por los que pasaba la cadena ha muerto, hago que la cadena de relámpagos vuelva a
+    // calcular desde el principio por qué personajes debe pasar
+    public void ResetLightningChain()
     {
-        bool delete = false;
-        for (int i = 0; i < lightningFragments.Count; i++)
-        {
-            if (lightningFragments[i] == fragment)
-            {
-                chainedCharacters.RemoveRange(i, chainedCharacters.Count - i);
-                delete = true;
-            }
-
-            if (delete)
-                Destroy(lightningFragments[i]);
-        }
+        foreach (GameObject fragment in lightningFragments)
+            Destroy(fragment);
+        lightningFragments = new List<GameObject>();
+        CreateLightningChain();
     }
 
     private void Hit()
