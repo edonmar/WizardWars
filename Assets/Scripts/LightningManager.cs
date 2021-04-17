@@ -17,11 +17,25 @@ public class LightningManager : MonoBehaviour
     // del hechizo y el último el último enemigo golpeado por el rayo
     private List<GameObject> lightningFragments; // LineRenderer que formarán los fragmentos de la cadena de relámpagos
 
+    private Vector3 frontPosition; // Punto un metro delante del lanzador del hechizo
+    private Vector3 backPosition;  // Punto un metro detrás del lanzador del hechizo
+
     private void Start()
     {
+        GetFrontAndBackPositions();
         CreateLightningChain();
         dmgTypes = GetDamageTypesDictionary();
         StartCoroutine(HitTimer(0.25f));
+    }
+
+    private void GetFrontAndBackPositions()
+    {
+        Transform thisTransform = transform;
+        Vector3 thisPosition = thisTransform.position;
+        Vector3 thisForward = thisTransform.forward;
+
+        frontPosition = thisPosition + thisForward;
+        backPosition = thisPosition - thisForward;
     }
 
     private void CreateLightningChain()
@@ -81,9 +95,16 @@ public class LightningManager : MonoBehaviour
     private GameObject GetNearestCharacter(Vector3 characterPos)
     {
         // Obtiene una lista con los personajes dentro del radio pasado como parámetro
-        List<GameObject> nearCharacters = NearCharacters(characterPos, size);
+        List<GameObject> nearCharacters = GetNearCharacters(characterPos, size);
+
+        // Si es el primer fragmento de la cadena, elimina de la lista los personajes que NO estén enfrente
+        // del lanzador del hechizo
+        if (chainedCharacters.Count == 1)
+            nearCharacters = GetNearCharactersInFrontOfCaster(nearCharacters);
+
         // Elimina de la lista los personajes por los que ya haya pasado el rayo
         nearCharacters = nearCharacters.Except(chainedCharacters).ToList();
+
         // Devuelve el personaje más cercano de los que queden sin golpear por el rayo
         GameObject nearestCharacter = nearCharacters.Count == 0
             ? null
@@ -91,7 +112,7 @@ public class LightningManager : MonoBehaviour
         return nearestCharacter;
     }
 
-    private List<GameObject> NearCharacters(Vector3 center, float radius)
+    private List<GameObject> GetNearCharacters(Vector3 center, float radius)
     {
         List<GameObject> nearCharacters = new List<GameObject>();
         Collider[] hitColliders = Physics.OverlapSphere(center, radius);
@@ -109,6 +130,15 @@ public class LightningManager : MonoBehaviour
         }
 
         return nearCharacters;
+    }
+
+    private List<GameObject> GetNearCharactersInFrontOfCaster(List<GameObject> nearCharacters)
+    {
+        return (from c in nearCharacters
+            let characterPosition = c.transform.position
+            where Vector3.Distance(characterPosition, frontPosition) <=
+                  Vector3.Distance(characterPosition, backPosition)
+            select c).ToList();
     }
 
     private GameObject NearestCharacter(List<GameObject> nearCharacters, Vector3 characterPos)
