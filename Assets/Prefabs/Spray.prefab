@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 178975791682078365}
   - component: {fileID: -5957676430871064061}
   - component: {fileID: 4632460977177638792}
+  - component: {fileID: 2897164006220475}
   m_Layer: 12
   m_Name: Spray
   m_TagString: Spray
@@ -109,7 +110,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 766c31bf6f7073240960e4cd546025da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  elements: []
 --- !u!54 &4632460977177638792
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -126,3 +126,16 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &2897164006220475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 788494856509777952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bea063033315aed40a4af2c9365ccd1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  duration: 0

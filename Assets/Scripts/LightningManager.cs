@@ -265,4 +265,9 @@ public class LightningManager : MonoBehaviour
 
         return position;
     }
+    
+    public void DestroyThis()
+    {
+        Destroy(gameObject);
+    }
 }

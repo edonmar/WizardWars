@@ -152,4 +152,9 @@ public class Beam : MonoBehaviour
             yield return new WaitForSeconds(hitRate);
         }
     }
+    
+    public void DestroyThis()
+    {
+        Destroy(gameObject);
+    }
 }

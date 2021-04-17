@@ -77,4 +77,9 @@ public class Spray : MonoBehaviour
             yield return new WaitForSeconds(hitRate);
         }
     }
+    
+    public void DestroyThis()
+    {
+        Destroy(gameObject);
+    }
 }

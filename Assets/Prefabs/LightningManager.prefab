@@ -10,9 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 8459016341948996310}
   - component: {fileID: -8341247081238137901}
+  - component: {fileID: -1022336695525952926}
   m_Layer: 12
   m_Name: LightningManager
-  m_TagString: Untagged
+  m_TagString: Lightning
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -45,4 +46,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lightningFragmentPrefab: {fileID: 8459016341948996305, guid: 5615ad9a64173e84888627e943b668ed, type: 3}
   caster: {fileID: 0}
+  castType: 
   size: 0
+  color: {r: 0, g: 0, b: 0, a: 0}
+--- !u!114 &-1022336695525952926
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8459016341948996305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bea063033315aed40a4af2c9365ccd1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  duration: 0

@@ -555,6 +555,10 @@ public class GameManager : MonoBehaviour
         // Le paso al beam los elementos que tendrá
         newObj.GetComponent<Beam>().elements = elements;
 
+        // Le paso su duración
+        int mainElementCount = elements.ContainsKey("LIF") ? elements["LIF"] : elements["ARC"];
+        newObj.GetComponent<DestroyIn>().duration = 3 + 2 * (mainElementCount - 1);
+
         ApplyMaterialBeam(newObj, elements);
 
         return newObj;
@@ -574,6 +578,9 @@ public class GameManager : MonoBehaviour
         lightningManagerScript.castType = castType;
         lightningManagerScript.size = size;
         lightningManagerScript.color = GetLightningColor(elements);
+        
+        // Le paso su duración
+        newObj.GetComponent<DestroyIn>().duration = 2;
 
         return newObj;
     }
@@ -591,6 +598,9 @@ public class GameManager : MonoBehaviour
 
         // Le paso al spray los elementos que tendrá
         newObj.GetComponent<Spray>().elements = elements;
+        
+        // Le paso su duración
+        newObj.GetComponent<DestroyIn>().duration = 4;
 
         ApplyMaterialSpray(newObj, elements);
 

@@ -12,6 +12,8 @@ TagManager:
   - Nova
   - Spray
   - WallAura
+  - Beam
+  - Lightning
   layers:
   - Default
   - TransparentFX

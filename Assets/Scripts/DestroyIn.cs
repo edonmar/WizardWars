@@ -28,8 +28,18 @@ public class DestroyIn : MonoBehaviour
             case "Nova":
                 gameObject.GetComponent<Nova>().DestroyThis();
                 break;
+            case "Beam":
+                gameObject.GetComponent<Beam>().DestroyThis();
+                break;
+            case "Lightning":
+                gameObject.GetComponent<LightningManager>().DestroyThis();
+                break;
+            case "Spray":
+                gameObject.GetComponent<Spray>().DestroyThis();
+                break;
+            default:
+                Destroy(gameObject);
+                break;
         }
-
-        Destroy(gameObject);
     }
 }
