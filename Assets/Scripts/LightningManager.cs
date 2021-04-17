@@ -10,6 +10,7 @@ public class LightningManager : MonoBehaviour
     public Dictionary<string, int> elements;
     private Dictionary<string, int> dmgTypes;
     public GameObject caster;
+    public string castType;
     public float size;
     public Color color;
 
@@ -17,25 +18,39 @@ public class LightningManager : MonoBehaviour
     // del hechizo y el último el último enemigo golpeado por el rayo
     private List<GameObject> lightningFragments; // LineRenderer que formarán los fragmentos de la cadena de relámpagos
 
-    private Vector3 frontPosition; // Punto un metro delante del lanzador del hechizo
-    private Vector3 backPosition;  // Punto un metro detrás del lanzador del hechizo
+    // Puntos que rodean al lanzador del hechizo, un metro delante, detrás, derecha e izquierda
+    private Vector3 frontPosition;
+    private Vector3 backPosition;
+    private Vector3 rightPosition;
+    private Vector3 leftPosition;
+
+    private char direction; // Dirección en la que el lanzador del hechizo lanzará el rayo
+    // (delante, derecha, detrás, izquierda)
 
     private void Start()
     {
-        GetFrontAndBackPositions();
+        chainedCharacters = new List<GameObject>();
+        lightningFragments = new List<GameObject>();
+
+        GetPositionsAroundCaster();
+        // Si el tipo de lanzamiento es de área, empiezo en L para que el primer golpe sea F
+        direction = castType == "FOC" ? 'F' : 'L';
         CreateLightningChain();
         dmgTypes = GetDamageTypesDictionary();
         StartCoroutine(HitTimer(0.25f));
     }
 
-    private void GetFrontAndBackPositions()
+    private void GetPositionsAroundCaster()
     {
         Transform thisTransform = transform;
         Vector3 thisPosition = thisTransform.position;
         Vector3 thisForward = thisTransform.forward;
+        Vector3 thisRight = thisTransform.right;
 
         frontPosition = thisPosition + thisForward;
         backPosition = thisPosition - thisForward;
+        rightPosition = thisPosition + thisRight;
+        leftPosition = thisPosition - thisRight;
     }
 
     private void CreateLightningChain()
@@ -100,7 +115,7 @@ public class LightningManager : MonoBehaviour
         // Si es el primer fragmento de la cadena, elimina de la lista los personajes que NO estén enfrente
         // del lanzador del hechizo
         if (chainedCharacters.Count == 1)
-            nearCharacters = GetNearCharactersInFrontOfCaster(nearCharacters);
+            nearCharacters = GetNearCharactersInDirection(nearCharacters);
 
         // Elimina de la lista los personajes por los que ya haya pasado el rayo
         nearCharacters = nearCharacters.Except(chainedCharacters).ToList();
@@ -132,12 +147,12 @@ public class LightningManager : MonoBehaviour
         return nearCharacters;
     }
 
-    private List<GameObject> GetNearCharactersInFrontOfCaster(List<GameObject> nearCharacters)
+    private List<GameObject> GetNearCharactersInDirection(List<GameObject> nearCharacters)
     {
         return (from c in nearCharacters
             let characterPosition = c.transform.position
-            where Vector3.Distance(characterPosition, frontPosition) <=
-                  Vector3.Distance(characterPosition, backPosition)
+            where Vector3.Distance(characterPosition, GetPositionAtDirection()) <=
+                  Vector3.Distance(characterPosition, GetPositionAtOppositeDirection())
             select c).ToList();
     }
 
@@ -172,10 +187,31 @@ public class LightningManager : MonoBehaviour
     // calcular desde el principio por qué personajes debe pasar
     public void ResetLightningChain()
     {
-        foreach (GameObject fragment in lightningFragments)
-            Destroy(fragment);
+        if (lightningFragments.Count > 0)
+        {
+            foreach (GameObject fragment in lightningFragments)
+                Destroy(fragment);
+        }
+
         lightningFragments = new List<GameObject>();
         CreateLightningChain();
+    }
+
+    private IEnumerator HitTimer(float hitRate)
+    {
+        while (true)
+        {
+            // Si el tipo de lanzamiento es enfocado, se mantiene un rayo hacia delante
+            // Si es área, el rayo va girando en el sentido de las agujas del reloj
+            if (castType == "ARE")
+            {
+                ChangeDirection();
+                ResetLightningChain();
+            }
+
+            Hit();
+            yield return new WaitForSeconds(hitRate);
+        }
     }
 
     private void Hit()
@@ -188,12 +224,45 @@ public class LightningManager : MonoBehaviour
         }
     }
 
-    private IEnumerator HitTimer(float hitRate)
+    private void ChangeDirection()
     {
-        while (true)
+        char newDirection = direction switch
         {
-            Hit();
-            yield return new WaitForSeconds(hitRate);
-        }
+            'F' => 'R',
+            'R' => 'B',
+            'B' => 'L',
+            'L' => 'F',
+            _ => '\0'
+        };
+
+        direction = newDirection;
+    }
+
+    private Vector3 GetPositionAtDirection()
+    {
+        Vector3 position = direction switch
+        {
+            'F' => frontPosition,
+            'R' => rightPosition,
+            'B' => backPosition,
+            'L' => leftPosition,
+            _ => default
+        };
+
+        return position;
+    }
+
+    private Vector3 GetPositionAtOppositeDirection()
+    {
+        Vector3 position = direction switch
+        {
+            'F' => backPosition,
+            'R' => leftPosition,
+            'B' => frontPosition,
+            'L' => rightPosition,
+            _ => default
+        };
+
+        return position;
     }
 }

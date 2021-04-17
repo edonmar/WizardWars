@@ -348,12 +348,13 @@ public class GameManager : MonoBehaviour
         return newObj;
     }
 
-    public GameObject CastLightning(Dictionary<string, int> elements, Transform originTransform, GameObject caster)
+    public GameObject CastLightning(Dictionary<string, int> elements, string castType, Transform originTransform,
+        GameObject caster)
     {
         int ligCount = elements["LIG"];
         float size = 3 + (ligCount - 1) * 1;
 
-        GameObject newObj = InstantiateLightning(elements, originTransform, caster, size);
+        GameObject newObj = InstantiateLightning(elements, castType, originTransform, caster, size);
         return newObj;
     }
 
@@ -559,7 +560,8 @@ public class GameManager : MonoBehaviour
         return newObj;
     }
 
-    private GameObject InstantiateLightning(Dictionary<string, int> elements, Transform originTransform,
+    private GameObject InstantiateLightning(Dictionary<string, int> elements, string castType,
+        Transform originTransform,
         GameObject caster, float size)
     {
         GameObject newObj = Instantiate(lightningPrefab, originTransform.position, originTransform.rotation);
@@ -569,6 +571,7 @@ public class GameManager : MonoBehaviour
         LightningManager lightningManagerScript = newObj.GetComponent<LightningManager>();
         lightningManagerScript.elements = elements;
         lightningManagerScript.caster = caster;
+        lightningManagerScript.castType = castType;
         lightningManagerScript.size = size;
         lightningManagerScript.color = GetLightningColor(elements);
 

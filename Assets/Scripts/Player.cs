@@ -401,25 +401,22 @@ public class Player : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Alpha4))
             castType = "WEA";
 
-        // Si levanto el botón, desactivo el hechizo Beam
+        // Si levanto el botón, desactivo los hechizos que esté lanzando
         if (Input.GetKeyUp(KeyCode.Alpha1))
         {
             if (isBeamActive)
-            {
-                Destroy(activeBeam);
-                isBeamActive = false;
-            }
-
+                DestroyBeam();
             if (isLightningActive)
-            {
-                Destroy(activeLightning);
-                isLightningActive = false;
-            }
+                DestroyLightning();
             else if (isSprayActive)
-            {
-                Destroy(activeSpray);
-                isSprayActive = false;
-            }
+                DestroySpray();
+        }
+
+        // Si levanto el botón, desactivo los hechizos que esté lanzando
+        if (Input.GetKeyUp(KeyCode.Alpha2))
+        {
+            if (isLightningActive)
+                DestroyLightning();
         }
 
         switch (castType)
@@ -561,7 +558,7 @@ public class Player : MonoBehaviour
             // barrier / storm / mines / wall
             "SHI" => GetSpellTypeShieldNotSelfCast(),
             // lightning nova
-            "LIG" => "lightningNova",
+            "LIG" => "lightning",
             // nova
             _ => "nova"
         };
@@ -683,17 +680,13 @@ public class Player : MonoBehaviour
                 break;
 
             case "lightning":
-                activeLightning = manager.CastLightning(elements, shootPoint, gameObject);
+                activeLightning = manager.CastLightning(elements, castType, shootPoint, gameObject);
                 isLightningActive = true;
                 break;
 
             case "spray":
                 activeSpray = manager.CastSpray(elements, shootPoint);
                 isSprayActive = true;
-                break;
-
-            case "lightningNova":
-
                 break;
 
             case "nova":
@@ -724,5 +717,23 @@ public class Player : MonoBehaviour
 
                 break;
         }
+    }
+
+    private void DestroyBeam()
+    {
+        Destroy(activeBeam);
+        isBeamActive = false;
+    }
+
+    private void DestroyLightning()
+    {
+        Destroy(activeLightning);
+        isLightningActive = false;
+    }
+
+    private void DestroySpray()
+    {
+        Destroy(activeSpray);
+        isSprayActive = false;
     }
 }
