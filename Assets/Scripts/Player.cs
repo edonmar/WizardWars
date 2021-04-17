@@ -65,7 +65,10 @@ public class Player : MonoBehaviour
     {
         RotatePlayerTowardsCamera();
         if (Input.GetKey(KeyCode.Mouse0))
+        {
+            DestroyCurrentSpells();
             MovePlayerForward();
+        }
 
         ElementInput();
         CastInput();
@@ -404,12 +407,7 @@ public class Player : MonoBehaviour
         // Si levanto el botón, desactivo los hechizos que esté lanzando
         if (Input.GetKeyUp(KeyCode.Alpha1))
         {
-            if (isBeamActive)
-                DestroyBeam();
-            if (isLightningActive)
-                DestroyLightning();
-            else if (isSprayActive)
-                DestroySpray();
+            DestroyCurrentSpells();
         }
 
         // Si levanto el botón, desactivo los hechizos que esté lanzando
@@ -717,6 +715,16 @@ public class Player : MonoBehaviour
 
                 break;
         }
+    }
+
+    private void DestroyCurrentSpells()
+    {
+        if (isBeamActive)
+            DestroyBeam();
+        if (isLightningActive)
+            DestroyLightning();
+        else if (isSprayActive)
+            DestroySpray();
     }
 
     private void DestroyBeam()
