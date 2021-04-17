@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -7,6 +8,7 @@ public class LightningManager : MonoBehaviour
     [SerializeField] private GameObject lightningFragmentPrefab;
 
     public Dictionary<string, int> elements;
+    private Dictionary<string, int> dmgTypes;
     public GameObject caster;
     public float size;
     public Color color;
@@ -19,6 +21,39 @@ public class LightningManager : MonoBehaviour
         GetChainedCharacters();
         if (chainedCharacters.Count > 1)
             CreateLightningFragments();
+
+        dmgTypes = GetDamageTypesDictionary();
+        StartCoroutine(HitTimer(0.25f));
+    }
+
+    private Dictionary<string, int> GetDamageTypesDictionary()
+    {
+        Dictionary<string, int> dmgTypesDict = new Dictionary<string, int>();
+
+        int waterCount = 0;
+        int coldCount = 0;
+        int lightningCount = 0;
+        int fireCount = 0;
+
+        if (elements.ContainsKey("WAT"))
+            waterCount = elements["WAT"];
+        if (elements.ContainsKey("COL"))
+            coldCount = elements["COL"];
+        if (elements.ContainsKey("LIG"))
+            lightningCount = elements["LIG"];
+        if (elements.ContainsKey("FIR"))
+            fireCount = elements["FIR"];
+
+        if (waterCount > 0)
+            dmgTypesDict.Add("WAT", 32 + 10 * waterCount);
+        if (coldCount > 0)
+            dmgTypesDict.Add("COL", 0);
+        if (lightningCount > 0)
+            dmgTypesDict.Add("LIG", 32 + 10 * lightningCount);
+        if (fireCount > 0)
+            dmgTypesDict.Add("FIR", 0);
+
+        return dmgTypesDict;
     }
 
     // Obtiene todos los personajes por los que pasará el rayo
@@ -92,5 +127,24 @@ public class LightningManager : MonoBehaviour
         lightningFragmentScript.startTransform = startTransform;
         lightningFragmentScript.endTransform = endTransform;
         lightningFragmentScript.color = color;
+    }
+
+    private void Hit()
+    {
+        for (int i = 1; i < chainedCharacters.Count; i++)
+        {
+            CharacterStats characterStats = chainedCharacters[i].GetComponent<CharacterStats>();
+            if (characterStats.health != 0)
+                characterStats.TakeSpell(dmgTypes);
+        }
+    }
+
+    private IEnumerator HitTimer(float hitRate)
+    {
+        while (true)
+        {
+            Hit();
+            yield return new WaitForSeconds(hitRate);
+        }
     }
 }
