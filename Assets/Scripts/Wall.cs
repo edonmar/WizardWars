@@ -16,7 +16,9 @@ public class Wall : MonoBehaviour
 
         wallAura = CreateWallAuraIfNecessary();
         if (wallAura != null)
+        {
             wallAuraElements = wallAura.GetComponent<WallAura>().elements;
+        }
 
         manager.CheckAndDestroyOverlappingSpells(gameObject, 0.5f);
     }
@@ -41,8 +43,24 @@ public class Wall : MonoBehaviour
         Dictionary<string, int> subDictElements =
             elements.Where(e => e.Key != "EAR" && e.Key != "ICE")
                 .ToDictionary(e => e.Key, e => e.Value);
-        if (subDictElements.Count > 0)
-            newObj = manager.InstantiateWallAura(transform, subDictElements);
+        if (subDictElements.Count <= 0)
+            return null;
+
+        newObj = manager.InstantiateWallAura(transform, subDictElements);
+
+        // Calculo el efecto que tendrá el WallAura
+        int effectMode;
+        if (elements.ContainsKey("EAR"))
+        {
+            if (elements.ContainsKey("LIF") || elements.ContainsKey("ARC"))
+                effectMode = 0;
+            else
+                effectMode = 1;
+        }
+        else
+            effectMode = 2;
+
+        newObj.GetComponent<WallAura>().effectMode = effectMode;
 
         return newObj;
     }
