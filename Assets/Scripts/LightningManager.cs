@@ -79,11 +79,11 @@ public class LightningManager : MonoBehaviour
             fireCount = elements["FIR"];
 
         if (waterCount > 0)
-            dmgTypesDict.Add("WAT", 32 + 10 * waterCount);
+            dmgTypesDict.Add("WAT", 32 + 10 * (waterCount - 1));
         if (coldCount > 0)
             dmgTypesDict.Add("COL", 0);
         if (lightningCount > 0)
-            dmgTypesDict.Add("LIG", 32 + 10 * lightningCount);
+            dmgTypesDict.Add("LIG", 32 + 10 * (lightningCount - 1));
         if (fireCount > 0)
             dmgTypesDict.Add("FIR", 0);
 

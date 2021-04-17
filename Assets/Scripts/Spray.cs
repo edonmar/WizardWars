@@ -36,15 +36,15 @@ public class Spray : MonoBehaviour
             steamCount = elements["STE"];
 
         if (waterCount > 0)
-            dmgTypesDict.Add("WAT", 77 + 24 * waterCount);
+            dmgTypesDict.Add("WAT", 77 + 24 * (waterCount - 1));
         if (coldCount > 0)
-            dmgTypesDict.Add("COL", 6 + 2 * coldCount);
+            dmgTypesDict.Add("COL", 6 + 2 * (coldCount - 1));
         if (lightningCount > 0)
-            dmgTypesDict.Add("LIG", 77 + 24 * lightningCount);
+            dmgTypesDict.Add("LIG", 77 + 24 * (lightningCount - 1));
         if (fireCount > 0)
-            dmgTypesDict.Add("FIR", 15 + 5 * fireCount);
+            dmgTypesDict.Add("FIR", 15 + 5 * (fireCount - 1));
         if (steamCount > 0)
-            dmgTypesDict.Add("STE", 70 + 22 * steamCount);
+            dmgTypesDict.Add("STE", 70 + 22 * (steamCount - 1));
 
         return dmgTypesDict;
     }

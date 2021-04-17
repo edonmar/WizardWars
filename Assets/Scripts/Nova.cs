@@ -50,50 +50,50 @@ public class Nova : MonoBehaviour
         {
             case "character":
                 if (waterCount > 0)
-                    dmgTypesDict.Add("WAT", 250 + 77 * waterCount);
+                    dmgTypesDict.Add("WAT", 250 + 77 * (waterCount - 1));
                 if (lifeCount > 0)
                     dmgTypesDict.Add("LIF", 179);
                 if (coldCount > 0)
-                    dmgTypesDict.Add("COL", 24 + 8 * coldCount);
+                    dmgTypesDict.Add("COL", 24 + 8 * (coldCount - 1));
                 if (lightningCount > 0)
-                    dmgTypesDict.Add("LIG", 250 + 77 * lightningCount);
+                    dmgTypesDict.Add("LIG", 250 + 77 * (lightningCount - 1));
                 if (arcaneCount > 0)
                     dmgTypesDict.Add("ARC", 225);
                 if (earthCount > 0)
                     dmgTypesDict.Add("EAR", 0);
                 if (fireCount > 0)
-                    dmgTypesDict.Add("FIR", 60 + 19 * fireCount);
+                    dmgTypesDict.Add("FIR", 60 + 19 * (fireCount - 1));
                 if (iceCount > 0)
-                    dmgTypesDict.Add("ICE", 275 + 85 * iceCount);
+                    dmgTypesDict.Add("ICE", 275 + 85 * (iceCount - 1));
                 if (steamCount > 0)
-                    dmgTypesDict.Add("STE", 280 + 87 * steamCount);
+                    dmgTypesDict.Add("STE", 280 + 87 * (steamCount - 1));
                 break;
 
             case "rock":
                 if (waterCount > 0)
-                    dmgTypesDict.Add("WAT", 250 + 96 * waterCount);
+                    dmgTypesDict.Add("WAT", 250 + 96 * (waterCount - 1));
                 if (lifeCount > 0)
                     dmgTypesDict.Add("LIF", 179);
                 if (coldCount > 0)
-                    dmgTypesDict.Add("COL", 25 + 6 * coldCount);
+                    dmgTypesDict.Add("COL", 25 + 6 * (coldCount - 1));
                 if (arcaneCount > 0)
                     dmgTypesDict.Add("ARC", 225);
                 if (fireCount > 0)
-                    dmgTypesDict.Add("FIR", 60 + 15 * fireCount);
+                    dmgTypesDict.Add("FIR", 60 + 15 * (fireCount - 1));
                 if (steamCount > 0)
-                    dmgTypesDict.Add("STE", 280 + 70 * steamCount);
+                    dmgTypesDict.Add("STE", 280 + 70 * (steamCount - 1));
                 break;
 
             case "mine":
             case "wallAura":
                 if (waterCount > 0)
-                    dmgTypesDict.Add("WAT", 130 + 48 * waterCount);
+                    dmgTypesDict.Add("WAT", 130 + 48 * (waterCount - 1));
                 if (lifeCount > 0)
                     dmgTypesDict.Add("LIF", 599);
                 if (coldCount > 0)
                     dmgTypesDict.Add("COL", 0);
                 if (lightningCount > 0)
-                    dmgTypesDict.Add("LIG", 130 + 48 * lightningCount);
+                    dmgTypesDict.Add("LIG", 130 + 48 * (lightningCount - 1));
                 if (arcaneCount > 0)
                     dmgTypesDict.Add("ARC", 225);
                 if (fireCount > 0)

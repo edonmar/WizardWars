@@ -49,19 +49,19 @@ public class Beam : MonoBehaviour
             steamCount = elements["STE"];
 
         if (waterCount > 0)
-            dmgTypesDict.Add("WAT", 51 + 13 * waterCount);
+            dmgTypesDict.Add("WAT", 51 + 13 * (waterCount - 1));
         if (lifeCount > 0)
             dmgTypesDict.Add("LIF", 89);
         if (coldCount > 0)
-            dmgTypesDict.Add("COL", 13 + 3 * coldCount);
+            dmgTypesDict.Add("COL", 13 + 3 * (coldCount - 1));
         if (lightningCount > 0)
-            dmgTypesDict.Add("LIG", 51 + 13 * lightningCount);
+            dmgTypesDict.Add("LIG", 51 + 13 * (lightningCount - 1));
         if (arcaneCount > 0)
             dmgTypesDict.Add("ARC", 106);
         if (fireCount > 0)
-            dmgTypesDict.Add("FIR", 30 + 8 * fireCount);
+            dmgTypesDict.Add("FIR", 30 + 8 * (fireCount - 1));
         if (steamCount > 0)
-            dmgTypesDict.Add("STE", 90 + 23 * steamCount);
+            dmgTypesDict.Add("STE", 90 + 23 * (steamCount - 1));
 
         return dmgTypesDict;
     }

@@ -54,13 +54,13 @@ public class WallAura : MonoBehaviour
             steamCount = elements["STE"];
 
         if (waterCount > 0)
-            dmgTypesDict.Add("WAT", 32 + 14 * waterCount);
+            dmgTypesDict.Add("WAT", 32 + 14 * (waterCount - 1));
         if (lifeCount > 0 && effectMode == 2)
             dmgTypesDict.Add("LIF", 149);
         if (coldCount > 0)
             dmgTypesDict.Add("COL", 0);
         if (lightningCount > 0)
-            dmgTypesDict.Add("LIG", 32 + 14 * lightningCount);
+            dmgTypesDict.Add("LIG", 32 + 14 * (lightningCount - 1));
         if (arcaneCount > 0 && effectMode == 2)
             dmgTypesDict.Add("ARC", 56);
         if (fireCount > 0)
