@@ -15,6 +15,7 @@ public class LightningManager : MonoBehaviour
 
     private List<GameObject> chainedCharacters; // Personajes por los que pasará el rayo, siendo el primero el lanzador
     // del hechizo y el último el último enemigo golpeado por el rayo
+    private List<GameObject> lightningFragments; // LineRenderer que formarán los fragmentos de la cadena de relámpagos
 
     private void Start()
     {
@@ -116,17 +117,39 @@ public class LightningManager : MonoBehaviour
     // Crea un LightningFragment para cada dos personajes que estén unidos por el rayo
     private void CreateLightningFragments()
     {
+        lightningFragments = new List<GameObject>();
         for (int i = 0; i < chainedCharacters.Count - 1; i++)
-            InstantiateLightningFragment(chainedCharacters[i].transform, chainedCharacters[i + 1].transform);
+            lightningFragments.Add(InstantiateLightningFragment(chainedCharacters[i].transform,
+                chainedCharacters[i + 1].transform));
     }
 
-    private void InstantiateLightningFragment(Transform startTransform, Transform endTransform)
+    private GameObject InstantiateLightningFragment(Transform startTransform, Transform endTransform)
     {
         GameObject lightningFragment = Instantiate(lightningFragmentPrefab, gameObject.transform, true);
         LightningFragment lightningFragmentScript = lightningFragment.GetComponent<LightningFragment>();
+        lightningFragmentScript.lightningManager = gameObject;
         lightningFragmentScript.startTransform = startTransform;
         lightningFragmentScript.endTransform = endTransform;
         lightningFragmentScript.color = color;
+        return lightningFragment;
+    }
+
+    // Si uno de los personajes por los que pasaba la cadena ha muerto, hago que la cadena de relámpagos se corte al
+    // llegar a él
+    public void InterruptChain(GameObject fragment)
+    {
+        bool delete = false;
+        for (int i = 0; i < lightningFragments.Count; i++)
+        {
+            if (lightningFragments[i] == fragment)
+            {
+                chainedCharacters.RemoveRange(i, chainedCharacters.Count - i);
+                delete = true;
+            }
+
+            if (delete)
+                Destroy(lightningFragments[i]);
+        }
     }
 
     private void Hit()
