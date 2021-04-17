@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class LightningManager : MonoBehaviour
+public class Lightning : MonoBehaviour
 {
     [SerializeField] private GameObject lightningFragmentPrefab;
 
@@ -176,7 +176,7 @@ public class LightningManager : MonoBehaviour
     {
         GameObject lightningFragment = Instantiate(lightningFragmentPrefab, gameObject.transform, true);
         LightningFragment lightningFragmentScript = lightningFragment.GetComponent<LightningFragment>();
-        lightningFragmentScript.lightningManager = gameObject;
+        lightningFragmentScript.lightning = gameObject;
         lightningFragmentScript.startTransform = startTransform;
         lightningFragmentScript.endTransform = endTransform;
         lightningFragmentScript.color = color;

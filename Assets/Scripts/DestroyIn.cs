@@ -32,7 +32,7 @@ public class DestroyIn : MonoBehaviour
                 gameObject.GetComponent<Beam>().DestroyThis();
                 break;
             case "Lightning":
-                gameObject.GetComponent<LightningManager>().DestroyThis();
+                gameObject.GetComponent<Lightning>().DestroyThis();
                 break;
             case "Spray":
                 gameObject.GetComponent<Spray>().DestroyThis();

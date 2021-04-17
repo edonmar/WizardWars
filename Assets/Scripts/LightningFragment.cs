@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class LightningFragment : MonoBehaviour
 {
-    public GameObject lightningManager;
-    public LightningManager lightningManagerScript;
+    public GameObject lightning;
+    public Lightning lightningScript;
 
     public Transform startTransform;
     public Transform endTransform;
@@ -13,7 +13,7 @@ public class LightningFragment : MonoBehaviour
 
     private void Start()
     {
-        lightningManagerScript = lightningManager.GetComponent<LightningManager>();
+        lightningScript = lightning.GetComponent<Lightning>();
         lineRenderer = GetComponent<LineRenderer>();
         SetLineRendererColor();
     }
@@ -21,7 +21,7 @@ public class LightningFragment : MonoBehaviour
     private void Update()
     {
         if (startTransform == null || endTransform == null)
-            lightningManagerScript.ResetLightningChain();
+            lightningScript.ResetLightningChain();
         else
             DrawLine();
     }

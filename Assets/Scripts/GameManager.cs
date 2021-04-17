@@ -38,18 +38,14 @@ public class GameManager : MonoBehaviour
         int numberOfObjects;
         int numOfIterations;
         bool evenNumberOfObjects;
-        int countEarth = 0;
-        int countIce = 0;
+        
+        int earthCount = elements.ContainsKey("EAR") ? elements["EAR"] : 0;
+        int iceCount = elements.ContainsKey("ICE") ? elements["ICE"] : 0;
 
-        if (elements.ContainsKey("EAR"))
-            countEarth = elements["EAR"];
-        if (elements.ContainsKey("ICE"))
-            countIce = elements["ICE"];
-
-        if (countEarth != 0)
-            duration = 20 + 10 * (countEarth - 1);
+        if (earthCount != 0)
+            duration = 20 + 10 * (earthCount - 1);
         else
-            duration = countIce;
+            duration = iceCount;
 
         switch (castType)
         {
@@ -278,15 +274,10 @@ public class GameManager : MonoBehaviour
     public void CastRock(Dictionary<string, int> elements, string castType, Transform casterTransform,
         Transform casterShootPointTransform)
     {
-        int countEarth = 0;
-        int countIce = 0;
+        int earthCount = elements.ContainsKey("EAR") ? elements["EAR"] : 0;
+        int iceCount = elements.ContainsKey("ICE") ? elements["ICE"] : 0;
 
-        if (elements.ContainsKey("EAR"))
-            countEarth = elements["EAR"];
-        if (elements.ContainsKey("ICE"))
-            countIce = elements["ICE"];
-
-        int size = countEarth + countIce;
+        int size = earthCount + iceCount;
         switch (castType)
         {
             case "FOC":
@@ -324,15 +315,10 @@ public class GameManager : MonoBehaviour
 
         if (firstElement == "EAR" || firstElement == "ICE")
         {
-            int countEarth = 0;
-            int countIce = 0;
+            int earthCount = elements.ContainsKey("EAR") ? elements["EAR"] : 0;
+            int iceCount = elements.ContainsKey("ICE") ? elements["ICE"] : 0;
 
-            if (elements.ContainsKey("EAR"))
-                countEarth = elements["EAR"];
-            if (elements.ContainsKey("ICE"))
-                countIce = elements["ICE"];
-
-            mainElement = countEarth > countIce ? "EAR" : "ICE";
+            mainElement = earthCount > iceCount ? "EAR" : "ICE";
         }
         else
             mainElement = firstElement;
@@ -351,8 +337,8 @@ public class GameManager : MonoBehaviour
     public GameObject CastLightning(Dictionary<string, int> elements, string castType, Transform originTransform,
         GameObject caster)
     {
-        int ligCount = elements["LIG"];
-        float size = 3 + (ligCount - 1) * 1;
+        int lightningCount = elements["LIG"];
+        float size = 3 + (lightningCount - 1) * 1;
 
         GameObject newObj = InstantiateLightning(elements, castType, originTransform, caster, size);
         return newObj;
@@ -572,7 +558,7 @@ public class GameManager : MonoBehaviour
         newObj.transform.SetParent(originTransform);
 
         // Le paso al lightning los elementos que tendrá
-        LightningManager lightningManagerScript = newObj.GetComponent<LightningManager>();
+        Lightning lightningManagerScript = newObj.GetComponent<Lightning>();
         lightningManagerScript.elements = elements;
         lightningManagerScript.caster = caster;
         lightningManagerScript.castType = castType;
