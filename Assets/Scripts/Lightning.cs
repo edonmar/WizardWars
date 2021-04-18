@@ -219,7 +219,7 @@ public class Lightning : MonoBehaviour
         for (int i = 1; i < chainedCharacters.Count; i++)
         {
             CharacterStats characterStats = chainedCharacters[i].GetComponent<CharacterStats>();
-            if (characterStats.health != 0)
+            if (characterStats.currentHealth != 0)
                 characterStats.TakeSpell(dmgTypes);
         }
     }

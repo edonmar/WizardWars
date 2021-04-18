@@ -64,7 +64,7 @@ public class Spray : MonoBehaviour
             return;
 
         CharacterStats characterStats = other.GetComponent<CharacterStats>();
-        if (characterStats.health != 0)
+        if (characterStats.currentHealth != 0)
             characterStats.TakeSpell(dmgTypes);
         canHit = false;
     }

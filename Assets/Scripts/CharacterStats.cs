@@ -5,7 +5,7 @@ using UnityEngine;
 public class CharacterStats : MonoBehaviour
 {
     public int maxHealth;
-    public int health;
+    public int currentHealth;
     public float physicPercentageTaken;
     public float waterPercentageTaken;
     public float lifePercentageTaken;
@@ -20,7 +20,7 @@ public class CharacterStats : MonoBehaviour
 
     private void Start()
     {
-        health = maxHealth;
+        currentHealth = maxHealth;
         resistances = GetResistances();
     }
 
@@ -46,37 +46,28 @@ public class CharacterStats : MonoBehaviour
     {
         // TODO efectos de estado
 
-        int qty = GetQuantytyTaken(dmgTypes);
-        if (qty < 0)
-            TakeDamage(-qty);
-        if (qty >= 0)
-            TakeHealing(qty);
+        int amount = GetAmountTaken(dmgTypes);
+        ModifyHealth(amount);
     }
 
-    private int GetQuantytyTaken(Dictionary<string, int> dmgTypes)
+    private int GetAmountTaken(Dictionary<string, int> dmgTypes)
     {
         return dmgTypes.Aggregate(0, (current, dt) => current - (int) (dt.Value * resistances[dt.Key] / 100));
     }
 
-    private void TakeDamage(int qty)
+    private void ModifyHealth(int amount)
     {
-        health -= qty;
-        if (health > 0)
-            return;
+        currentHealth += amount;
 
-        Die();
-    }
-
-    private void TakeHealing(int qty)
-    {
-        health += qty;
-        if (health > maxHealth)
-            health = maxHealth;
+        if (currentHealth > maxHealth)
+            currentHealth = maxHealth;
+        else if (currentHealth <= 0)
+            Die();
     }
 
     private void Die()
     {
-        health = 0;
+        currentHealth = 0;
         Destroy(gameObject);
     }
 }
