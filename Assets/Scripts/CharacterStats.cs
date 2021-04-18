@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CharacterStats : MonoBehaviour
 {
+    [SerializeField] private HealthBar healthBar;
+    
     public int maxHealth;
     public int currentHealth;
     public float physicPercentageTaken;
@@ -22,6 +24,9 @@ public class CharacterStats : MonoBehaviour
     {
         currentHealth = maxHealth;
         resistances = GetResistances();
+        
+        healthBar.SetMaxHealth(maxHealth);
+        healthBar.SetHealth(currentHealth);
     }
 
     private Dictionary<string, float> GetResistances()
@@ -63,6 +68,8 @@ public class CharacterStats : MonoBehaviour
             currentHealth = maxHealth;
         else if (currentHealth <= 0)
             Die();
+        
+        healthBar.SetHealth(currentHealth);
     }
 
     private void Die()
