@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -31,6 +32,14 @@ public class Player : MonoBehaviour
     private GameObject activeLightning;
     private GameObject activeSpray;
 
+    private IEnumerator chargingSpellCoroutine;
+    private bool isChargingSpell;
+    private string chargedSpellType;
+    private int chargedSpellForce;
+    private float chargedSpellDmgMultiplier;
+    private float chargedSpellAngle;
+    private Dictionary<string, int> chargedSpellElements;
+
     private void Start()
     {
         manager = GameObject.Find("Manager").GetComponent<GameManager>();
@@ -59,6 +68,11 @@ public class Player : MonoBehaviour
         isBeamActive = false;
         isLightningActive = false;
         isSprayActive = false;
+        isChargingSpell = false;
+        chargedSpellForce = 0;
+        chargedSpellDmgMultiplier = 0;
+        chargedSpellAngle = 0;
+        chargedSpellElements = new Dictionary<string, int>();
     }
 
     private void Update()
@@ -66,7 +80,10 @@ public class Player : MonoBehaviour
         RotatePlayerTowardsCamera();
         if (Input.GetKey(KeyCode.Mouse0))
         {
-            DestroyCurrentSpells();
+            if (isChargingSpell)
+                CastChargingSpell();
+            else
+                DestroyCurrentSpells();
             MovePlayerForward();
         }
 
@@ -407,7 +424,10 @@ public class Player : MonoBehaviour
         // Si levanto el botón, desactivo los hechizos que esté lanzando
         if (Input.GetKeyUp(KeyCode.Alpha1))
         {
-            DestroyCurrentSpells();
+            if (isChargingSpell)
+                CastChargingSpell();
+            else
+                DestroyCurrentSpells();
         }
 
         // Si levanto el botón, desactivo los hechizos que esté lanzando
@@ -665,11 +685,29 @@ public class Player : MonoBehaviour
                 break;
 
             case "rock":
-                manager.CastRock(elements, castType, transform, shootPoint);
+                switch (castType)
+                {
+                    case "FOC":
+                        StartChargingSpell(elements, spellType);
+                        break;
+                    case "SEL":
+                        manager.CastRock(elements, castType, 1000, 1, transform, shootPoint);
+                        break;
+                }
+
                 break;
 
             case "icicles":
-                manager.CastIcicles(elements, castType, transform, shootPoint);
+                switch (castType)
+                {
+                    case "FOC":
+                        StartChargingSpell(elements, spellType);
+                        break;
+                    case "SEL":
+                        manager.CastIcicles(elements, castType, 1000, 1, chargedSpellAngle, transform, shootPoint);
+                        break;
+                }
+
                 break;
 
             case "beam":
@@ -714,6 +752,57 @@ public class Player : MonoBehaviour
             case "imbuedStab":
 
                 break;
+        }
+    }
+
+    private void StartChargingSpell(Dictionary<string, int> elements, string spellType)
+    {
+        float finalDmgMultiplier = spellType switch
+        {
+            "rock" => 4.4f,
+            "icicles" => 2,
+            _ => 1
+        };
+
+        chargedSpellElements = elements;
+        chargedSpellForce = 1000;
+        chargedSpellDmgMultiplier = 1;
+        chargedSpellAngle = 45;
+        chargedSpellType = spellType;
+        isChargingSpell = true;
+        chargingSpellCoroutine = ChargeSpell(1000, 2000, 1, finalDmgMultiplier, 45, 2, 2.75f);
+        StartCoroutine(chargingSpellCoroutine);
+    }
+
+    private void CastChargingSpell()
+    {
+        switch (chargedSpellType)
+        {
+            case "rock":
+                manager.CastRock(chargedSpellElements, "FOC", chargedSpellForce, chargedSpellDmgMultiplier, transform,
+                    shootPoint);
+                break;
+            case "icicles":
+                manager.CastIcicles(chargedSpellElements, "FOC", chargedSpellForce, chargedSpellDmgMultiplier,
+                    chargedSpellAngle, transform, shootPoint);
+                break;
+        }
+
+        isChargingSpell = false;
+        StopCoroutine(chargingSpellCoroutine);
+    }
+
+    private IEnumerator ChargeSpell(float initialForce, float finalForce, float initialDmgMultiplier,
+        float finalDmgMultiplier, float initialAngle, float finalangle, float duration)
+    {
+        float counter = 0f;
+        while (counter < duration)
+        {
+            counter += Time.deltaTime;
+            chargedSpellForce = (int) Mathf.Lerp(initialForce, finalForce, counter / duration);
+            chargedSpellDmgMultiplier = Mathf.Lerp(initialDmgMultiplier, finalDmgMultiplier, counter / duration);
+            chargedSpellAngle = Mathf.Lerp(initialAngle, finalangle, counter / duration);
+            yield return null;
         }
     }
 

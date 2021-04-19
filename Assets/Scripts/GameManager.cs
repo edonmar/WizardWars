@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
         int numberOfObjects;
         int numOfIterations;
         bool evenNumberOfObjects;
-        
+
         int earthCount = elements.ContainsKey("EAR") ? elements["EAR"] : 0;
         int iceCount = elements.ContainsKey("ICE") ? elements["ICE"] : 0;
 
@@ -271,8 +271,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void CastRock(Dictionary<string, int> elements, string castType, Transform casterTransform,
-        Transform casterShootPointTransform)
+    public void CastRock(Dictionary<string, int> elements, string castType, int force, float dmgMultiplier,
+        Transform casterTransform, Transform casterShootPointTransform)
     {
         int earthCount = elements.ContainsKey("EAR") ? elements["EAR"] : 0;
         int iceCount = elements.ContainsKey("ICE") ? elements["ICE"] : 0;
@@ -281,16 +281,16 @@ public class GameManager : MonoBehaviour
         switch (castType)
         {
             case "FOC":
-                InstantiateRock(elements, casterShootPointTransform, size, 1000, castType);
+                InstantiateRock(elements, casterShootPointTransform, size, force, dmgMultiplier, castType);
                 break;
             case "SEL":
-                InstantiateRock(elements, casterTransform, size, 1000, castType);
+                InstantiateRock(elements, casterTransform, size, force, dmgMultiplier, castType);
                 break;
         }
     }
 
-    public void CastIcicles(Dictionary<string, int> elements, string castType, Transform casterTransform,
-        Transform casterShootPointTransform)
+    public void CastIcicles(Dictionary<string, int> elements, string castType, int force, float dmgMultiplier,
+        float angle, Transform casterTransform, Transform casterShootPointTransform)
     {
         int quantity = 3 * elements["ICE"];
 
@@ -298,12 +298,12 @@ public class GameManager : MonoBehaviour
         {
             case "FOC":
                 for (int i = 0; i < quantity; i++)
-                    InstantiateIcicleFocus(elements, casterShootPointTransform, 1000);
+                    InstantiateIcicleFocus(elements, casterShootPointTransform, force, dmgMultiplier, angle);
                 break;
 
             case "SEL":
                 for (int i = 0; i < quantity; i++)
-                    InstantiateIcicleSelfCast(elements, casterTransform, 1000);
+                    InstantiateIcicleSelfCast(elements, casterTransform, force, dmgMultiplier);
                 break;
         }
     }
@@ -423,17 +423,21 @@ public class GameManager : MonoBehaviour
         return newObj;
     }
 
-    private void InstantiateRock(Dictionary<string, int> elements, Transform originTransform, float size, float force,
-        string castType)
+    private void InstantiateRock(Dictionary<string, int> elements, Transform originTransform, float size, int force,
+        float dmgMultiplier, string castType)
     {
-        float scale = 0.25f + size * 0.1375f;
+        float scale = 0.25f + size * 0.1f;
         Vector3 shootPointPosition = originTransform.position;
         Vector3 spawnPos = shootPointPosition;
+        Quaternion spawnRot = originTransform.rotation;
 
         switch (castType)
         {
             case "FOC":
+                // Alejo la roca del punto de lanzamiento según su tamaño, para que no se solape con el personaje
                 spawnPos += originTransform.forward * (scale / 2);
+                // Lanzo la roca con algo de inclinación hacia arriba, para que llegue más lejos
+                spawnRot *= Quaternion.Euler(-3, 0, 0);
                 break;
             case "SEL":
                 // Muevo la roca un poco en los ejes X y Z para evitar que se quede en equilibrio encima del jugador
@@ -452,7 +456,7 @@ public class GameManager : MonoBehaviour
                 break;
         }
 
-        GameObject newObj = Instantiate(rockPrefab, spawnPos, originTransform.rotation);
+        GameObject newObj = Instantiate(rockPrefab, spawnPos, spawnRot);
         newObj.transform.localScale = new Vector3(scale, scale, scale);
         Rigidbody rb = newObj.GetComponent<Rigidbody>();
 
@@ -470,19 +474,24 @@ public class GameManager : MonoBehaviour
         Dictionary<string, int> subDictElements =
             elements.Where(e => e.Key != "EAR" && e.Key != "ICE")
                 .ToDictionary(e => e.Key, e => e.Value);
-        newObj.GetComponent<Rock>().elements = subDictElements;
+        Rock rockScript = newObj.GetComponent<Rock>();
+        rockScript.elements = subDictElements;
+        rockScript.dmgMultiplier = dmgMultiplier;
 
         ApplyMaterialRock(newObj, elements);
     }
 
-    private void InstantiateIcicleFocus(Dictionary<string, int> elements, Transform originTransform, float force)
+    private void InstantiateIcicleFocus(Dictionary<string, int> elements, Transform originTransform, int force,
+        float dmgMultiplier, float angle)
     {
         Vector3 shootPointPosition = originTransform.position;
         Vector3 spawnPos = shootPointPosition + originTransform.forward * iciclePrefab.transform.localScale.y;
         Vector3 shootPointRotation = originTransform.eulerAngles;
-        float spreadingRotation = Random.Range(-45f, 45f);
+        float spreadingRotation = Random.Range(-angle, angle);
         spreadingRotation += shootPointRotation.y;
-        Quaternion spawnRot = Quaternion.Euler(90, spreadingRotation, shootPointRotation.z);
+        // Le pongo la rotación en el eje X a 87 y no a 90, para que tenga una leve inclinación hacia arriba y llegue
+        // más lejos
+        Quaternion spawnRot = Quaternion.Euler(87, spreadingRotation, shootPointRotation.z);
 
         GameObject newObj = Instantiate(iciclePrefab, spawnPos, spawnRot);
         Rigidbody rb = newObj.GetComponent<Rigidbody>();
@@ -492,10 +501,13 @@ public class GameManager : MonoBehaviour
         Dictionary<string, int> subDictElements =
             elements.Where(e => e.Key != "ICE")
                 .ToDictionary(e => e.Key, e => e.Value);
-        newObj.GetComponent<Icicle>().elements = subDictElements;
+        Icicle icicleScript = newObj.GetComponent<Icicle>();
+        icicleScript.elements = subDictElements;
+        icicleScript.dmgMultiplier = dmgMultiplier;
     }
 
-    private void InstantiateIcicleSelfCast(Dictionary<string, int> elements, Transform originTransform, float force)
+    private void InstantiateIcicleSelfCast(Dictionary<string, int> elements, Transform originTransform, int force,
+        float dmgMultiplier)
     {
         Vector3 shootPointPosition = originTransform.position;
         Vector3 spawnPos = shootPointPosition + new Vector3(Random.Range(-2f, 2f), 3, Random.Range(-2f, 2f));
@@ -509,7 +521,9 @@ public class GameManager : MonoBehaviour
         Dictionary<string, int> subDictElements =
             elements.Where(e => e.Key != "ICE")
                 .ToDictionary(e => e.Key, e => e.Value);
-        newObj.GetComponent<Icicle>().elements = subDictElements;
+        Icicle icicleScript = newObj.GetComponent<Icicle>();
+        icicleScript.elements = subDictElements;
+        icicleScript.dmgMultiplier = dmgMultiplier;
     }
 
     // Si el origen de la nova es el jugador
@@ -564,7 +578,7 @@ public class GameManager : MonoBehaviour
         lightningManagerScript.castType = castType;
         lightningManagerScript.size = size;
         lightningManagerScript.color = GetLightningColor(elements);
-        
+
         // Le paso su duración
         newObj.GetComponent<DestroyIn>().duration = 2;
 
@@ -584,7 +598,7 @@ public class GameManager : MonoBehaviour
 
         // Le paso al spray los elementos que tendrá
         newObj.GetComponent<Spray>().elements = elements;
-        
+
         // Le paso su duración
         newObj.GetComponent<DestroyIn>().duration = 4;
 

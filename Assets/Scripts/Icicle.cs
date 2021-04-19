@@ -4,4 +4,5 @@ using UnityEngine;
 public class Icicle : MonoBehaviour
 {
     public Dictionary<string, int> elements; // Después de eliminar ICE
+    public float dmgMultiplier;
 }

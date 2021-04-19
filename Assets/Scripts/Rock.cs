@@ -6,6 +6,7 @@ public class Rock : MonoBehaviour
     private GameManager manager;
 
     public Dictionary<string, int> elements; // Después de eliminar EAR e ICE
+    public float dmgMultiplier;
 
     private void Start()
     {
