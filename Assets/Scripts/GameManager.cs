@@ -469,7 +469,7 @@ public class GameManager : MonoBehaviour
                 rb.AddRelativeForce(Vector3.down * force);
                 break;
         }
-        
+
         Rock rockScript = newObj.GetComponent<Rock>();
         rockScript.elements = elements;
         rockScript.dmgMultiplier = dmgMultiplier;
@@ -493,12 +493,8 @@ public class GameManager : MonoBehaviour
         Rigidbody rb = newObj.GetComponent<Rigidbody>();
         rb.AddRelativeForce(Vector3.up * force);
 
-        // Le paso al icicle los elementos que tendrá
-        Dictionary<string, int> subDictElements =
-            elements.Where(e => e.Key != "ICE")
-                .ToDictionary(e => e.Key, e => e.Value);
         Icicle icicleScript = newObj.GetComponent<Icicle>();
-        icicleScript.elements = subDictElements;
+        icicleScript.elements = elements;
         icicleScript.dmgMultiplier = dmgMultiplier;
     }
 
