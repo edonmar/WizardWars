@@ -469,13 +469,9 @@ public class GameManager : MonoBehaviour
                 rb.AddRelativeForce(Vector3.down * force);
                 break;
         }
-
-        // Le paso a la roca los elementos con los que explotará
-        Dictionary<string, int> subDictElements =
-            elements.Where(e => e.Key != "EAR" && e.Key != "ICE")
-                .ToDictionary(e => e.Key, e => e.Value);
+        
         Rock rockScript = newObj.GetComponent<Rock>();
-        rockScript.elements = subDictElements;
+        rockScript.elements = elements;
         rockScript.dmgMultiplier = dmgMultiplier;
 
         ApplyMaterialRock(newObj, elements);
