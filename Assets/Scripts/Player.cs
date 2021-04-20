@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     private Camera mainCamera;
 
     [SerializeField] private Transform shootPoint;
+    [SerializeField] private CharacterStats characterStats;
 
     private Sprite spriteEleWater;
     private Sprite spriteEleLife;
@@ -594,8 +595,8 @@ public class Player : MonoBehaviour
             "ICE" => loadedElements.Contains("EAR") ? "rock" : "icicles",
             // rock
             "EAR" => "rock",
-            // effect
-            _ => "effect"
+            // self cast effect
+            _ => "selfCastEffect"
         };
 
         return spellType;
@@ -737,8 +738,9 @@ public class Player : MonoBehaviour
 
                 break;
 
-            case "effect":
-
+            case "selfCastEffect":
+                Dictionary<string, int> dmgTypes = GetSelfCastEffectDamageTypesDictionary(elements);
+                characterStats.TakeSpell(dmgTypes);
                 break;
 
             case "imbuedVerticalSwing":
@@ -832,5 +834,50 @@ public class Player : MonoBehaviour
     {
         Destroy(activeSpray);
         isSprayActive = false;
+    }
+
+    private Dictionary<string, int> GetSelfCastEffectDamageTypesDictionary(Dictionary<string, int> elements)
+    {
+        Dictionary<string, int> dmgTypesDict = new Dictionary<string, int>();
+
+        int waterCount = 0;
+        int lifeCount = 0;
+        int coldCount = 0;
+        int lightningCount = 0;
+        int arcaneCount = 0;
+        int fireCount = 0;
+        int steamCount = 0;
+
+        if (elements.ContainsKey("WAT"))
+            waterCount = elements["WAT"];
+        if (elements.ContainsKey("LIF"))
+            lifeCount = elements["LIF"];
+        if (elements.ContainsKey("COL"))
+            coldCount = elements["COL"];
+        if (elements.ContainsKey("LIG"))
+            lightningCount = elements["LIG"];
+        if (elements.ContainsKey("ARC"))
+            arcaneCount = elements["ARC"];
+        if (elements.ContainsKey("FIR"))
+            fireCount = elements["FIR"];
+        if (elements.ContainsKey("STE"))
+            steamCount = elements["STE"];
+
+        if (waterCount > 0)
+            dmgTypesDict.Add("WAT", 250 + 63 * (waterCount - 1));
+        if (lifeCount > 0)
+            dmgTypesDict.Add("LIF", 260 + 65 * (lifeCount - 1));
+        if (coldCount > 0)
+            dmgTypesDict.Add("COL", 25 + 6 * (coldCount - 1));
+        if (lightningCount > 0)
+            dmgTypesDict.Add("LIG", 250 + 63 * (lightningCount - 1));
+        if (arcaneCount > 0)
+            dmgTypesDict.Add("ARC", 200 + 50 * (arcaneCount - 1));
+        if (fireCount > 0)
+            dmgTypesDict.Add("FIR", 60 + 15 * (fireCount - 1));
+        if (steamCount > 0)
+            dmgTypesDict.Add("STE", 280 + 70 * (steamCount - 1));
+
+        return dmgTypesDict;
     }
 }

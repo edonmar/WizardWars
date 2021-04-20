@@ -164,6 +164,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shootPoint: {fileID: 17628892379456643}
+  characterStats: {fileID: -3010007505195884469}
 --- !u!114 &-3010007505195884469
 MonoBehaviour:
   m_ObjectHideFlags: 0
