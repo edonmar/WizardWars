@@ -16,22 +16,11 @@ public class Icicle : MonoBehaviour
     {
         Dictionary<string, int> dmgTypesDict = new Dictionary<string, int>();
 
-        int waterCount = 0;
-        int lifeCount = 0;
-        int coldCount = 0;
-        int lightningCount = 0;
-        int arcaneCount = 0;
-
-        if (elements.ContainsKey("WAT"))
-            waterCount = elements["WAT"];
-        if (elements.ContainsKey("LIF"))
-            lifeCount = elements["LIF"];
-        if (elements.ContainsKey("COL"))
-            coldCount = elements["COL"];
-        if (elements.ContainsKey("LIG"))
-            lightningCount = elements["LIG"];
-        if (elements.ContainsKey("ARC"))
-            arcaneCount = elements["ARC"];
+        int waterCount = elements.ContainsKey("WAT") ? elements["WAT"] : 0;
+        int lifeCount = elements.ContainsKey("LIF") ? elements["LIF"] : 0;
+        int coldCount = elements.ContainsKey("COL") ? elements["COL"] : 0;
+        int lightningCount = elements.ContainsKey("LIG") ? elements["LIG"] : 0;
+        int arcaneCount = elements.ContainsKey("ARC") ? elements["ARC"] : 0;
 
         if (waterCount > 0)
             dmgTypesDict.Add("WAT", 0);

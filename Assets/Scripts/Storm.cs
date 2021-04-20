@@ -25,22 +25,11 @@ public class Storm : MonoBehaviour
     {
         Dictionary<string, int> dmgTypesDict = new Dictionary<string, int>();
 
-        int waterCount = 0;
-        int coldCount = 0;
-        int lightningCount = 0;
-        int fireCount = 0;
-        int steamCount = 0;
-
-        if (elements.ContainsKey("WAT"))
-            waterCount = elements["WAT"];
-        if (elements.ContainsKey("COL"))
-            coldCount = elements["COL"];
-        if (elements.ContainsKey("LIG"))
-            lightningCount = elements["LIG"];
-        if (elements.ContainsKey("FIR"))
-            fireCount = elements["FIR"];
-        if (elements.ContainsKey("STE"))
-            steamCount = elements["STE"];
+        int waterCount = elements.ContainsKey("WAT") ? elements["WAT"] : 0;
+        int coldCount = elements.ContainsKey("COL") ? elements["COL"] : 0;
+        int lightningCount = elements.ContainsKey("LIG") ? elements["LIG"] : 0;
+        int fireCount = elements.ContainsKey("FIR") ? elements["FIR"] : 0;
+        int steamCount = elements.ContainsKey("STE") ? elements["STE"] : 0;
 
         if (waterCount > 0)
             dmgTypesDict.Add("WAT", 130 + 32 * (waterCount - 1));

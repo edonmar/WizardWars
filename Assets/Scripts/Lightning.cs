@@ -64,19 +64,10 @@ public class Lightning : MonoBehaviour
     {
         Dictionary<string, int> dmgTypesDict = new Dictionary<string, int>();
 
-        int waterCount = 0;
-        int coldCount = 0;
-        int lightningCount = 0;
-        int fireCount = 0;
-
-        if (elements.ContainsKey("WAT"))
-            waterCount = elements["WAT"];
-        if (elements.ContainsKey("COL"))
-            coldCount = elements["COL"];
-        if (elements.ContainsKey("LIG"))
-            lightningCount = elements["LIG"];
-        if (elements.ContainsKey("FIR"))
-            fireCount = elements["FIR"];
+        int waterCount = elements.ContainsKey("WAT") ? elements["WAT"] : 0;
+        int coldCount = elements.ContainsKey("COL") ? elements["COL"] : 0;
+        int lightningCount = elements.ContainsKey("LIG") ? elements["LIG"] : 0;
+        int fireCount = elements.ContainsKey("FIR") ? elements["FIR"] : 0;
 
         if (waterCount > 0)
             dmgTypesDict.Add("WAT", 32 + 10 * (waterCount - 1));
@@ -265,7 +256,7 @@ public class Lightning : MonoBehaviour
 
         return position;
     }
-    
+
     public void DestroyThis()
     {
         Destroy(gameObject);

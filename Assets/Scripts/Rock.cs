@@ -24,12 +24,8 @@ public class Rock : MonoBehaviour
     {
         Dictionary<string, int> dmgTypesDict = new Dictionary<string, int>();
 
-        int earthCount = 0;
-        int iceCount = 0;
-
-        earthCount = elements["EAR"];
-        if (elements.ContainsKey("ICE"))
-            iceCount = elements["ICE"];
+        int earthCount = elements["EAR"];
+        int iceCount = elements.ContainsKey("ICE") ? elements["ICE"] : 0;
 
         dmgTypesDict.Add("PHY", (75 + 263 * (earthCount - 1)) * (int) dmgMultiplier);
         if (iceCount > 0)
