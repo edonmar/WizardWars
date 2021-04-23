@@ -34,9 +34,9 @@ public class Rock : MonoBehaviour
         return dmgTypesDict;
     }
 
-    private void OnCollisionEnter(Collision other)
+    private void OnTriggerEnter(Collider other)
     {
-        CheckCharacterHit(other.collider);
+        CheckCharacterHit(other);
         DestroyThis();
     }
 
