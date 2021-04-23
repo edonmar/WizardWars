@@ -16,6 +16,10 @@ public class GameManager : MonoBehaviour
     public Material matFire;
     public Material matIce;
     public Material matSteam;
+    public Material matBeamPrimary;
+    public Material matBeamSecondary;
+    public Material matBeamSpray;
+    public Material matBeamLightning;
 
     [SerializeField] private GameObject wallPrefab;
     [SerializeField] private GameObject wallAuraPrefab;
@@ -670,16 +674,91 @@ public class GameManager : MonoBehaviour
 
     private void ApplyMaterialBeam(GameObject newObj, Dictionary<string, int> elements)
     {
-        Color color = elements.ElementAt(0).Key switch
-        {
-            "LIF" => Color.green,
-            "ARC" => Color.red,
-            _ => Color.white
-        };
-
         LineRenderer lineRenderer = newObj.GetComponent<LineRenderer>();
-        lineRenderer.startColor = color;
-        lineRenderer.endColor = color;
+        string beamType = SetBeamMaterials(lineRenderer, elements);
+        SetBeamMaterialsColors(lineRenderer, elements, beamType);
+    }
+
+    private string SetBeamMaterials(LineRenderer lineRenderer, Dictionary<string, int> elements)
+    {
+        List<Material> materials = new List<Material>(); // Creo una lista con los elementos que más tarde añadiré
+        // al LineRenderer
+
+        bool containsSpray = false;
+        bool containsLightning = false;
+
+        // Si el Beam contiene alguno de los elementos de tipo Spray (water, ice, fire, steam)
+        if (elements.ContainsKey("WAT") || elements.ContainsKey("COL") || elements.ContainsKey("FIR") ||
+            elements.ContainsKey("STE"))
+        {
+            containsSpray = true;
+            materials.Add(matBeamSecondary);
+            materials.Add(matBeamSpray);
+        }
+        else
+        {
+            // El elemento base del Beam (life o arcane) tendrá el material primario o 
+            // secundario dependiendo de si hay presente o no un elemento de tipo Spray
+            materials.Add(matBeamPrimary);
+        }
+
+        // Si el Beam contiene el elemento lightning
+        if (elements.ContainsKey("LIG"))
+        {
+            containsLightning = true;
+            materials.Add(matBeamLightning);
+        }
+
+        // Le añado todos los materiales de la lista al LineRender
+        lineRenderer.materials = materials.ToArray();
+
+        // Devuelvo el tipo de Beam
+        // 00 - Sólo el elemento base
+        // 10 - Base y Spray
+        // 01 - Base y Lightning
+        // 11 - Base, Spray y Lightning
+        string beamType = "";
+        beamType += containsSpray ? "1" : "0";
+        beamType += containsLightning ? "1" : "0";
+        return beamType;
+    }
+
+    private void SetBeamMaterialsColors(LineRenderer lineRenderer, Dictionary<string, int> elements, string beamType)
+    {
+        // Obtengo los colores de cada material
+        Color baseColor;
+        Color sprayColor;
+        Color lightningColor;
+
+        baseColor = elements.ContainsKey("LIF") ? matLife.color : matArcane.color;
+        if (elements.ContainsKey("STE"))
+            // TODO por ahora le pongo al vapor el color del agua, porque el color de vapor se transparenta al ser gris
+            sprayColor = matWater.color;
+        else if (elements.ContainsKey("WAT"))
+            sprayColor = matWater.color;
+        else if (elements.ContainsKey("COL"))
+            sprayColor = matCold.color;
+        else
+            sprayColor = matFire.color;
+        lightningColor = matLightning.color;
+
+        // Obtengo los materiales del LineRenderer y a cada uno le asigno su color
+        Material[] materials = lineRenderer.materials;
+
+        bool containsSpray = beamType[0].Equals('1');
+        bool containsLightning = beamType[1].Equals('1');
+
+        materials[0].SetColor("_TintColor", baseColor);
+        if (containsSpray)
+            materials[1].SetColor("_TintColor", sprayColor);
+
+        if (!containsLightning)
+            return;
+
+        if (containsSpray)
+            materials[2].SetColor("_TintColor", lightningColor);
+        else
+            materials[1].SetColor("_TintColor", lightningColor);
     }
 
     private Color GetLightningColor(Dictionary<string, int> elements)

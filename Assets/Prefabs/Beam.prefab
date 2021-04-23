@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8459016341948996311}
   - component: {fileID: 8459016341948996308}
   - component: {fileID: -8309012600643111969}
+  - component: {fileID: 6539208807319320188}
   m_Layer: 10
   m_Name: Beam
   m_TagString: Beam
@@ -51,8 +52,7 @@ LineRenderer:
   m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 0b44217c6aa89d845977b78f22e6b392, type: 2}
+  m_Materials: []
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -156,3 +156,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   duration: 0
+--- !u!114 &6539208807319320188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8459016341948996305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98c3144909533d24fafbaa5257eeaeaa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
