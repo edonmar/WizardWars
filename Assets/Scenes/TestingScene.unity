@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028453, g: 0.22571503, b: 0.30692175, a: 1}
+  m_IndirectSpecularColor: {r: 0.1802844, g: 0.22571506, b: 0.30692184, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1178,9 +1178,9 @@ MonoBehaviour:
   matCold: {fileID: 2100000, guid: 9721eff1c8572424dadd9b5f4a1f6d74, type: 2}
   matLightning: {fileID: 2100000, guid: a537a86d883b5844ebe1865cd454a0b0, type: 2}
   matArcane: {fileID: 2100000, guid: 6cda4b146594ab344ac2e78c69e77873, type: 2}
-  matEarth: {fileID: 2100000, guid: 76fd8c5842a22214e8e8381d6068f49a, type: 2}
+  matEarth: {fileID: 2100000, guid: 2d9a216ddb8fea6458215d4ded62910b, type: 2}
   matFire: {fileID: 2100000, guid: 5b0b5b4260e65ae46983ebc129b356b8, type: 2}
-  matIce: {fileID: 2100000, guid: 9721eff1c8572424dadd9b5f4a1f6d74, type: 2}
+  matIce: {fileID: 2100000, guid: 049f4eaa67c0d41489e82f6af89c35af, type: 2}
   matSteam: {fileID: 2100000, guid: 16b36140d59cd324b875487145a4b22d, type: 2}
   wallPrefab: {fileID: 4525695405561118062, guid: 528f98469aeddcc4cad9373babf5c4ca, type: 3}
   wallAuraPrefab: {fileID: 4525695405561118062, guid: 009d190d29cd6de4eaf24645637c417d, type: 3}
