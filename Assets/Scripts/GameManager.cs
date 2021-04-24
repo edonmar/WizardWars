@@ -609,7 +609,10 @@ public class GameManager : MonoBehaviour
         // Le paso su duración
         newObj.GetComponent<DestroyIn>().duration = 4;
 
-        ApplyMaterialSpray(newObj, elements);
+        // Le paso la duración (tamaño del spray) y color de las partículas
+        ParticleSystem.MainModule particleSystemMain = newObj.transform.GetChild(0).GetComponent<ParticleSystem>().main;
+        particleSystemMain.startLifetime = scale / particleSystemMain.startSpeed.constant;
+        particleSystemMain.startColor = GetColorByElement(elements.ElementAt(0).Key);
 
         return newObj;
     }
@@ -841,18 +844,6 @@ public class GameManager : MonoBehaviour
     private Color GetLightningColor(Dictionary<string, int> elements)
     {
         return elements.Count > 1 ? GetColorByElement(elements.ElementAt(1).Key) : matLightning.color;
-    }
-
-    private void ApplyMaterialSpray(GameObject newObj, Dictionary<string, int> elements)
-    {
-        newObj.GetComponent<MeshRenderer>().material = elements.ElementAt(0).Key switch
-        {
-            "WAT" => matWater,
-            "COL" => matCold,
-            "FIR" => matFire,
-            "STE" => matSteam,
-            _ => newObj.GetComponent<MeshRenderer>().material
-        };
     }
 
     private void ApplyTrailColorAndWidth(GameObject newObj, List<Color> trailColors, int shrinkFactor)
