@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class Spray : MonoBehaviour
 {
+    public Transform originTransform;
     public Dictionary<string, int> elements;
     private Dictionary<string, int> dmgTypes;
+    private int layerMask;
     private bool canHit;
 
     private void Start()
     {
+        layerMask = LayerMask.GetMask("SolidSpells");
         dmgTypes = GetDamageTypesDictionary();
         StartCoroutine(HitTimer(0.25f));
     }
@@ -40,16 +43,21 @@ public class Spray : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
+        string otherTag = other.tag;
+        if (otherTag != "Player" && otherTag != "Enemy")
+            return;
+
+        // Si las capas de layerMastk están entre el punto de lanzamiento y el objeto que provoca el trigger,
+        // el Spray no golpeará al objeto
+        if (Physics.Linecast(originTransform.position, other.gameObject.transform.position, layerMask))
+            return;
+
         CheckCharacterHit(other);
     }
 
     private void CheckCharacterHit(Collider other)
     {
         if (!canHit)
-            return;
-
-        string otherTag = other.tag;
-        if (otherTag != "Player" && otherTag != "Enemy")
             return;
 
         CharacterStats characterStats = other.GetComponent<CharacterStats>();

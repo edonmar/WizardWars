@@ -603,8 +603,10 @@ public class GameManager : MonoBehaviour
         activeSprayTransform.localScale = new Vector3(activeSprayLocalScale.x, activeSprayLocalScale.y, scale);
         activeSprayTransform.SetParent(originTransform);
 
-        // Le paso al spray los elementos que tendrá
-        newObj.GetComponent<Spray>().elements = elements;
+        // Le paso al spray los elementos que tendrá y su transform de origen
+        Spray spray = newObj.GetComponent<Spray>();
+        spray.elements = elements;
+        spray.originTransform = originTransform;
 
         // Le paso su duración
         newObj.GetComponent<DestroyIn>().duration = 4;
