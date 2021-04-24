@@ -12,7 +12,7 @@ public class Spray : MonoBehaviour
 
     private void Start()
     {
-        layerMask = LayerMask.GetMask("SolidSpells");
+        layerMask = LayerMask.GetMask("Terrain");
         dmgTypes = GetDamageTypesDictionary();
         StartCoroutine(HitTimer(0.25f));
     }
@@ -47,7 +47,7 @@ public class Spray : MonoBehaviour
         if (otherTag != "Player" && otherTag != "Enemy")
             return;
 
-        // Si las capas de layerMastk están entre el punto de lanzamiento y el objeto que provoca el trigger,
+        // Si las capas de layerMask están entre el punto de lanzamiento y el objeto que provoca el trigger,
         // el Spray no golpeará al objeto
         if (Physics.Linecast(originTransform.position, other.gameObject.transform.position, layerMask))
             return;

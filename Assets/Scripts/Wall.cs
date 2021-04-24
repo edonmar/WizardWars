@@ -9,10 +9,12 @@ public class Wall : MonoBehaviour
     public Dictionary<string, int> elements; // Después de eliminar SHI
     public Dictionary<string, int> wallAuraElements;
     public GameObject wallAura;
+    private int layerMask;
 
     private void Start()
     {
         manager = GameObject.Find("Manager").GetComponent<GameManager>();
+        layerMask = LayerMask.GetMask("Terrain");
 
         wallAura = CreateWallAuraIfNecessary();
         if (wallAura != null)
@@ -106,6 +108,11 @@ public class Wall : MonoBehaviour
         // hechizo, devuelvo true
         if (elementsThatDestroysThisWallAura.Any(e => otherElements.ContainsKey(e)))
             destroys = true;
+
+        // Si las capas de layerMask están entre el punto de lanzamiento y el objeto que provoca el trigger,
+        // el Spray no golpeará al objeto
+        if (Physics.Linecast(transform.position, otherGameObj.gameObject.transform.position, layerMask))
+            return false;
 
         return destroys;
     }
