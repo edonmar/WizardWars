@@ -284,13 +284,15 @@ public class GameManager : MonoBehaviour
         int iceCount = elements.ContainsKey("ICE") ? elements["ICE"] : 0;
 
         int size = earthCount + iceCount;
+        List<Color> trailColors = GetTrailColorsRock(elements);
+
         switch (castType)
         {
             case "FOC":
-                InstantiateRock(elements, casterShootPointTransform, size, force, dmgMultiplier, castType);
+                InstantiateRock(elements, casterShootPointTransform, size, force, dmgMultiplier, castType, trailColors);
                 break;
             case "SEL":
-                InstantiateRock(elements, casterTransform, size, force, dmgMultiplier, castType);
+                InstantiateRock(elements, casterTransform, size, force, dmgMultiplier, castType, trailColors);
                 break;
         }
     }
@@ -299,17 +301,19 @@ public class GameManager : MonoBehaviour
         float angle, Transform casterTransform, Transform casterShootPointTransform)
     {
         int quantity = 3 * elements["ICE"];
+        List<Color> trailColors = GetTrailColorsIcicle(elements);
 
         switch (castType)
         {
             case "FOC":
                 for (int i = 0; i < quantity; i++)
-                    InstantiateIcicleFocus(elements, casterShootPointTransform, force, dmgMultiplier, angle);
+                    InstantiateIcicleFocus(elements, casterShootPointTransform, force, dmgMultiplier, angle,
+                        trailColors);
                 break;
 
             case "SEL":
                 for (int i = 0; i < quantity; i++)
-                    InstantiateIcicleSelfCast(elements, casterTransform, force, dmgMultiplier);
+                    InstantiateIcicleSelfCast(elements, casterTransform, force, dmgMultiplier, trailColors);
                 break;
         }
     }
@@ -430,7 +434,7 @@ public class GameManager : MonoBehaviour
     }
 
     private void InstantiateRock(Dictionary<string, int> elements, Transform originTransform, float size, int force,
-        float dmgMultiplier, string castType)
+        float dmgMultiplier, string castType, List<Color> trailColors)
     {
         float scale = 0.25f + size * 0.1f;
         Vector3 shootPointPosition = originTransform.position;
@@ -481,11 +485,11 @@ public class GameManager : MonoBehaviour
         rockScript.dmgMultiplier = dmgMultiplier;
 
         ApplyMaterialRock(newObj, elements);
-        ApplyTrailRendererColor(newObj, elements);
+        ApplyTrailColor(newObj, trailColors);
     }
 
     private void InstantiateIcicleFocus(Dictionary<string, int> elements, Transform originTransform, int force,
-        float dmgMultiplier, float angle)
+        float dmgMultiplier, float angle, List<Color> trailColors)
     {
         Vector3 shootPointPosition = originTransform.position;
         Vector3 spawnPos = shootPointPosition + originTransform.forward * iciclePrefab.transform.localScale.y;
@@ -503,10 +507,12 @@ public class GameManager : MonoBehaviour
         Icicle icicleScript = newObj.GetComponent<Icicle>();
         icicleScript.elements = elements;
         icicleScript.dmgMultiplier = dmgMultiplier;
+
+        ApplyTrailColor(newObj, trailColors);
     }
 
     private void InstantiateIcicleSelfCast(Dictionary<string, int> elements, Transform originTransform, int force,
-        float dmgMultiplier)
+        float dmgMultiplier, List<Color> trailColors)
     {
         Vector3 shootPointPosition = originTransform.position;
         Vector3 spawnPos = shootPointPosition + new Vector3(Random.Range(-2f, 2f), 3, Random.Range(-2f, 2f));
@@ -523,6 +529,8 @@ public class GameManager : MonoBehaviour
         Icicle icicleScript = newObj.GetComponent<Icicle>();
         icicleScript.elements = subDictElements;
         icicleScript.dmgMultiplier = dmgMultiplier;
+
+        ApplyTrailColor(newObj, trailColors);
     }
 
     // Si el origen de la nova es el jugador
@@ -654,9 +662,76 @@ public class GameManager : MonoBehaviour
         };
     }
 
+    private List<Color> GetTrailColorsRock(Dictionary<string, int> elements)
+    {
+        List<Color> trailColors = new List<Color>();
+
+        Color startColor;
+        Color endColor;
+
+        int baseElements = 0; // Elementos base presentes (Earth e Ice, sólo cuenta una vez cada uno)
+        bool containsEar = elements.ContainsKey("EAR");
+        bool containsIce = elements.ContainsKey("ICE");
+        if (containsEar)
+            baseElements++;
+        if (containsIce)
+            baseElements++;
+
+        int elementsCount = elements.Count;
+        if (elementsCount == baseElements)
+        {
+            startColor = containsIce ? matIce.color : matEarth.color;
+            endColor = startColor;
+        }
+        else if (elementsCount == baseElements + 1)
+        {
+            startColor = GetColorByElement(elements.ElementAt(baseElements).Key);
+            endColor = startColor;
+        }
+        else
+        {
+            startColor = GetColorByElement(elements.ElementAt(baseElements).Key);
+            endColor = GetColorByElement(elements.ElementAt(baseElements + 1).Key);
+        }
+
+        trailColors.Add(startColor);
+        trailColors.Add(endColor);
+
+        return trailColors;
+    }
+
     private void ApplyMaterialRock(GameObject newObj, Dictionary<string, int> elements)
     {
         newObj.GetComponent<MeshRenderer>().material = elements.ContainsKey("ICE") ? matIceTexture : matEarthTexture;
+    }
+
+    private List<Color> GetTrailColorsIcicle(Dictionary<string, int> elements)
+    {
+        List<Color> trailColors = new List<Color>();
+
+        Color startColor;
+        Color endColor;
+
+        switch (elements.Count)
+        {
+            case 1:
+                startColor = matIce.color;
+                endColor = startColor;
+                break;
+            case 2:
+                startColor = GetColorByElement(elements.ElementAt(1).Key);
+                endColor = startColor;
+                break;
+            default:
+                startColor = GetColorByElement(elements.ElementAt(1).Key);
+                endColor = GetColorByElement(elements.ElementAt(2).Key);
+                break;
+        }
+
+        trailColors.Add(startColor);
+        trailColors.Add(endColor);
+
+        return trailColors;
     }
 
     private void ApplyMaterialNova(GameObject newObj, Dictionary<string, int> elements)
@@ -728,28 +803,27 @@ public class GameManager : MonoBehaviour
 
     private void SetBeamMaterialsColors(LineRenderer lineRenderer, Dictionary<string, int> elements, string beamType)
     {
-        // Obtengo los colores de cada material
-        Color baseColor;
-        Color sprayColor;
-        Color lightningColor;
+        bool containsSpray = beamType[0].Equals('1');
+        bool containsLightning = beamType[1].Equals('1');
 
-        baseColor = elements.ContainsKey("LIF") ? matLife.color : matArcane.color;
-        if (elements.ContainsKey("STE"))
+        // Obtengo los colores de cada material
+        Color baseColor = elements.ContainsKey("LIF") ? matLife.color : matArcane.color;
+
+        int sprayElementPosition = containsLightning ? 2 : 1;
+        Color sprayColor = default;
+        if (containsSpray)
+        {
+            string sprayElement = elements.ElementAt(sprayElementPosition).Key;
             // TODO por ahora le pongo al vapor el color del agua, porque el color de vapor se transparenta al ser gris
-            sprayColor = matWater.color;
-        else if (elements.ContainsKey("WAT"))
-            sprayColor = matWater.color;
-        else if (elements.ContainsKey("COL"))
-            sprayColor = matCold.color;
-        else
-            sprayColor = matFire.color;
-        lightningColor = matLightning.color;
+            if (sprayElement.Equals("STE"))
+                sprayElement = "WAT";
+            sprayColor = GetColorByElement(sprayElement);
+        }
+
+        Color lightningColor = matLightning.color;
 
         // Obtengo los materiales del LineRenderer y a cada uno le asigno su color
         Material[] materials = lineRenderer.materials;
-
-        bool containsSpray = beamType[0].Equals('1');
-        bool containsLightning = beamType[1].Equals('1');
 
         materials[0].SetColor("_TintColor", baseColor);
         if (containsSpray)
@@ -766,18 +840,7 @@ public class GameManager : MonoBehaviour
 
     private Color GetLightningColor(Dictionary<string, int> elements)
     {
-        Color color;
-
-        if (elements.ContainsKey("WAT"))
-            color = matWater.color;
-        else if (elements.ContainsKey("COL"))
-            color = matCold.color;
-        else if (elements.ContainsKey("FIR"))
-            color = matFire.color;
-        else
-            color = matLightning.color;
-
-        return color;
+        return elements.Count > 1 ? GetColorByElement(elements.ElementAt(1).Key) : matLightning.color;
     }
 
     private void ApplyMaterialSpray(GameObject newObj, Dictionary<string, int> elements)
@@ -792,45 +855,30 @@ public class GameManager : MonoBehaviour
         };
     }
 
-    private void ApplyTrailRendererColor(GameObject newObj, Dictionary<string, int> elements)
+    private void ApplyTrailColor(GameObject newObj, List<Color> trailColors)
     {
         TrailRenderer trailRenderer = newObj.GetComponent<TrailRenderer>();
-        int pos = elements.ContainsKey("ICE") ? 2 : 1;
+        trailRenderer.startColor = trailColors[0];
+        trailRenderer.endColor = trailColors[1];
+    }
 
-        if (elements.Count <= pos)
-        {
-            trailRenderer.enabled = false;
-            return;
-        }
-
-        Color startColor = elements.ElementAt(pos).Key switch
+    private Color GetColorByElement(string element)
+    {
+        Color color = element switch
         {
             "WAT" => matWater.color,
             "LIF" => matLife.color,
+            "SHI" => matShield.color,
             "COL" => matCold.color,
+            "LIG" => matLightning.color,
             "ARC" => matArcane.color,
+            "EAR" => matEarth.color,
             "FIR" => matFire.color,
+            "ICE" => matIce.color,
             "STE" => matSteam.color,
-            _ => matEarth.color
+            _ => default
         };
-
-        Color endColor;
-        if (elements.Count > pos + 1)
-            endColor = elements.ElementAt(pos + 1).Key switch
-            {
-                "WAT" => matWater.color,
-                "LIF" => matLife.color,
-                "COL" => matCold.color,
-                "ARC" => matArcane.color,
-                "FIR" => matFire.color,
-                "STE" => matSteam.color,
-                _ => matEarth.color
-            };
-        else
-            endColor = startColor;
-
-        trailRenderer.startColor = startColor;
-        trailRenderer.endColor = endColor;
+        return color;
     }
 
     public void CheckAndDestroyOverlappingSpells(GameObject originSpell, float radius)
