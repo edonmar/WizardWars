@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
     public Material matFire;
     public Material matIce;
     public Material matSteam;
+    public Material matEarthTexture;
+    public Material matIceTexture;
     public Material matBeamPrimary;
     public Material matBeamSecondary;
     public Material matBeamSpray;
@@ -606,7 +608,7 @@ public class GameManager : MonoBehaviour
 
     private void ApplyMaterialWall(GameObject newObj, Dictionary<string, int> elements)
     {
-        newObj.GetComponent<MeshRenderer>().material = elements.ContainsKey("EAR") ? matEarth : matIce;
+        newObj.GetComponent<MeshRenderer>().material = elements.ContainsKey("EAR") ? matEarthTexture : matIceTexture;
     }
 
     private void ApplyMaterialWallAura(GameObject newObj, Dictionary<string, int> elements)
@@ -654,7 +656,7 @@ public class GameManager : MonoBehaviour
 
     private void ApplyMaterialRock(GameObject newObj, Dictionary<string, int> elements)
     {
-        newObj.GetComponent<MeshRenderer>().material = elements.ContainsKey("ICE") ? matIce : matEarth;
+        newObj.GetComponent<MeshRenderer>().material = elements.ContainsKey("ICE") ? matIceTexture : matEarthTexture;
     }
 
     private void ApplyMaterialNova(GameObject newObj, Dictionary<string, int> elements)

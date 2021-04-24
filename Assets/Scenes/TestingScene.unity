@@ -1178,10 +1178,12 @@ MonoBehaviour:
   matCold: {fileID: 2100000, guid: 9721eff1c8572424dadd9b5f4a1f6d74, type: 2}
   matLightning: {fileID: 2100000, guid: a537a86d883b5844ebe1865cd454a0b0, type: 2}
   matArcane: {fileID: 2100000, guid: 6cda4b146594ab344ac2e78c69e77873, type: 2}
-  matEarth: {fileID: 2100000, guid: 2d9a216ddb8fea6458215d4ded62910b, type: 2}
+  matEarth: {fileID: 2100000, guid: 2e197ac69c35bd445862ceebb1d682df, type: 2}
   matFire: {fileID: 2100000, guid: 5b0b5b4260e65ae46983ebc129b356b8, type: 2}
-  matIce: {fileID: 2100000, guid: 049f4eaa67c0d41489e82f6af89c35af, type: 2}
+  matIce: {fileID: 2100000, guid: 9721eff1c8572424dadd9b5f4a1f6d74, type: 2}
   matSteam: {fileID: 2100000, guid: 16b36140d59cd324b875487145a4b22d, type: 2}
+  matEarthTexture: {fileID: 2100000, guid: 2d9a216ddb8fea6458215d4ded62910b, type: 2}
+  matIceTexture: {fileID: 2100000, guid: 049f4eaa67c0d41489e82f6af89c35af, type: 2}
   matBeamPrimary: {fileID: 2100000, guid: 0b44217c6aa89d845977b78f22e6b392, type: 2}
   matBeamSecondary: {fileID: 2100000, guid: 40d717c09d47a6a48be9d4e906342a71, type: 2}
   matBeamSpray: {fileID: 2100000, guid: cd60999fb9a940e48bccf663f8a68627, type: 2}
