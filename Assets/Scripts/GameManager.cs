@@ -479,6 +479,7 @@ public class GameManager : MonoBehaviour
         rockScript.dmgMultiplier = dmgMultiplier;
 
         ApplyMaterialRock(newObj, elements);
+        ApplyTrailRendererColor(newObj, elements);
     }
 
     private void InstantiateIcicleFocus(Dictionary<string, int> elements, Transform originTransform, int force,
@@ -787,6 +788,47 @@ public class GameManager : MonoBehaviour
             "STE" => matSteam,
             _ => newObj.GetComponent<MeshRenderer>().material
         };
+    }
+
+    private void ApplyTrailRendererColor(GameObject newObj, Dictionary<string, int> elements)
+    {
+        TrailRenderer trailRenderer = newObj.GetComponent<TrailRenderer>();
+        int pos = elements.ContainsKey("ICE") ? 2 : 1;
+
+        if (elements.Count <= pos)
+        {
+            trailRenderer.enabled = false;
+            return;
+        }
+
+        Color startColor = elements.ElementAt(pos).Key switch
+        {
+            "WAT" => matWater.color,
+            "LIF" => matLife.color,
+            "COL" => matCold.color,
+            "ARC" => matArcane.color,
+            "FIR" => matFire.color,
+            "STE" => matSteam.color,
+            _ => matEarth.color
+        };
+
+        Color endColor;
+        if (elements.Count > pos + 1)
+            endColor = elements.ElementAt(pos + 1).Key switch
+            {
+                "WAT" => matWater.color,
+                "LIF" => matLife.color,
+                "COL" => matCold.color,
+                "ARC" => matArcane.color,
+                "FIR" => matFire.color,
+                "STE" => matSteam.color,
+                _ => matEarth.color
+            };
+        else
+            endColor = startColor;
+
+        trailRenderer.startColor = startColor;
+        trailRenderer.endColor = endColor;
     }
 
     public void CheckAndDestroyOverlappingSpells(GameObject originSpell, float radius)
