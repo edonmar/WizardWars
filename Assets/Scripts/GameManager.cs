@@ -433,7 +433,7 @@ public class GameManager : MonoBehaviour
         return newObj;
     }
 
-    private void InstantiateRock(Dictionary<string, int> elements, Transform originTransform, float size, int force,
+    private void InstantiateRock(Dictionary<string, int> elements, Transform originTransform, int size, int force,
         float dmgMultiplier, string castType, List<Color> trailColors)
     {
         float scale = 0.25f + size * 0.1f;
@@ -485,7 +485,7 @@ public class GameManager : MonoBehaviour
         rockScript.dmgMultiplier = dmgMultiplier;
 
         ApplyMaterialRock(newObj, elements);
-        ApplyTrailColor(newObj, trailColors);
+        ApplyTrailColorAndWidth(newObj, trailColors, 5 - size);
     }
 
     private void InstantiateIcicleFocus(Dictionary<string, int> elements, Transform originTransform, int force,
@@ -508,7 +508,7 @@ public class GameManager : MonoBehaviour
         icicleScript.elements = elements;
         icicleScript.dmgMultiplier = dmgMultiplier;
 
-        ApplyTrailColor(newObj, trailColors);
+        ApplyTrailColorAndWidth(newObj, trailColors, 0);
     }
 
     private void InstantiateIcicleSelfCast(Dictionary<string, int> elements, Transform originTransform, int force,
@@ -530,7 +530,7 @@ public class GameManager : MonoBehaviour
         icicleScript.elements = subDictElements;
         icicleScript.dmgMultiplier = dmgMultiplier;
 
-        ApplyTrailColor(newObj, trailColors);
+        ApplyTrailColorAndWidth(newObj, trailColors, 0);
     }
 
     // Si el origen de la nova es el jugador
@@ -855,11 +855,12 @@ public class GameManager : MonoBehaviour
         };
     }
 
-    private void ApplyTrailColor(GameObject newObj, List<Color> trailColors)
+    private void ApplyTrailColorAndWidth(GameObject newObj, List<Color> trailColors, int shrinkFactor)
     {
         TrailRenderer trailRenderer = newObj.GetComponent<TrailRenderer>();
         trailRenderer.startColor = trailColors[0];
         trailRenderer.endColor = trailColors[1];
+        trailRenderer.widthMultiplier -= 0.1f * shrinkFactor;
     }
 
     private Color GetColorByElement(string element)
