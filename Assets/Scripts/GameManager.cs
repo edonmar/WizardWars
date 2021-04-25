@@ -205,6 +205,7 @@ public class GameManager : MonoBehaviour
         float radius;
         int count = elements[elements.ElementAt(1).Key];
         float duration = 4 + 2 * (count - 1);
+        Color color = GetColorByElement(elements.ElementAt(1).Key);
         int numberOfObjects;
         int numOfIterations;
         bool evenNumberOfObjects;
@@ -273,7 +274,13 @@ public class GameManager : MonoBehaviour
                     .ToDictionary(e => e.Key, e => e.Value);
             newObj.GetComponent<Storm>().elements = subDictElements;
 
-            ApplyMaterialStorm(newObj, elements);
+            // Asigno la duración (tamaño del spray) y color de las partículas
+            ParticleSystem ps = newObj.transform.GetChild(0).GetComponent<ParticleSystem>();
+            ParticleSystem.MainModule particleSystemMain = ps.main;
+            ps.Stop();
+            particleSystemMain.duration = duration;
+            particleSystemMain.startColor = color;
+            ps.Play();
         }
     }
 
@@ -554,6 +561,8 @@ public class GameManager : MonoBehaviour
         // Asigno la velocidad (tamaño de la nova) y color de las partículas
         ParticleSystem ps = newObj.transform.GetChild(0).GetComponent<ParticleSystem>();
         ParticleSystem.MainModule particleSystemMain = ps.main;
+        ps.Stop();
+
         particleSystemMain.startSpeed = (scale / 2) / particleSystemMain.startLifetime.constant;
 
         Color startColor = GetColorByElement(elements.ElementAt(0).Key);
@@ -568,6 +577,8 @@ public class GameManager : MonoBehaviour
                 /*new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(1.0f, 1.0f)*/
             });
         colorOverTime.color = grad;
+
+        ps.Play();
     }
 
     private GameObject InstantiateBeam(Dictionary<string, int> elements, Transform originTransform)
@@ -628,9 +639,12 @@ public class GameManager : MonoBehaviour
         newObj.GetComponent<DestroyIn>().duration = 4;
 
         // Asigno la duración (tamaño del spray) y color de las partículas
-        ParticleSystem.MainModule particleSystemMain = newObj.transform.GetChild(0).GetComponent<ParticleSystem>().main;
+        ParticleSystem ps = newObj.transform.GetChild(0).GetComponent<ParticleSystem>();
+        ParticleSystem.MainModule particleSystemMain = ps.main;
+        ps.Stop();
         particleSystemMain.startLifetime = scale / particleSystemMain.startSpeed.constant;
         particleSystemMain.startColor = GetColorByElement(elements.ElementAt(0).Key);
+        ps.Play();
 
         return newObj;
     }
@@ -666,19 +680,6 @@ public class GameManager : MonoBehaviour
         {
             "ARC" => matArcane,
             "LIF" => matLife,
-            _ => newObj.GetComponent<MeshRenderer>().material
-        };
-    }
-
-    private void ApplyMaterialStorm(GameObject newObj, Dictionary<string, int> elements)
-    {
-        newObj.GetComponent<MeshRenderer>().material = elements.ElementAt(1).Key switch
-        {
-            "WAT" => matWater,
-            "COL" => matCold,
-            "LIG" => matLightning,
-            "FIR" => matFire,
-            "STE" => matSteam,
             _ => newObj.GetComponent<MeshRenderer>().material
         };
     }
