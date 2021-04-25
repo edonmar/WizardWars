@@ -595,12 +595,12 @@ public class GameManager : MonoBehaviour
         newObj.transform.SetParent(originTransform);
 
         // Le paso al lightning los elementos que tendrá
-        Lightning lightningManagerScript = newObj.GetComponent<Lightning>();
-        lightningManagerScript.elements = elements;
-        lightningManagerScript.caster = caster;
-        lightningManagerScript.castType = castType;
-        lightningManagerScript.size = size;
-        lightningManagerScript.color = GetLightningColor(elements);
+        Lightning lightningScript = newObj.GetComponent<Lightning>();
+        lightningScript.elements = elements;
+        lightningScript.caster = caster;
+        lightningScript.castType = castType;
+        lightningScript.size = size;
+        lightningScript.color = GetLightningColor(elements);
 
         // Le paso su duración
         newObj.GetComponent<DestroyIn>().duration = 2;

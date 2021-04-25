@@ -91,23 +91,29 @@ public class Nova : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        CheckCharacterHit(other);
+        if (CanHit(other))
+            Hit(other);
     }
 
-    private void CheckCharacterHit(Collider other)
+    private bool CanHit(Collider other)
     {
         string otherTag = other.tag;
         if (otherTag != "Player" && otherTag != "Enemy")
-            return;
+            return false;
 
         if (caster == other.gameObject)
-            return;
+            return false;
 
         // Si las capas de layerMask están entre el centro de la nova y el objeto que provoca el trigger,
         // el Spray no golpeará al objeto
         if (Physics.Linecast(transform.position, other.gameObject.transform.position, layerMask))
-            return;
+            return false;
 
+        return true;
+    }
+    
+    private void Hit(Collider other)
+    {
         CharacterStats characterStats = other.GetComponent<CharacterStats>();
         if (characterStats.currentHealth != 0)
             characterStats.TakeSpell(dmgTypes);

@@ -15,6 +15,7 @@ public class Lightning : MonoBehaviour
     public Color color;
 
     private List<GameObject> chainedCharacters; // Personajes por los que pasará el rayo, siendo el primero el lanzador
+
     // del hechizo y el último el último enemigo golpeado por el rayo
     private List<GameObject> lightningFragments; // LineRenderer que formarán los fragmentos de la cadena de relámpagos
 
@@ -200,19 +201,18 @@ public class Lightning : MonoBehaviour
                 ResetLightningChain();
             }
 
-            Hit();
+            for (int i = 1; i < chainedCharacters.Count; i++)
+                Hit(chainedCharacters[i]);
+
             yield return new WaitForSeconds(hitRate);
         }
     }
 
-    private void Hit()
+    private void Hit(GameObject character)
     {
-        for (int i = 1; i < chainedCharacters.Count; i++)
-        {
-            CharacterStats characterStats = chainedCharacters[i].GetComponent<CharacterStats>();
-            if (characterStats.currentHealth != 0)
-                characterStats.TakeSpell(dmgTypes);
-        }
+        CharacterStats characterStats = character.GetComponent<CharacterStats>();
+        if (characterStats.currentHealth != 0)
+            characterStats.TakeSpell(dmgTypes);
     }
 
     private void ChangeDirection()

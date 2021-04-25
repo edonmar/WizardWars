@@ -56,7 +56,11 @@ public class Storm : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        CheckCharacterHit(other);
+        if (!CanHit(other))
+            return;
+
+        Hit(other);
+        canHit = false;
     }
 
     // Devuelve true si este hechizo debe ser destruido porque ha sido golpeado por determinados tipos de hechizos
@@ -98,19 +102,23 @@ public class Storm : MonoBehaviour
         return destroys;
     }
 
-    private void CheckCharacterHit(Collider other)
+    private bool CanHit(Collider other)
     {
         if (!canHit)
-            return;
+            return false;
 
         string otherTag = other.tag;
         if (otherTag != "Player" && otherTag != "Enemy")
-            return;
+            return false;
 
+        return true;
+    }
+
+    private void Hit(Collider other)
+    {
         CharacterStats characterStats = other.GetComponent<CharacterStats>();
         if (characterStats.currentHealth != 0)
             characterStats.TakeSpell(dmgTypes);
-        canHit = false;
     }
 
     private IEnumerator HitTimer(float hitRate)

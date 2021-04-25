@@ -70,11 +70,17 @@ public class Beam : MonoBehaviour
 
     private void OnHit(Collider other)
     {
-        CheckWallHit(other);
-        CheckCharacterHit(other);
+        CheckDestroyWallAura(other);
+
+        if (!CanHit(other))
+            return;
+
+        Hit(other);
+        canHit = false;
     }
 
-    private void CheckWallHit(Collider other)
+    // Si el Beam choca con un Wall, comprueba si debe eliminar su WallAura y lo elimina si se cumplen los elementos
+    private void CheckDestroyWallAura(Collider other)
     {
         if (!other.CompareTag("Wall"))
             return;
@@ -116,19 +122,23 @@ public class Beam : MonoBehaviour
         return destroys;
     }
 
-    private void CheckCharacterHit(Collider other)
+    private bool CanHit(Collider other)
     {
         if (!canHit)
-            return;
+            return false;
 
         string otherTag = other.tag;
         if (otherTag != "Player" && otherTag != "Enemy")
-            return;
+            return false;
 
+        return true;
+    }
+
+    private void Hit(Collider other)
+    {
         CharacterStats characterStats = other.GetComponent<CharacterStats>();
         if (characterStats.currentHealth != 0)
             characterStats.TakeSpell(dmgTypes);
-        canHit = false;
     }
 
     private IEnumerator HitTimer(float hitRate)

@@ -39,11 +39,21 @@ public class Icicle : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        CheckCharacterHit(other);
+        if (CanHit(other))
+            Hit(other);
         DestroyThis();
     }
 
-    private void CheckCharacterHit(Collider other)
+    private bool CanHit(Collider other)
+    {
+        string otherTag = other.tag;
+        if (otherTag != "Player" && otherTag != "Enemy")
+            return false;
+
+        return true;
+    }
+
+    private void Hit(Collider other)
     {
         string otherTag = other.tag;
         if (otherTag != "Player" && otherTag != "Enemy")

@@ -39,8 +39,6 @@ public class Wall : MonoBehaviour
 
     private GameObject CreateWallAuraIfNecessary()
     {
-        GameObject newObj = null;
-
         // Creo el aura que rodea al wall, si es que tiene
         Dictionary<string, int> subDictElements =
             elements.Where(e => e.Key != "EAR" && e.Key != "ICE")
@@ -48,7 +46,7 @@ public class Wall : MonoBehaviour
         if (subDictElements.Count <= 0)
             return null;
 
-        newObj = manager.InstantiateWallAura(transform, subDictElements);
+        GameObject newObj = manager.InstantiateWallAura(transform, subDictElements);
 
         // Calculo el efecto que tendrá el WallAura
         int effectMode;

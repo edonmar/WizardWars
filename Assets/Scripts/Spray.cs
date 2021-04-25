@@ -43,27 +43,35 @@ public class Spray : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
+        if (!CanHit(other))
+            return;
+
+        Hit(other);
+        canHit = false;
+    }
+
+    private bool CanHit(Collider other)
+    {
+        if (!canHit)
+            return false;
+        
         string otherTag = other.tag;
         if (otherTag != "Player" && otherTag != "Enemy")
-            return;
+            return false;
 
         // Si las capas de layerMask están entre el punto de lanzamiento y el objeto que provoca el trigger,
         // el Spray no golpeará al objeto
         if (Physics.Linecast(originTransform.position, other.gameObject.transform.position, layerMask))
-            return;
+            return false;
 
-        CheckCharacterHit(other);
+        return true;
     }
 
-    private void CheckCharacterHit(Collider other)
+    private void Hit(Collider other)
     {
-        if (!canHit)
-            return;
-
         CharacterStats characterStats = other.GetComponent<CharacterStats>();
         if (characterStats.currentHealth != 0)
             characterStats.TakeSpell(dmgTypes);
-        canHit = false;
     }
 
     private IEnumerator HitTimer(float hitRate)

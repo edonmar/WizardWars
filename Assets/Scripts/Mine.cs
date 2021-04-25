@@ -81,10 +81,15 @@ public class Mine : MonoBehaviour
         return destroys;
     }
 
+    private void Explode()
+    {
+        manager.InstantiateNova(elements, transform, "mine", 1);
+    }
+
     public void DestroyThis()
     {
         destroyed = true;
-        manager.InstantiateNova(elements, transform, "mine", 1);
+        Explode();
         Destroy(gameObject);
     }
 }

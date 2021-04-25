@@ -58,10 +58,26 @@ public class WallAura : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        CheckCharacterHit(other);
+        if (!CanHit(other))
+            return;
+
+        Hit(other);
+        canHit = false;
     }
 
-    private void CheckCharacterHit(Collider other)
+    private bool CanHit(Collider other)
+    {
+        if (!canHit)
+            return false;
+
+        string otherTag = other.tag;
+        if (otherTag != "Player" && otherTag != "Enemy")
+            return false;
+
+        return true;
+    }
+
+    private void Hit(Collider other)
     {
         if (!canHit)
             return;
@@ -73,7 +89,6 @@ public class WallAura : MonoBehaviour
         CharacterStats characterStats = other.GetComponent<CharacterStats>();
         if (characterStats.currentHealth != 0)
             characterStats.TakeSpell(dmgTypes);
-        canHit = false;
     }
 
     private IEnumerator HitTimer(float hitRate)
@@ -85,10 +100,15 @@ public class WallAura : MonoBehaviour
         }
     }
 
+    private void Explode()
+    {
+        manager.InstantiateNova(elements, transform, "wallAura", 1);
+    }
+
     public void DestroyThis()
     {
         if (elements.ContainsKey("LIF") || elements.ContainsKey("ARC"))
-            manager.InstantiateNova(elements, transform, "wallAura", 1);
+            Explode();
 
         Destroy(gameObject);
     }

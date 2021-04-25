@@ -36,16 +36,22 @@ public class Rock : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        CheckCharacterHit(other);
+        if (CanHit(other))
+            Hit(other);
         DestroyThis();
     }
 
-    private void CheckCharacterHit(Collider other)
+    private bool CanHit(Collider other)
     {
         string otherTag = other.tag;
         if (otherTag != "Player" && otherTag != "Enemy")
-            return;
+            return false;
 
+        return true;
+    }
+
+    private void Hit(Collider other)
+    {
         CharacterStats characterStats = other.GetComponent<CharacterStats>();
         if (characterStats.currentHealth != 0)
             characterStats.TakeSpell(dmgTypes);
