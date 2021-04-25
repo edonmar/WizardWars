@@ -551,7 +551,23 @@ public class GameManager : MonoBehaviour
         nova.originType = originType;
         nova.caster = originType == "character" ? originTransform.gameObject : null;
 
-        ApplyMaterialNova(newObj, elements);
+        // Asigno la velocidad (tamaño de la nova) y color de las partículas
+        ParticleSystem ps = newObj.transform.GetChild(0).GetComponent<ParticleSystem>();
+        ParticleSystem.MainModule particleSystemMain = ps.main;
+        particleSystemMain.startSpeed = (scale / 2) / particleSystemMain.startLifetime.constant;
+
+        Color startColor = GetColorByElement(elements.ElementAt(0).Key);
+        Color endColor = elements.Count > 1 ? GetColorByElement(elements.ElementAt(1).Key) : startColor;
+
+        ParticleSystem.ColorOverLifetimeModule colorOverTime = ps.colorOverLifetime;
+        Gradient grad = new Gradient();
+        grad.SetKeys(
+            new GradientColorKey[] {new GradientColorKey(startColor, 0.0f), new GradientColorKey(endColor, 1.0f)},
+            new GradientAlphaKey[]
+            {
+                /*new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(1.0f, 1.0f)*/
+            });
+        colorOverTime.color = grad;
     }
 
     private GameObject InstantiateBeam(Dictionary<string, int> elements, Transform originTransform)
@@ -611,7 +627,7 @@ public class GameManager : MonoBehaviour
         // Le paso su duración
         newObj.GetComponent<DestroyIn>().duration = 4;
 
-        // Le paso la duración (tamaño del spray) y color de las partículas
+        // Asigno la duración (tamaño del spray) y color de las partículas
         ParticleSystem.MainModule particleSystemMain = newObj.transform.GetChild(0).GetComponent<ParticleSystem>().main;
         particleSystemMain.startLifetime = scale / particleSystemMain.startSpeed.constant;
         particleSystemMain.startColor = GetColorByElement(elements.ElementAt(0).Key);
@@ -737,22 +753,6 @@ public class GameManager : MonoBehaviour
         trailColors.Add(endColor);
 
         return trailColors;
-    }
-
-    private void ApplyMaterialNova(GameObject newObj, Dictionary<string, int> elements)
-    {
-        newObj.GetComponent<MeshRenderer>().material = elements.ElementAt(0).Key switch
-        {
-            "WAT" => matWater,
-            "LIF" => matLife,
-            "COL" => matCold,
-            "ARC" => matArcane,
-            "EAR" => matEarth,
-            "FIR" => matFire,
-            "ICE" => matIce,
-            "STE" => matSteam,
-            _ => newObj.GetComponent<MeshRenderer>().material
-        };
     }
 
     private void ApplyMaterialBeam(GameObject newObj, Dictionary<string, int> elements)
