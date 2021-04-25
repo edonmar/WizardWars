@@ -38,7 +38,8 @@ public class Rock : MonoBehaviour
     {
         if (CanHit(other))
             Hit(other);
-        DestroyThis();
+        if (other.gameObject.layer != LayerMask.NameToLayer("NonSolidSpells"))
+            DestroyThis();
     }
 
     private bool CanHit(Collider other)
