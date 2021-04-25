@@ -7,9 +7,11 @@ public class Nova : MonoBehaviour
     private Dictionary<string, int> dmgTypes;
     public string originType;
     public GameObject caster;
+    private int layerMask;
 
     private void Start()
     {
+        layerMask = LayerMask.GetMask("Terrain");
         dmgTypes = GetDamageTypesDictionary();
     }
 
@@ -99,6 +101,11 @@ public class Nova : MonoBehaviour
             return;
 
         if (caster == other.gameObject)
+            return;
+
+        // Si las capas de layerMask están entre el centro de la nova y el objeto que provoca el trigger,
+        // el Spray no golpeará al objeto
+        if (Physics.Linecast(transform.position, other.gameObject.transform.position, layerMask))
             return;
 
         CharacterStats characterStats = other.GetComponent<CharacterStats>();
