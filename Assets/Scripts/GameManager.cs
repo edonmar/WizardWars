@@ -127,6 +127,8 @@ public class GameManager : MonoBehaviour
         Vector3 originPos = originTransform.position;
         Vector3 originRot = originTransform.localEulerAngles;
         float radius;
+        Color colorCenter = GetColorByElement(elements.ElementAt(1).Key);
+        Color colorRadius = elements.Count > 2 ? GetColorByElement(elements.ElementAt(2).Key) : colorCenter;
         int numberOfObjects;
         int numOfIterations;
         bool evenNumberOfObjects;
@@ -193,7 +195,22 @@ public class GameManager : MonoBehaviour
                     .ToDictionary(e => e.Key, e => e.Value);
             newObj.GetComponent<Mine>().elements = subDictElements;
 
-            ApplyMaterialMine(newObj, elements);
+
+            // Asigno el color de las partículas
+            Transform mineParticlesTransform = newObj.transform.GetChild(0);
+            ParticleSystem psCenter = mineParticlesTransform.GetChild(0).GetComponent<ParticleSystem>();
+            ParticleSystem psRadius = mineParticlesTransform.GetChild(1).GetComponent<ParticleSystem>();
+
+            SetParticleSystemColor(psCenter, colorCenter);
+            SetParticleSystemColor(psRadius, colorRadius);
+        }
+
+        void SetParticleSystemColor(ParticleSystem ps, Color color)
+        {
+            ParticleSystem.MainModule particleSystemMain = ps.main;
+            ps.Stop();
+            particleSystemMain.startColor = color;
+            ps.Play();
         }
     }
 
@@ -672,16 +689,6 @@ public class GameManager : MonoBehaviour
 
         Color color = meshRenderer.material.color;
         meshRenderer.material.color = new Color(color.r, color.g, color.b, 0.5f);
-    }
-
-    private void ApplyMaterialMine(GameObject newObj, Dictionary<string, int> elements)
-    {
-        newObj.GetComponent<MeshRenderer>().material = elements.ElementAt(1).Key switch
-        {
-            "ARC" => matArcane,
-            "LIF" => matLife,
-            _ => newObj.GetComponent<MeshRenderer>().material
-        };
     }
 
     private List<Color> GetTrailColorsRock(Dictionary<string, int> elements)
