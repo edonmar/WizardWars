@@ -195,7 +195,6 @@ public class GameManager : MonoBehaviour
                     .ToDictionary(e => e.Key, e => e.Value);
             newObj.GetComponent<Mine>().elements = subDictElements;
 
-
             // Asigno el color de las partículas
             Transform mineParticlesTransform = newObj.transform.GetChild(0);
             ParticleSystem psCenter = mineParticlesTransform.GetChild(0).GetComponent<ParticleSystem>();
@@ -203,14 +202,6 @@ public class GameManager : MonoBehaviour
 
             SetParticleSystemColor(psCenter, colorCenter);
             SetParticleSystemColor(psRadius, colorRadius);
-        }
-
-        void SetParticleSystemColor(ParticleSystem ps, Color color)
-        {
-            ParticleSystem.MainModule particleSystemMain = ps.main;
-            ps.Stop();
-            particleSystemMain.startColor = color;
-            ps.Play();
         }
     }
 
@@ -291,7 +282,7 @@ public class GameManager : MonoBehaviour
                     .ToDictionary(e => e.Key, e => e.Value);
             newObj.GetComponent<Storm>().elements = subDictElements;
 
-            // Asigno la duración (tamaño del spray) y color de las partículas
+            // Asigno la duración y color de las partículas
             ParticleSystem ps = newObj.transform.GetChild(0).GetComponent<ParticleSystem>();
             ParticleSystem.MainModule particleSystemMain = ps.main;
             ps.Stop();
@@ -452,7 +443,24 @@ public class GameManager : MonoBehaviour
         // Le paso al wallAura los elementos que tendrá
         newObj.GetComponent<WallAura>().elements = elements;
 
-        ApplyMaterialWallAura(newObj, elements);
+        // Asigno la duración y color de las partículas
+        bool containsExp = elements.ContainsKey("LIF") || elements.ContainsKey("ARC");
+        bool containsSpray = !containsExp || elements.Count > 1;
+        int innerElementPos = containsExp && containsSpray ? 1 : 0;
+        int outerElementPos = 0;
+
+        Color colorRadius = GetColorByElement(elements.ElementAt(innerElementPos).Key);
+        Color colorFlames = GetColorByElement(elements.ElementAt(innerElementPos).Key);
+        Color colorRing = GetColorByElement(elements.ElementAt(outerElementPos).Key);
+
+        Transform mineParticlesTransform = newObj.transform.GetChild(0);
+        ParticleSystem psRadius = mineParticlesTransform.GetChild(0).GetComponent<ParticleSystem>();
+        ParticleSystem psFlames = mineParticlesTransform.GetChild(1).GetComponent<ParticleSystem>();
+        ParticleSystem psRing = mineParticlesTransform.GetChild(2).GetComponent<ParticleSystem>();
+
+        SetParticleSystemColor(psRadius, colorRadius);
+        SetParticleSystemColor(psFlames, colorFlames);
+        SetParticleSystemColor(psRing, colorRing);
 
         return newObj;
     }
@@ -666,29 +674,17 @@ public class GameManager : MonoBehaviour
         return newObj;
     }
 
+    private void SetParticleSystemColor(ParticleSystem ps, Color color)
+    {
+        ParticleSystem.MainModule particleSystemMain = ps.main;
+        ps.Stop();
+        particleSystemMain.startColor = color;
+        ps.Play();
+    }
+
     private void ApplyMaterialWall(GameObject newObj, Dictionary<string, int> elements)
     {
         newObj.GetComponent<MeshRenderer>().material = elements.ContainsKey("EAR") ? matEarthTexture : matIceTexture;
-    }
-
-    private void ApplyMaterialWallAura(GameObject newObj, Dictionary<string, int> elements)
-    {
-        MeshRenderer meshRenderer = newObj.GetComponent<MeshRenderer>();
-
-        meshRenderer.material = elements.ElementAt(0).Key switch
-        {
-            "WAT" => matWater,
-            "LIF" => matLife,
-            "COL" => matCold,
-            "LIG" => matLightning,
-            "ARC" => matArcane,
-            "FIR" => matFire,
-            "STE" => matSteam,
-            _ => meshRenderer.material
-        };
-
-        Color color = meshRenderer.material.color;
-        meshRenderer.material.color = new Color(color.r, color.g, color.b, 0.5f);
     }
 
     private List<Color> GetTrailColorsRock(Dictionary<string, int> elements)
