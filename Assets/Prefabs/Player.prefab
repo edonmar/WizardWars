@@ -179,16 +179,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthBar: {fileID: 7360810482985542308}
   maxHealth: 1500
-  currentHealth: 0
-  physicPercentageTaken: 100
-  waterPercentageTaken: 0
-  lifePercentageTaken: -100
-  coldPercentageTaken: 100
-  lightningPercentageTaken: 100
-  arcanePercentageTaken: 100
-  firePercentageTaken: 100
-  icePercentageTaken: 100
-  steamPercentageTaken: 100
+  health: 0
+  baseMovSpeed: 4
+  movSpeed: 0
+  physicPercTaken: 100
+  waterPercTaken: 0
+  lifePercTaken: -100
+  coldPercTaken: 100
+  lightningPercTaken: 100
+  arcanePercTaken: 100
+  firePercTaken: 100
+  icePercTaken: 100
+  steamPercTaken: 100
 --- !u!1 &17628892379456644
 GameObject:
   m_ObjectHideFlags: 0

@@ -87,7 +87,7 @@ public class WallAura : MonoBehaviour
             return;
 
         CharacterStats characterStats = other.GetComponent<CharacterStats>();
-        if (characterStats.currentHealth != 0)
+        if (characterStats.health != 0)
             characterStats.TakeSpell(dmgTypes);
     }
 

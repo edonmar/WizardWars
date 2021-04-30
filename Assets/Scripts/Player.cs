@@ -111,7 +111,7 @@ public class Player : MonoBehaviour
 
     private void MovePlayerForward()
     {
-        float movSpeed = 4;
+        float movSpeed = characterStats.movSpeed;
         transform.Translate(transform.forward * (movSpeed * Time.deltaTime), Space.World);
     }
 
