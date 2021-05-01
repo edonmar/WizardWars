@@ -17,6 +17,7 @@ public class CharacterStats : MonoBehaviour
 
     public int maxHealth;
     public int health;
+    private int shield;
     public float baseMovSpeed;
     public float movSpeed;
 
@@ -55,6 +56,7 @@ public class CharacterStats : MonoBehaviour
         manager = GameObject.Find("Manager").GetComponent<GameManager>();
 
         health = maxHealth;
+        shield = 0;
         movSpeed = baseMovSpeed;
         percDmgTypes = GetPercDmgTypes();
         isWet = false;
@@ -103,14 +105,73 @@ public class CharacterStats : MonoBehaviour
     public void TakeSpell(Dictionary<string, int> dmgTypes)
     {
         ApplyStatusEffects(dmgTypes);
-        int amount = GetAmountTaken(dmgTypes);
-        ModifyHealth(amount);
+        int dmg = GetDamageTaken(dmgTypes);
+        int healing = GetHealingTaken(dmgTypes);
+        if (shield > 0)
+            ModifyShield(dmg);
+        else
+            ModifyHealth(dmg + healing);
     }
 
     private void TakeBurningDamage()
     {
         int amount = -(int) (35 * percDmgTypes["FIR"] / 100);
-        ModifyHealth(amount);
+        if (shield > 0)
+        {
+            if (amount < 0)
+                ModifyShield(amount);
+        }
+        else
+            ModifyHealth(amount);
+    }
+
+    private int GetDamageTaken(Dictionary<string, int> dmgTypes)
+    {
+        return dmgTypes.Where(dt => percDmgTypes[dt.Key] > 0).Sum(dt => -(int) (dt.Value * percDmgTypes[dt.Key] / 100));
+    }
+
+    private int GetHealingTaken(Dictionary<string, int> dmgTypes)
+    {
+        return dmgTypes.Where(dt => percDmgTypes[dt.Key] < 0).Sum(dt => -(int) (dt.Value * percDmgTypes[dt.Key] / 100));
+    }
+
+    private void ModifyHealth(int amount)
+    {
+        health += amount;
+
+        if (health > maxHealth)
+            health = maxHealth;
+        else if (health <= 0)
+            Die();
+
+        healthBar.SetHealth(health);
+    }
+
+    private void ModifyShield(int amount)
+    {
+        shield += amount;
+
+        if (shield <= 0)
+            healthBar.DeactivateShield();
+        else
+            healthBar.SetShield(shield);
+    }
+
+    private void Die()
+    {
+        health = 0;
+        Destroy(gameObject);
+    }
+
+    public void CastWard(Dictionary<string, int> elements)
+    {
+        if (elements.Count != 1)
+            return;
+
+        shield = (int) (maxHealth * (2f / 3f));
+        healthBar.SetMaxShield(shield);
+        healthBar.SetShield(shield);
+        healthBar.ActivateShield();
     }
 
     private void ApplyStatusEffects(Dictionary<string, int> dmgTypes)
@@ -327,29 +388,6 @@ public class CharacterStats : MonoBehaviour
         isBurning = false;
         StopCoroutine(burningCoroutine);
         StopFlamesParticles();
-    }
-
-    private int GetAmountTaken(Dictionary<string, int> dmgTypes)
-    {
-        return dmgTypes.Aggregate(0, (current, dt) => current - (int) (dt.Value * percDmgTypes[dt.Key] / 100));
-    }
-
-    private void ModifyHealth(int amount)
-    {
-        health += amount;
-
-        if (health > maxHealth)
-            health = maxHealth;
-        else if (health <= 0)
-            Die();
-
-        healthBar.SetHealth(health);
-    }
-
-    private void Die()
-    {
-        health = 0;
-        Destroy(gameObject);
     }
 
     // FlamesParticles dibuja 3 efectos: Wet, Chilled y Burning

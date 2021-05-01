@@ -178,7 +178,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33b784f92011e0a4caa3696a6d9ba906, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healthBar: {fileID: 7360810482985542308}
+  healthBar: {fileID: 1660206647933381919}
   flamesParticles: {fileID: 1092621843876589464}
   frozenParticles: {fileID: 381107743124917211}
   maxHealth: 1500
@@ -1136,9 +1136,9 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7052380864708627819, guid: ffa1af1d954dedf4e82ed16a223742e0, type: 3}
   m_PrefabInstance: {fileID: 574716011335457031}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7360810482985542308 stripped
+--- !u!114 &1660206647933381919 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7052380865807137699, guid: ffa1af1d954dedf4e82ed16a223742e0, type: 3}
+  m_CorrespondingSourceObject: {fileID: 1221583861393044504, guid: ffa1af1d954dedf4e82ed16a223742e0, type: 3}
   m_PrefabInstance: {fileID: 574716011335457031}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}

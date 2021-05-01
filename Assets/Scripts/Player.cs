@@ -735,7 +735,7 @@ public class Player : MonoBehaviour
                 break;
 
             case "ward":
-
+                characterStats.CastWard(elements);
                 break;
 
             case "selfCastEffect":
