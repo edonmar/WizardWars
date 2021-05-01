@@ -5,7 +5,15 @@ using UnityEngine;
 
 public class CharacterStats : MonoBehaviour
 {
+    private GameManager manager;
+
     [SerializeField] private HealthBar healthBar;
+    [SerializeField] private GameObject flamesParticles;
+    [SerializeField] private GameObject frozenParticles;
+
+    private ParticleSystem psFlames;
+    private ParticleSystem psFrozen;
+    ParticleSystem.MainModule psMainFlames;
 
     public int maxHealth;
     public int health;
@@ -29,6 +37,7 @@ public class CharacterStats : MonoBehaviour
     private bool isChilled;
     private bool isFrozen;
     private bool isBurning;
+    private bool isWetAndChilled;
 
     private float chillTime;
     private float freezeTime;
@@ -43,6 +52,8 @@ public class CharacterStats : MonoBehaviour
 
     private void Start()
     {
+        manager = GameObject.Find("Manager").GetComponent<GameManager>();
+
         health = maxHealth;
         movSpeed = baseMovSpeed;
         percDmgTypes = GetPercDmgTypes();
@@ -50,6 +61,7 @@ public class CharacterStats : MonoBehaviour
         isChilled = false;
         isFrozen = false;
         isBurning = false;
+        isWetAndChilled = false;
 
         healthBar.SetMaxHealth(maxHealth);
         healthBar.SetHealth(health);
@@ -57,6 +69,12 @@ public class CharacterStats : MonoBehaviour
         chillTime = 10;
         freezeTime = 5;
         burningTime = 5;
+
+        psFlames = flamesParticles.GetComponent<ParticleSystem>();
+        psFrozen = frozenParticles.GetComponent<ParticleSystem>();
+        psMainFlames = psFlames.main;
+        flamesParticles.SetActive(true);
+        frozenParticles.SetActive(true);
     }
 
     private Dictionary<string, float> GetPercDmgTypes()
@@ -220,6 +238,7 @@ public class CharacterStats : MonoBehaviour
             return;
         SetPercDmgType("COL", coldPercTaken * 2);
         SetPercDmgType("LIG", lightningPercTaken * 2);
+        PlayFlamesParticles("wet");
     }
 
     private void DispelWet()
@@ -230,6 +249,7 @@ public class CharacterStats : MonoBehaviour
         isWet = false;
         SetPercDmgType("COL", coldPercTaken);
         SetPercDmgType("LIG", lightningPercTaken);
+        StopFlamesParticles();
     }
 
     private void ApplyChill()
@@ -242,6 +262,7 @@ public class CharacterStats : MonoBehaviour
             chillCoroutine = ChillCoroutine();
             StartCoroutine(chillCoroutine);
             movSpeed /= 4;
+            PlayFlamesParticles("chill");
         }
     }
 
@@ -253,6 +274,7 @@ public class CharacterStats : MonoBehaviour
         isChilled = false;
         StopCoroutine(chillCoroutine);
         movSpeed = baseMovSpeed;
+        StopFlamesParticles();
     }
 
     private void ApplyFreeze()
@@ -267,6 +289,7 @@ public class CharacterStats : MonoBehaviour
             movSpeed = 0;
             SetPercDmgType("PHY", physicPercTaken * 3);
             SetPercDmgType("ICE", icePercTaken * 3);
+            PlayFreezeParticles();
         }
     }
 
@@ -280,6 +303,7 @@ public class CharacterStats : MonoBehaviour
         movSpeed = baseMovSpeed;
         SetPercDmgType("PHY", physicPercTaken);
         SetPercDmgType("ICE", icePercTaken);
+        StopFreezeParticles();
     }
 
     private void ApplyBurning()
@@ -291,6 +315,7 @@ public class CharacterStats : MonoBehaviour
             isBurning = true;
             burningCoroutine = BurningCoroutine();
             StartCoroutine(burningCoroutine);
+            PlayFlamesParticles("burning");
         }
     }
 
@@ -301,6 +326,7 @@ public class CharacterStats : MonoBehaviour
 
         isBurning = false;
         StopCoroutine(burningCoroutine);
+        StopFlamesParticles();
     }
 
     private int GetAmountTaken(Dictionary<string, int> dmgTypes)
@@ -324,5 +350,62 @@ public class CharacterStats : MonoBehaviour
     {
         health = 0;
         Destroy(gameObject);
+    }
+
+    // FlamesParticles dibuja 3 efectos: Wet, Chilled y Burning
+    // Si no hay ninguno de estos tres efecto de estado anteriormente, activo las partículas con el color del nuevo efecto.
+    // Si hay ninguno de estos tres efecto de estado anteriormente, mezclo el color del efecto antiguo con el color del efecto nuevo.
+    // Este caso sólo se puede dar cuando está Chilled y después se aplica Wet
+    private void PlayFlamesParticles(string status)
+    {
+        Color color = status switch
+        {
+            "wet" => manager.matWater.color,
+            "chill" => manager.matCold.color,
+            "burning" => manager.matFire.color,
+            _ => default
+        };
+
+        if (psFlames.isEmitting)
+        {
+            Color oldColor = psMainFlames.startColor.color;
+            Color mixColor;
+            mixColor.r = (oldColor.r + color.r) / 2;
+            mixColor.g = (oldColor.g + color.g) / 2;
+            mixColor.b = (oldColor.b + color.b) / 2;
+            mixColor.a = (oldColor.a + color.a) / 2;
+
+            psMainFlames.startColor = mixColor;
+            isWetAndChilled = true;
+        }
+        else
+        {
+            psMainFlames.startColor = color;
+            psFlames.Play();
+        }
+    }
+
+    // Si tenía Wet y Chilled y sólo es disipado uno de los dos, el disipado siempre será Chilled, así que le pongo
+    // a las partículas el color de Wet
+    // Si no tenía Wet y Chilled, es que sólo tenía el efecto que es disipado. En este caso detengo las partículas
+    private void StopFlamesParticles()
+    {
+        if (isWetAndChilled)
+        {
+            psMainFlames.startColor = manager.matWater.color;
+            isWetAndChilled = false;
+        }
+        else
+            psFlames.Stop();
+    }
+
+    private void PlayFreezeParticles()
+    {
+        psFrozen.Play();
+    }
+
+    private void StopFreezeParticles()
+    {
+        psFrozen.Stop();
     }
 }
