@@ -8,11 +8,14 @@ public class CharacterStats : MonoBehaviour
     private GameManager manager;
 
     [SerializeField] private HealthBar healthBar;
+    [SerializeField] private GameObject wardParticles;
     [SerializeField] private GameObject flamesParticles;
     [SerializeField] private GameObject frozenParticles;
 
+    private ParticleSystem psWard;
     private ParticleSystem psFlames;
     private ParticleSystem psFrozen;
+    ParticleSystem.MainModule psMainWard;
     ParticleSystem.MainModule psMainFlames;
 
     public int maxHealth;
@@ -77,6 +80,12 @@ public class CharacterStats : MonoBehaviour
         psMainFlames = psFlames.main;
         flamesParticles.SetActive(true);
         frozenParticles.SetActive(true);
+
+        if (wardParticles == null)
+            return;
+        psWard = wardParticles.GetComponent<ParticleSystem>();
+        psMainWard = psWard.main;
+        wardParticles.SetActive(true);
     }
 
     private Dictionary<string, float> GetPercDmgTypes()
@@ -152,7 +161,10 @@ public class CharacterStats : MonoBehaviour
         shield += amount;
 
         if (shield <= 0)
+        {
             healthBar.DeactivateShield();
+            StopWardParticles();
+        }
         else
             healthBar.SetShield(shield);
     }
@@ -169,9 +181,13 @@ public class CharacterStats : MonoBehaviour
             return;
 
         shield = (int) (maxHealth * (2f / 3f));
+
         healthBar.SetMaxShield(shield);
         healthBar.SetShield(shield);
         healthBar.ActivateShield();
+
+        psMainWard.startColor = manager.matShield.color;
+        PlayWardParticles();
     }
 
     private void ApplyStatusEffects(Dictionary<string, int> dmgTypes)
@@ -445,5 +461,15 @@ public class CharacterStats : MonoBehaviour
     private void StopFreezeParticles()
     {
         psFrozen.Stop();
+    }
+
+    private void PlayWardParticles()
+    {
+        psWard.Play();
+    }
+
+    private void StopWardParticles()
+    {
+        psWard.Stop();
     }
 }
