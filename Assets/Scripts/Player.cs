@@ -589,8 +589,8 @@ public class Player : MonoBehaviour
     {
         string spellType = loadedElements[0] switch
         {
-            // ward
-            "SHI" => "ward",
+            // shield o ward
+            "SHI" => loadedElements.Count == 1 ? "shield" : "ward",
             // icicles o rock
             "ICE" => loadedElements.Contains("EAR") ? "rock" : "icicles",
             // rock
@@ -734,6 +734,10 @@ public class Player : MonoBehaviour
 
                 break;
 
+            case "shield":
+                characterStats.CastShield();
+                break;
+            
             case "ward":
                 characterStats.CastWard(elements);
                 break;

@@ -24,6 +24,7 @@ public class CharacterStats : MonoBehaviour
     public float baseMovSpeed;
     public float movSpeed;
 
+    // Estos son los valores iniciales, no los valores con los que se harán los cálculos
     public float physicPercTaken;
     public float waterPercTaken;
     public float lifePercTaken;
@@ -34,22 +35,37 @@ public class CharacterStats : MonoBehaviour
     public float icePercTaken;
     public float steamPercTaken;
 
-    // Diccionario con todos los tipos de daño y el porcentaje que recibirá de cada uno
-    private Dictionary<string, float> percDmgTypes;
+    // Estos son los valores iniciales, no los valores con los que se harán los cálculos
+    public bool wetResistant;
+    public bool chillResistant;
+    public bool freezeResistant;
+    public bool burningResistant;
 
+    // Diccionario con todos los tipos de daño y el porcentaje que recibirá de cada uno
+    // Los cálculos de daño se harán con este diccionario
+    private Dictionary<string, float> percDmgTypes;
+    private Dictionary<string, bool> statusEffectResistances;
+
+    // Diccionario con los elementos que tendrá el ward, si es que existe
+    private Dictionary<string, int> wardElements;
+
+    private bool isWardActive;
     private bool isWet;
     private bool isChilled;
     private bool isFrozen;
     private bool isBurning;
     private bool isWetAndChilled;
 
+    private float wardTime;
     private float chillTime;
     private float freezeTime;
     private float burningTime;
+    private float wardTimeRemaining;
     private float chillTimeRemaining;
     private float freezeTimeRemaining;
     private float burningTimeRemaining;
 
+    private IEnumerator wardCoroutine;
     private IEnumerator chillCoroutine;
     private IEnumerator freezeCoroutine;
     private IEnumerator burningCoroutine;
@@ -62,6 +78,9 @@ public class CharacterStats : MonoBehaviour
         shield = 0;
         movSpeed = baseMovSpeed;
         percDmgTypes = GetPercDmgTypes();
+        statusEffectResistances = GetStatusEffectsResistances();
+
+        isWardActive = false;
         isWet = false;
         isChilled = false;
         isFrozen = false;
@@ -71,6 +90,7 @@ public class CharacterStats : MonoBehaviour
         healthBar.SetMaxHealth(maxHealth);
         healthBar.SetHealth(health);
 
+        wardTime = 15;
         chillTime = 10;
         freezeTime = 5;
         burningTime = 5;
@@ -106,6 +126,19 @@ public class CharacterStats : MonoBehaviour
         return percDmgTypesDict;
     }
 
+    private Dictionary<string, bool> GetStatusEffectsResistances()
+    {
+        Dictionary<string, bool> statusEffectsResistancesDict = new Dictionary<string, bool>
+        {
+            {"wet", wetResistant},
+            {"chill", chillResistant},
+            {"freeze", freezeResistant},
+            {"burning", burningResistant},
+        };
+
+        return statusEffectsResistancesDict;
+    }
+
     private void SetPercDmgType(string dmgType, float num)
     {
         percDmgTypes[dmgType] = num;
@@ -114,8 +147,10 @@ public class CharacterStats : MonoBehaviour
     public void TakeSpell(Dictionary<string, int> dmgTypes)
     {
         ApplyStatusEffects(dmgTypes);
+
         int dmg = GetDamageTaken(dmgTypes);
         int healing = GetHealingTaken(dmgTypes);
+
         if (shield > 0)
             ModifyShield(dmg);
         else
@@ -161,10 +196,7 @@ public class CharacterStats : MonoBehaviour
         shield += amount;
 
         if (shield <= 0)
-        {
-            healthBar.DeactivateShield();
-            StopWardParticles();
-        }
+            DispelShield();
         else
             healthBar.SetShield(shield);
     }
@@ -175,10 +207,16 @@ public class CharacterStats : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public void CastWard(Dictionary<string, int> elements)
+    public void CastShield()
     {
-        if (elements.Count != 1)
+        if (shield > 0)
+        {
+            DispelShield();
             return;
+        }
+
+        if (isWardActive)
+            DispelWard();
 
         shield = (int) (maxHealth * (2f / 3f));
 
@@ -188,6 +226,141 @@ public class CharacterStats : MonoBehaviour
 
         psMainWard.startColor = manager.matShield.color;
         PlayWardParticles();
+    }
+
+    private void DispelShield()
+    {
+        shield = 0;
+        healthBar.DeactivateShield();
+        StopWardParticles();
+    }
+
+    // Aumento la resistencia a cada elemento contenido en el Ward
+    // Si un elemento está 1 vez, protege un 50% de su daño / sanación y totalmente de su efecto de estado
+    // Si un elemento está 2 veces, protege un 100% de su daño / sanación y totalmente de su efecto de estado
+    // Si el Ward contiene vida, cura en el tiempo
+    public void CastWard(Dictionary<string, int> elements)
+    {
+        if (shield > 0)
+            DispelShield();
+        if (isWardActive)
+            DispelWard();
+
+        // Elimino el elemento Shield del diccionario y si un elemento está más de 2 veces, lo reduzco a 2
+        elements.Remove("SHI");
+        foreach (var e in elements.ToList().Where(e => e.Value > 2))
+            elements[e.Key] = 2;
+        // Cambio el nombre de clave de EAR a PHY
+        if (elements.ContainsKey("EAR"))
+        {
+            int earthCount = elements["EAR"];
+            elements.Remove("EAR");
+            elements.Add("PHY", earthCount);
+        }
+
+        wardElements = elements;
+
+        // Aplico las inmunidades a efectos de estado y los elimino si están activos
+        ApplyWardStatusEffectsResistances();
+
+        // Aplico las resistencias a los tipos de daño / sanación
+        ApplyWardDmgResistances();
+
+        isWardActive = true;
+        wardCoroutine = WardCoroutine();
+        StartCoroutine(wardCoroutine);
+
+        psMainWard.startColor = Color.white;
+        PlayWardParticles();
+    }
+
+    private void ApplyWardStatusEffectsResistances()
+    {
+        if (wardElements.ContainsKey("WAT"))
+        {
+            statusEffectResistances["wet"] = true;
+            if (isWet)
+                DispelWet();
+        }
+
+        if (wardElements.ContainsKey("COL"))
+        {
+            statusEffectResistances["chill"] = true;
+            statusEffectResistances["freeze"] = true;
+            if (isChilled)
+                DispelChill();
+            if (isFrozen)
+                DispelFreeze();
+        }
+
+        if (wardElements.ContainsKey("FIR"))
+        {
+            statusEffectResistances["burning"] = true;
+            if (isBurning)
+                DispelBurning();
+        }
+    }
+
+    private void ApplyWardDmgResistances()
+    {
+        foreach (KeyValuePair<string, int> e in wardElements)
+            percDmgTypes[e.Key] -= e.Value * percDmgTypes[e.Key] / 2;
+    }
+
+    private void DispelWard()
+    {
+        isWardActive = false;
+        StopCoroutine(wardCoroutine);
+
+        DispelWardStatusEffectsResistances();
+        DispelWardDmgResistances();
+
+        StopWardParticles();
+        wardElements = new Dictionary<string, int>();
+    }
+
+    private void DispelWardStatusEffectsResistances()
+    {
+        if (wardElements.ContainsKey("WAT"))
+            statusEffectResistances["wet"] = wetResistant;
+
+        if (wardElements.ContainsKey("COL"))
+            statusEffectResistances["chill"] = chillResistant;
+
+        if (wardElements.ContainsKey("FIR"))
+            statusEffectResistances["burning"] = burningResistant;
+    }
+
+    private void DispelWardDmgResistances()
+    {
+        foreach (KeyValuePair<string, int> e in wardElements)
+        {
+            percDmgTypes[e.Key] = e.Key switch
+            {
+                "PHY" => physicPercTaken,
+                "WAT" => waterPercTaken,
+                "LIF" => lifePercTaken,
+                "COL" => isWet ? coldPercTaken * 2 : coldPercTaken,
+                "LIG" => isWet ? lightningPercTaken * 2 : lightningPercTaken,
+                "ARC" => arcanePercTaken,
+                "FIR" => firePercTaken,
+                "ICE" => icePercTaken,
+                "STE" => steamPercTaken,
+                _ => percDmgTypes[e.Key]
+            };
+        }
+    }
+
+    private IEnumerator WardCoroutine()
+    {
+        wardTimeRemaining = wardTime;
+        while (wardTimeRemaining > 0)
+        {
+            wardTimeRemaining -= Time.deltaTime;
+            yield return null;
+        }
+
+        DispelWard();
     }
 
     private void ApplyStatusEffects(Dictionary<string, int> dmgTypes)
@@ -209,7 +382,7 @@ public class CharacterStats : MonoBehaviour
             {
                 if (isBurning)
                     DispelBurning();
-                else
+                else if (!statusEffectResistances["wet"])
                     ApplyWet();
             }
         }
@@ -217,7 +390,7 @@ public class CharacterStats : MonoBehaviour
         {
             if (isBurning)
                 DispelBurning();
-            else
+            else if (!statusEffectResistances["wet"])
                 ApplyWet();
         }
         else if (dmgTypes.ContainsKey("COL"))
@@ -228,16 +401,17 @@ public class CharacterStats : MonoBehaviour
                     DispelWet();
                 if (isChilled)
                     DispelChill();
-                ApplyFreeze();
+                if (!statusEffectResistances["freeze"])
+                    ApplyFreeze();
             }
             else if (isBurning)
                 DispelBurning();
-            else
+            else if (!statusEffectResistances["chill"])
                 ApplyChill();
         }
         else if (dmgTypes.ContainsKey("FIR"))
         {
-            bool canBurn = true;
+            bool canBurn = !statusEffectResistances["burning"];
 
             if (isWet)
             {
