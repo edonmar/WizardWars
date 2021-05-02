@@ -169,6 +169,14 @@ public class CharacterStats : MonoBehaviour
             ModifyHealth(amount);
     }
 
+    private void TakeLifeWardEffect()
+    {
+        // Para esta sanación en el tiempo aplico la resistencia base a Life, en vez de la resistencia que queda
+        // después de aplicar el Ward
+        int amount = -(int) (wardElements["LIF"] * 25 * lifePercTaken / 100);
+        ModifyHealth(amount);
+    }
+
     private int GetDamageTaken(Dictionary<string, int> dmgTypes)
     {
         return dmgTypes.Where(dt => percDmgTypes[dt.Key] > 0).Sum(dt => -(int) (dt.Value * percDmgTypes[dt.Key] / 100));
@@ -353,10 +361,23 @@ public class CharacterStats : MonoBehaviour
 
     private IEnumerator WardCoroutine()
     {
+        bool containsLife = wardElements.ContainsKey("LIF");
+        float lifeTimer = 0.25f;
+
         wardTimeRemaining = wardTime;
         while (wardTimeRemaining > 0)
         {
             wardTimeRemaining -= Time.deltaTime;
+            if (containsLife)
+            {
+                lifeTimer -= Time.deltaTime;
+                if (lifeTimer <= 0)
+                {
+                    lifeTimer = 0.25f;
+                    TakeLifeWardEffect();
+                }
+            }
+
             yield return null;
         }
 
