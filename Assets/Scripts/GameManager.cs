@@ -674,7 +674,7 @@ public class GameManager : MonoBehaviour
         return newObj;
     }
 
-    private void SetParticleSystemColor(ParticleSystem ps, Color color)
+    public void SetParticleSystemColor(ParticleSystem ps, Color color)
     {
         ParticleSystem.MainModule particleSystemMain = ps.main;
         ps.Stop();
@@ -860,7 +860,7 @@ public class GameManager : MonoBehaviour
         trailRenderer.widthMultiplier -= 0.1f * shrinkFactor;
     }
 
-    private Color GetColorByElement(string element)
+    public Color GetColorByElement(string element)
     {
         Color color = element switch
         {

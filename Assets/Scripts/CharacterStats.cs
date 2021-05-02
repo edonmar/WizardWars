@@ -278,7 +278,6 @@ public class CharacterStats : MonoBehaviour
         wardCoroutine = WardCoroutine();
         StartCoroutine(wardCoroutine);
 
-        psMainWard.startColor = Color.white;
         PlayWardParticles();
     }
 
@@ -361,13 +360,23 @@ public class CharacterStats : MonoBehaviour
 
     private IEnumerator WardCoroutine()
     {
+        // Lista con los colores de todos los elementos presentes en el Ward
+        List<Color> wardColors = wardElements.Keys.Select(key => key == "PHY" ? "EAR" : key)
+            .Select(element => manager.GetColorByElement(element)).ToList();
+        // Asigno el primer elemento como color inicial
+        manager.SetParticleSystemColor(psWard, wardColors[0]);
+        float colorTimer = 1; // Cada cuánto tiempo cambiará de color, si es que hay más de un elemento
+        int colorCount = wardColors.Count;
+        int currentColor = 0;
+
         bool containsLife = wardElements.ContainsKey("LIF");
-        float lifeTimer = 0.25f;
+        float lifeTimer = 0.25f; // Cada cuanto tiempo aplicará Life
 
         wardTimeRemaining = wardTime;
         while (wardTimeRemaining > 0)
         {
             wardTimeRemaining -= Time.deltaTime;
+
             if (containsLife)
             {
                 lifeTimer -= Time.deltaTime;
@@ -375,6 +384,19 @@ public class CharacterStats : MonoBehaviour
                 {
                     lifeTimer = 0.25f;
                     TakeLifeWardEffect();
+                }
+            }
+
+            if (colorCount > 1)
+            {
+                colorTimer -= Time.deltaTime;
+                if (colorTimer <= 0)
+                {
+                    colorTimer = 1;
+                    currentColor++;
+                    if (currentColor >= colorCount)
+                        currentColor = 0;
+                    manager.SetParticleSystemColor(psWard, wardColors[currentColor]);
                 }
             }
 
@@ -483,7 +505,7 @@ public class CharacterStats : MonoBehaviour
 
     private IEnumerator BurningCoroutine()
     {
-        float hitTimer = 0.25f;
+        float hitTimer = 0.25f; // Cada cuánto tiempo aplicará Fire
         burningTimeRemaining = burningTime;
         while (burningTimeRemaining > 0)
         {
