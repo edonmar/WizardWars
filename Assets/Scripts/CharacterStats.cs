@@ -146,7 +146,8 @@ public class CharacterStats : MonoBehaviour
 
     public void TakeSpell(Dictionary<string, int> dmgTypes)
     {
-        ApplyStatusEffects(dmgTypes);
+        if (shield == 0)
+            ApplyStatusEffects(dmgTypes);
 
         int dmg = GetDamageTaken(dmgTypes);
         int healing = GetHealingTaken(dmgTypes);
