@@ -111,12 +111,17 @@ public class Nova : MonoBehaviour
 
         return true;
     }
-    
+
     private void Hit(Collider other)
     {
         CharacterStats characterStats = other.GetComponent<CharacterStats>();
-        if (characterStats.health != 0)
-            characterStats.TakeSpell(dmgTypes);
+        if (characterStats.health == 0)
+            return;
+        characterStats.TakeSpell(dmgTypes);
+        // Si la Nova contiene agua, empuja al personaje
+        if (elements.ContainsKey("WAT"))
+            other.GetComponent<Rigidbody>().velocity =
+                (other.transform.position - transform.position).normalized * 6;
     }
 
     public void DestroyThis()

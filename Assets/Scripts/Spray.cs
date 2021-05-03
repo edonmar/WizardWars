@@ -54,7 +54,7 @@ public class Spray : MonoBehaviour
     {
         if (!canHit)
             return false;
-        
+
         string otherTag = other.tag;
         if (otherTag != "Player" && otherTag != "Enemy")
             return false;
@@ -70,8 +70,12 @@ public class Spray : MonoBehaviour
     private void Hit(Collider other)
     {
         CharacterStats characterStats = other.GetComponent<CharacterStats>();
-        if (characterStats.health != 0)
-            characterStats.TakeSpell(dmgTypes);
+        if (characterStats.health == 0)
+            return;
+        characterStats.TakeSpell(dmgTypes);
+        // Si el Spray contiene Water, empuja al personaje
+        if (elements.ContainsKey("WAT"))
+            other.GetComponent<Rigidbody>().velocity = originTransform.forward * 5;
     }
 
     private IEnumerator HitTimer(float hitRate)
