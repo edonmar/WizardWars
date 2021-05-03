@@ -8,6 +8,9 @@ public class Storm : MonoBehaviour
 {
     private GameManager manager;
 
+    [SerializeField] private CapsuleCollider capsuleCollider;
+    [SerializeField] private ParticleSystem thisParticleSystem;
+
     public Dictionary<string, int> elements; // Después de eliminar SHI
     private Dictionary<string, int> dmgTypes;
     private bool canHit;
@@ -132,6 +135,16 @@ public class Storm : MonoBehaviour
 
     public void DestroyThis()
     {
+        capsuleCollider.enabled = false;
+        thisParticleSystem.Stop();
+        ParticleSystem.MainModule particleSystemMain = thisParticleSystem.main;
+        float duration = particleSystemMain.startLifetime.constant;
+        StartCoroutine(DestroyIn(duration));
+    }
+
+    private IEnumerator DestroyIn(float time)
+    {
+        yield return new WaitForSeconds(time);
         Destroy(gameObject);
     }
 }

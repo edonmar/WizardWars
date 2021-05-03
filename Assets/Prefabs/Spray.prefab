@@ -4915,6 +4915,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 766c31bf6f7073240960e4cd546025da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boxCollider: {fileID: 178975791682078365}
+  thisParticleSystem: {fileID: 7506592810167289139}
   originTransform: {fileID: 0}
 --- !u!54 &4632460977177638792
 Rigidbody:

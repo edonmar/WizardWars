@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class Spray : MonoBehaviour
 {
-    public Transform originTransform;
+    [SerializeField] private BoxCollider boxCollider;
+    [SerializeField] private ParticleSystem thisParticleSystem;
+
+    [HideInInspector] public Transform originTransform;
     public Dictionary<string, int> elements;
     private Dictionary<string, int> dmgTypes;
     private int layerMask;
@@ -89,6 +92,16 @@ public class Spray : MonoBehaviour
 
     public void DestroyThis()
     {
+        boxCollider.enabled = false;
+        thisParticleSystem.Stop();
+        ParticleSystem.MainModule particleSystemMain = thisParticleSystem.main;
+        float duration = particleSystemMain.startLifetime.constant;
+        StartCoroutine(DestroyIn(duration));
+    }
+
+    private IEnumerator DestroyIn(float time)
+    {
+        yield return new WaitForSeconds(time);
         Destroy(gameObject);
     }
 }

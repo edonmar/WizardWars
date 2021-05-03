@@ -737,7 +737,7 @@ public class Player : MonoBehaviour
             case "shield":
                 characterStats.CastShield();
                 break;
-            
+
             case "ward":
                 characterStats.CastWard(elements);
                 break;
@@ -824,19 +824,22 @@ public class Player : MonoBehaviour
 
     private void DestroyBeam()
     {
-        Destroy(activeBeam);
+        Beam activeBeamScript = activeBeam.GetComponent<Beam>();
+        activeBeamScript.DestroyThis();
         isBeamActive = false;
     }
 
     private void DestroyLightning()
     {
-        Destroy(activeLightning);
+        Lightning activeLightningScript = activeLightning.GetComponent<Lightning>();
+        activeLightningScript.DestroyThis();
         isLightningActive = false;
     }
 
     private void DestroySpray()
     {
-        Destroy(activeSpray);
+        Spray activeSprayScript = activeSpray.GetComponent<Spray>();
+        activeSprayScript.DestroyThis();
         isSprayActive = false;
     }
 

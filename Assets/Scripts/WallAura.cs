@@ -6,6 +6,9 @@ public class WallAura : MonoBehaviour
 {
     private GameManager manager;
 
+    [SerializeField] private CapsuleCollider capsuleCollider;
+    [SerializeField] private ParticleSystem thisParticleSystem;
+
     public Dictionary<string, int> elements; // Después de eliminar SHI, EAR e ICE
     private Dictionary<string, int> dmgTypes;
     private bool canHit;
@@ -110,6 +113,16 @@ public class WallAura : MonoBehaviour
         if (elements.ContainsKey("LIF") || elements.ContainsKey("ARC"))
             Explode();
 
+        capsuleCollider.enabled = false;
+        thisParticleSystem.Stop();
+        ParticleSystem.MainModule particleSystemMain = thisParticleSystem.main;
+        float duration = particleSystemMain.startLifetime.constant;
+        StartCoroutine(DestroyIn(duration));
+    }
+
+    private IEnumerator DestroyIn(float time)
+    {
+        yield return new WaitForSeconds(time);
         Destroy(gameObject);
     }
 }
