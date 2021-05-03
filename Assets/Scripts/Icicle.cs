@@ -39,9 +39,10 @@ public class Icicle : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        int otherLayer = other.gameObject.layer;
         if (CanHit(other))
             Hit(other);
-        if (other.gameObject.layer != LayerMask.NameToLayer("NonSolidSpells"))
+        if (otherLayer != LayerMask.NameToLayer("NonSolidSpells") && otherLayer != LayerMask.NameToLayer("Characters"))
             DestroyThis();
     }
 
