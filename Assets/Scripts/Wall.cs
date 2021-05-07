@@ -22,7 +22,7 @@ public class Wall : MonoBehaviour
             wallAuraElements = wallAura.GetComponent<WallAura>().elements;
         }
 
-        manager.CheckAndDestroyOverlappingSpells(gameObject, 0.5f);
+        manager.CheckAndDestroyOverlappingSpells(gameObject, 0.625f);
     }
 
     private void OnTriggerEnter(Collider other)

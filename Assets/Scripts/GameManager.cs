@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
 
         Vector3 spawnPos = originTransform.position - new Vector3(0, 0.5f, 0);
         Quaternion spawnRot = originTransform.rotation;
-        
+
         // Roto la barrera en el eje Y para que quede enfrente del personaje
         if (castType == "FOC")
         {
@@ -704,7 +704,8 @@ public class GameManager : MonoBehaviour
 
     private void ApplyMaterialWall(GameObject newObj, Dictionary<string, int> elements)
     {
-        newObj.GetComponent<MeshRenderer>().material = elements.ContainsKey("EAR") ? matEarthTexture : matIceTexture;
+        Transform crystal = newObj.transform.Find("Crystal");
+        crystal.GetComponent<MeshRenderer>().material = elements.ContainsKey("EAR") ? matEarthTexture : matIceTexture;
     }
 
     private List<Color> GetTrailColorsRock(Dictionary<string, int> elements)
