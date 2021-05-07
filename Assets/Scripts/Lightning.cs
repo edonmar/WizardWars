@@ -212,13 +212,13 @@ public class Lightning : MonoBehaviour
             }
 
             for (int i = 1; i < chainedCharacters.Count; i++)
-                Hit(chainedCharacters[i]);
+                HitCharacter(chainedCharacters[i]);
 
             yield return new WaitForSeconds(hitRate);
         }
     }
 
-    private void Hit(GameObject character)
+    private void HitCharacter(GameObject character)
     {
         CharacterStats characterStats = character.GetComponent<CharacterStats>();
         if (characterStats.health != 0)

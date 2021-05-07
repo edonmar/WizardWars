@@ -28,12 +28,11 @@ public class Wall : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         GameObject otherGameObj = other.gameObject;
-        string otherGameObjTag = otherGameObj.tag;
 
         if (wallAura == null)
             return;
 
-        if (OtherDestroysWallAura(otherGameObj, otherGameObjTag))
+        if (OtherDestroysWallAura(otherGameObj, otherGameObj.tag))
             DestroyWallAura();
     }
 

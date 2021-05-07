@@ -46,20 +46,24 @@ public class Spray : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (!CanHit(other))
+        if (!canHit)
             return;
 
-        Hit(other);
-        canHit = false;
+        if (CanHitCharacter(other))
+        {
+            HitCharacter(other);
+            canHit = false;
+        }
+        else if (CanHitBarrier(other))
+        {
+            HitBarrier(other);
+            canHit = false;
+        }
     }
 
-    private bool CanHit(Collider other)
+    private bool CanHitCharacter(Collider other)
     {
-        if (!canHit)
-            return false;
-
-        string otherTag = other.tag;
-        if (otherTag != "Player" && otherTag != "Enemy")
+        if (!other.CompareTag("Player") && !other.CompareTag("Enemy"))
             return false;
 
         // Si las capas de layerMask están entre el punto de lanzamiento y el objeto que provoca el trigger,
@@ -70,7 +74,16 @@ public class Spray : MonoBehaviour
         return true;
     }
 
-    private void Hit(Collider other)
+    private bool CanHitBarrier(Collider other)
+    {
+        if (!other.CompareTag("Barrier"))
+            return false;
+        if (Physics.Linecast(originTransform.position, other.gameObject.transform.position, layerMask))
+            return false;
+        return true;
+    }
+
+    private void HitCharacter(Collider other)
     {
         CharacterStats characterStats = other.GetComponent<CharacterStats>();
         if (characterStats.health == 0)
@@ -79,6 +92,13 @@ public class Spray : MonoBehaviour
         // Si el Spray contiene Water, empuja al personaje
         if (elements.ContainsKey("WAT"))
             other.GetComponent<Rigidbody>().velocity = originTransform.forward * 5;
+    }
+
+    private void HitBarrier(Collider other)
+    {
+        BarrierStats barrierStats = other.GetComponent<BarrierStats>();
+        if (barrierStats.health != 0)
+            barrierStats.TakeSpell(dmgTypes);
     }
 
     private IEnumerator HitTimer(float hitRate)

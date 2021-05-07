@@ -22,9 +22,8 @@ public class Mine : MonoBehaviour
             return;
 
         GameObject otherGameObj = other.gameObject;
-        string otherGameObjTag = otherGameObj.tag;
 
-        if (OtherDestroysThis(otherGameObj, otherGameObjTag))
+        if (OtherDestroysThis(otherGameObj, otherGameObj.tag))
             DestroyThis();
     }
 

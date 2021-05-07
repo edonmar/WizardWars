@@ -91,14 +91,15 @@ public class Nova : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (CanHit(other))
-            Hit(other);
+        if (CanHitCharacter(other))
+            HitCharacter(other);
+        else if (CanHitBarrier(other))
+            HitBarrier(other);
     }
 
-    private bool CanHit(Collider other)
+    private bool CanHitCharacter(Collider other)
     {
-        string otherTag = other.tag;
-        if (otherTag != "Player" && otherTag != "Enemy")
+        if (!other.CompareTag("Player") && !other.CompareTag("Enemy"))
             return false;
 
         if (caster == other.gameObject)
@@ -112,7 +113,16 @@ public class Nova : MonoBehaviour
         return true;
     }
 
-    private void Hit(Collider other)
+    private bool CanHitBarrier(Collider other)
+    {
+        if (!other.CompareTag("Barrier"))
+            return false;
+        if (Physics.Linecast(transform.position, other.gameObject.transform.position, layerMask))
+            return false;
+        return true;
+    }
+
+    private void HitCharacter(Collider other)
     {
         CharacterStats characterStats = other.GetComponent<CharacterStats>();
         if (characterStats.health == 0)
@@ -122,6 +132,13 @@ public class Nova : MonoBehaviour
         if (elements.ContainsKey("WAT"))
             other.GetComponent<Rigidbody>().velocity =
                 (other.transform.position - transform.position).normalized * 6;
+    }
+
+    private void HitBarrier(Collider other)
+    {
+        BarrierStats barrierStats = other.GetComponent<BarrierStats>();
+        if (barrierStats.health != 0)
+            barrierStats.TakeSpell(dmgTypes);
     }
 
     public void DestroyThis()

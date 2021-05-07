@@ -12,10 +12,10 @@ GameObject:
   - component: {fileID: 8166889117241251874}
   - component: {fileID: 8166889117241251875}
   - component: {fileID: 8166889117241251876}
-  - component: {fileID: 6539772131472206352}
+  - component: {fileID: 765167532915876414}
   m_Layer: 14
   m_Name: BarrierFull
-  m_TagString: Untagged
+  m_TagString: Barrier
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -97,7 +97,7 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -317884364718691439, guid: 975167a104793bf469682dfdd7d64528, type: 3}
---- !u!114 &6539772131472206352
+--- !u!114 &765167532915876414
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -106,7 +106,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 8166889117241251872}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bea063033315aed40a4af2c9365ccd1f, type: 3}
+  m_Script: {fileID: 11500000, guid: ac484e1a14ca80d4fbb9f6bdd61bd93a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  duration: 7
+  maxHealth: 1000
+  health: 0

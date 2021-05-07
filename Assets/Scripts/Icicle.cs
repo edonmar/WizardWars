@@ -40,30 +40,39 @@ public class Icicle : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         int otherLayer = other.gameObject.layer;
-        if (CanHit(other))
-            Hit(other);
+        if (CanHitCharacter(other))
+            HitCharacter(other);
+        else if (CanHitBarrier(other))
+            HitBarrier(other);
         if (otherLayer != LayerMask.NameToLayer("NonSolidSpells") && otherLayer != LayerMask.NameToLayer("Characters"))
             DestroyThis();
     }
 
-    private bool CanHit(Collider other)
+    private bool CanHitCharacter(Collider other)
     {
-        string otherTag = other.tag;
-        if (otherTag != "Player" && otherTag != "Enemy")
-            return false;
-
-        return true;
+        return other.CompareTag("Player") || other.CompareTag("Enemy");
     }
 
-    private void Hit(Collider other)
+    private bool CanHitBarrier(Collider other)
     {
-        string otherTag = other.tag;
-        if (otherTag != "Player" && otherTag != "Enemy")
+        return other.CompareTag("Barrier");
+    }
+
+    private void HitCharacter(Collider other)
+    {
+        if (!other.CompareTag("Player") && !other.CompareTag("Enemy"))
             return;
 
         CharacterStats characterStats = other.GetComponent<CharacterStats>();
         if (characterStats.health != 0)
             characterStats.TakeSpell(dmgTypes);
+    }
+
+    private void HitBarrier(Collider other)
+    {
+        BarrierStats barrierStats = other.GetComponent<BarrierStats>();
+        if (barrierStats.health != 0)
+            barrierStats.TakeSpell(dmgTypes);
     }
 
     public void DestroyThis()

@@ -51,7 +51,8 @@ public class GameManager : MonoBehaviour
                 originRotation.eulerAngles.z);
         }
 
-        Instantiate(barrier, spawnPos, spawnRot);
+        GameObject newObj = Instantiate(barrier, spawnPos, spawnRot);
+        newObj.GetComponent<BarrierStats>().loseRate = -50;
     }
 
     public IEnumerator CastWalls(Dictionary<string, int> elements, string castType,

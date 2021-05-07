@@ -61,32 +61,27 @@ public class WallAura : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (!CanHit(other))
+        if (!CanHitCharacter(other))
             return;
 
-        Hit(other);
+        HitCharacter(other);
         canHit = false;
     }
 
-    private bool CanHit(Collider other)
+    private bool CanHitCharacter(Collider other)
     {
         if (!canHit)
             return false;
 
-        string otherTag = other.tag;
-        if (otherTag != "Player" && otherTag != "Enemy")
-            return false;
-
-        return true;
+        return other.CompareTag("Player") || other.CompareTag("Enemy");
     }
 
-    private void Hit(Collider other)
+    private void HitCharacter(Collider other)
     {
         if (!canHit)
             return;
 
-        string otherTag = other.tag;
-        if (otherTag != "Player" && otherTag != "Enemy")
+        if (!other.CompareTag("Player") && !other.CompareTag("Enemy"))
             return;
 
         CharacterStats characterStats = other.GetComponent<CharacterStats>();

@@ -51,18 +51,16 @@ public class Storm : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         GameObject otherGameObj = other.gameObject;
-        string otherGameObjTag = otherGameObj.tag;
-
-        if (OtherDestroysThis(otherGameObj, otherGameObjTag))
+        if (OtherDestroysThis(otherGameObj, otherGameObj.tag))
             DestroyThis();
     }
 
     private void OnTriggerStay(Collider other)
     {
-        if (!CanHit(other))
+        if (!CanHitCharacter(other))
             return;
 
-        Hit(other);
+        HitCharacter(other);
         canHit = false;
     }
 
@@ -105,19 +103,15 @@ public class Storm : MonoBehaviour
         return destroys;
     }
 
-    private bool CanHit(Collider other)
+    private bool CanHitCharacter(Collider other)
     {
         if (!canHit)
             return false;
 
-        string otherTag = other.tag;
-        if (otherTag != "Player" && otherTag != "Enemy")
-            return false;
-
-        return true;
+        return other.CompareTag("Player") || other.CompareTag("Enemy");
     }
 
-    private void Hit(Collider other)
+    private void HitCharacter(Collider other)
     {
         CharacterStats characterStats = other.GetComponent<CharacterStats>();
         if (characterStats.health != 0)
