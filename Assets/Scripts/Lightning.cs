@@ -9,6 +9,7 @@ public class Lightning : MonoBehaviour
 
     public Dictionary<string, int> elements;
     private Dictionary<string, int> dmgTypes;
+    private LayerMask layerMask;
     public GameObject caster;
     public string castType;
     public float size;
@@ -32,6 +33,7 @@ public class Lightning : MonoBehaviour
     {
         chainedCharacters = new List<GameObject>();
         lightningFragments = new List<GameObject>();
+        layerMask = LayerMask.GetMask("Terrain", "Barrier");
 
         GetPositionsAroundCaster();
         // Si el tipo de lanzamiento es de área, empiezo en L para que el primer golpe sea F
@@ -90,7 +92,7 @@ public class Lightning : MonoBehaviour
 
         do
         {
-            GameObject nearestCharacter = GetNearestCharacter(chainedCharacters[pos].transform.position);
+            GameObject nearestCharacter = GetNextCharacter(chainedCharacters[pos].transform.position);
             if (nearestCharacter == null)
                 break;
 
@@ -99,7 +101,7 @@ public class Lightning : MonoBehaviour
         } while (true);
     }
 
-    private GameObject GetNearestCharacter(Vector3 characterPos)
+    private GameObject GetNextCharacter(Vector3 characterPos)
     {
         // Obtiene una lista con los personajes dentro del radio pasado como parámetro
         List<GameObject> nearCharacters = GetNearCharacters(characterPos, size);
@@ -111,6 +113,9 @@ public class Lightning : MonoBehaviour
 
         // Elimina de la lista los personajes por los que ya haya pasado el rayo
         nearCharacters = nearCharacters.Except(chainedCharacters).ToList();
+
+        // Elimina de la lista los personajes que tienen una pared entre ellos y el personaje actual
+        nearCharacters = GetNonCoveredCharacters(characterPos, nearCharacters);
 
         // Devuelve el personaje más cercano de los que queden sin golpear por el rayo
         GameObject nearestCharacter = nearCharacters.Count == 0
@@ -146,6 +151,11 @@ public class Lightning : MonoBehaviour
             where Vector3.Distance(characterPosition, GetPositionAtDirection()) <=
                   Vector3.Distance(characterPosition, GetPositionAtOppositeDirection())
             select c).ToList();
+    }
+
+    private List<GameObject> GetNonCoveredCharacters(Vector3 characterPos, List<GameObject> nearCharacters)
+    {
+        return nearCharacters.Where(c => !Physics.Linecast(characterPos, c.transform.position, layerMask)).ToList();
     }
 
     private GameObject NearestCharacter(List<GameObject> nearCharacters, Vector3 characterPos)
