@@ -23,6 +23,8 @@ public class GameManager : MonoBehaviour
     public Material matBeamSpray;
     public Material matBeamLightning;
 
+    [SerializeField] private GameObject barrierFullPrefab;
+    [SerializeField] private GameObject barrierHalfPrefab;
     [SerializeField] private GameObject wallPrefab;
     [SerializeField] private GameObject wallAuraPrefab;
     [SerializeField] private GameObject minePrefab;
@@ -33,6 +35,24 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject beamPrefab;
     [SerializeField] private GameObject lightningPrefab;
     [SerializeField] private GameObject sprayPrefab;
+
+    public void CastBarrier(string castType, Transform originTransform)
+    {
+        GameObject barrier = castType == "ARE" ? barrierFullPrefab : barrierHalfPrefab;
+
+        Vector3 spawnPos = originTransform.position - new Vector3(0, 0.5f, 0);
+        Quaternion spawnRot = originTransform.rotation;
+        
+        // Roto la barrera en el eje Y para que quede enfrente del personaje
+        if (castType == "FOC")
+        {
+            Quaternion originRotation = originTransform.rotation;
+            spawnRot = Quaternion.Euler(originRotation.eulerAngles.x, originRotation.eulerAngles.y - 90,
+                originRotation.eulerAngles.z);
+        }
+
+        Instantiate(barrier, spawnPos, spawnRot);
+    }
 
     public IEnumerator CastWalls(Dictionary<string, int> elements, string castType,
         Transform originTransform)

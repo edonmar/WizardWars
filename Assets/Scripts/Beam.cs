@@ -14,7 +14,7 @@ public class Beam : MonoBehaviour
     private void Start()
     {
         // Las capas con las que chocará el Beam, ignorando las demás capas
-        layerMask = LayerMask.GetMask("Terrain", "SolidSpells", "Characters");
+        layerMask = LayerMask.GetMask("Terrain", "SolidSpells", "Characters", "Barrier");
         lineRenderer = GetComponent<LineRenderer>();
 
         dmgTypes = GetDamageTypesDictionary();

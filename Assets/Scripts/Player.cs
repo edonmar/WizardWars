@@ -670,7 +670,7 @@ public class Player : MonoBehaviour
         switch (spellType)
         {
             case "barrier":
-
+                manager.CastBarrier(castType, transform);
                 break;
 
             case "wall":
