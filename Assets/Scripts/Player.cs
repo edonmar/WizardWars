@@ -824,23 +824,32 @@ public class Player : MonoBehaviour
 
     private void DestroyBeam()
     {
+        isBeamActive = false;
+        if (activeBeam == null)
+            return;
         Beam activeBeamScript = activeBeam.GetComponent<Beam>();
         activeBeamScript.DestroyThis();
-        isBeamActive = false;
+        activeBeam = null;
     }
 
     private void DestroyLightning()
     {
+        isLightningActive = false;
+        if (activeLightning == null)
+            return;
         Lightning activeLightningScript = activeLightning.GetComponent<Lightning>();
         activeLightningScript.DestroyThis();
-        isLightningActive = false;
+        activeLightning = null;
     }
 
     private void DestroySpray()
     {
+        isSprayActive = false;
+        if (activeSpray == null)
+            return;
         Spray activeSprayScript = activeSpray.GetComponent<Spray>();
         activeSprayScript.DestroyThis();
-        isSprayActive = false;
+        activeSpray = null;
     }
 
     private Dictionary<string, int> GetSelfCastEffectDamageTypesDictionary(Dictionary<string, int> elements)
