@@ -11,12 +11,15 @@ public class CharacterStats : MonoBehaviour
     [SerializeField] private GameObject wardParticles;
     [SerializeField] private GameObject flamesParticles;
     [SerializeField] private GameObject frozenParticles;
+    [SerializeField] private GameObject stunParticles;
 
     private ParticleSystem psWard;
     private ParticleSystem psFlames;
     private ParticleSystem psFrozen;
+    private ParticleSystem psStun;
     ParticleSystem.MainModule psMainWard;
     ParticleSystem.MainModule psMainFlames;
+    ParticleSystem.MainModule psMainStun;
 
     public int maxHealth;
     public int health;
@@ -39,6 +42,7 @@ public class CharacterStats : MonoBehaviour
     public bool wetResistant;
     public bool chillResistant;
     public bool freezeResistant;
+    public bool stunResistant;
     public bool burningResistant;
 
     // Diccionario con todos los tipos de daño y el porcentaje que recibirá de cada uno
@@ -53,21 +57,25 @@ public class CharacterStats : MonoBehaviour
     private bool isWet;
     private bool isChilled;
     [HideInInspector] public bool isFrozen;
+    [HideInInspector] public bool isStunned;
     private bool isBurning;
     private bool isWetAndChilled;
 
     private float wardTime;
     private float chillTime;
     private float freezeTime;
+    private float stunTime;
     private float burningTime;
     private float wardTimeRemaining;
     private float chillTimeRemaining;
     private float freezeTimeRemaining;
+    private float stunTimeRemaining;
     private float burningTimeRemaining;
 
     private IEnumerator wardCoroutine;
     private IEnumerator chillCoroutine;
     private IEnumerator freezeCoroutine;
+    private IEnumerator stunCoroutine;
     private IEnumerator burningCoroutine;
 
     private void Start()
@@ -84,6 +92,7 @@ public class CharacterStats : MonoBehaviour
         isWet = false;
         isChilled = false;
         isFrozen = false;
+        isStunned = false;
         isBurning = false;
         isWetAndChilled = false;
 
@@ -93,13 +102,16 @@ public class CharacterStats : MonoBehaviour
         wardTime = 15;
         chillTime = 10;
         freezeTime = 5;
+        stunTime = 2;
         burningTime = 5;
 
         psFlames = flamesParticles.GetComponent<ParticleSystem>();
         psFrozen = frozenParticles.GetComponent<ParticleSystem>();
+        psStun = stunParticles.GetComponent<ParticleSystem>();
         psMainFlames = psFlames.main;
         flamesParticles.SetActive(true);
         frozenParticles.SetActive(true);
+        stunParticles.SetActive(true);
 
         if (wardParticles == null)
             return;
@@ -133,6 +145,7 @@ public class CharacterStats : MonoBehaviour
             {"wet", wetResistant},
             {"chill", chillResistant},
             {"freeze", freezeResistant},
+            {"stun", stunResistant},
             {"burning", burningResistant},
         };
 
@@ -301,6 +314,11 @@ public class CharacterStats : MonoBehaviour
                 DispelFreeze();
         }
 
+        if (wardElements.ContainsKey("PHY"))
+        {
+            statusEffectResistances["stun"] = true;
+        }
+
         if (wardElements.ContainsKey("FIR"))
         {
             statusEffectResistances["burning"] = true;
@@ -334,6 +352,9 @@ public class CharacterStats : MonoBehaviour
 
         if (wardElements.ContainsKey("COL"))
             statusEffectResistances["chill"] = chillResistant;
+
+        if (wardElements.ContainsKey("PHY"))
+            statusEffectResistances["stun"] = stunResistant;
 
         if (wardElements.ContainsKey("FIR"))
             statusEffectResistances["burning"] = burningResistant;
@@ -405,6 +426,12 @@ public class CharacterStats : MonoBehaviour
         }
 
         DispelWard();
+    }
+
+    public void TryApplyStunningEffect()
+    {
+        if (!statusEffectResistances["stun"])
+            ApplyStun();
     }
 
     private void ApplyStatusEffects(Dictionary<string, int> dmgTypes)
@@ -504,6 +531,18 @@ public class CharacterStats : MonoBehaviour
         DispelFreeze();
     }
 
+    private IEnumerator StunCoroutine()
+    {
+        stunTimeRemaining = stunTime;
+        while (stunTimeRemaining > 0)
+        {
+            stunTimeRemaining -= Time.deltaTime;
+            yield return null;
+        }
+
+        DispelStun();
+    }
+
     private IEnumerator BurningCoroutine()
     {
         float hitTimer = 0.25f; // Cada cuánto tiempo aplicará Fire
@@ -601,6 +640,31 @@ public class CharacterStats : MonoBehaviour
         StopFreezeParticles();
     }
 
+    private void ApplyStun()
+    {
+        if (isStunned)
+            stunTimeRemaining = stunTime;
+        else
+        {
+            isStunned = true;
+            stunCoroutine = StunCoroutine();
+            StartCoroutine(stunCoroutine);
+            movSpeed = 0;
+            PlayStunParticles();
+        }
+    }
+
+    private void DispelStun()
+    {
+        if (!isStunned)
+            return;
+
+        isStunned = false;
+        StopCoroutine(stunCoroutine);
+        movSpeed = baseMovSpeed;
+        StopStunParticles();
+    }
+
     private void ApplyBurning()
     {
         if (isBurning)
@@ -679,6 +743,16 @@ public class CharacterStats : MonoBehaviour
     private void StopFreezeParticles()
     {
         psFrozen.Stop();
+    }
+
+    private void PlayStunParticles()
+    {
+        psStun.Play();
+    }
+
+    private void StopStunParticles()
+    {
+        psStun.Stop();
     }
 
     private void PlayWardParticles()

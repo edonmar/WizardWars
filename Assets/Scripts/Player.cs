@@ -469,6 +469,10 @@ public class Player : MonoBehaviour
         if (characterStats.isFrozen && castType != "SEL")
             return;
 
+        // Si estoy aturdido, no puedo lanzar hechizos
+        if (characterStats.isStunned)
+            return;
+
         Dictionary<string, int> elements = GetElementDictionary();
         CastSpell(elements, castType, spellType);
     }

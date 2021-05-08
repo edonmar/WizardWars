@@ -43,7 +43,7 @@ public class Nova : MonoBehaviour
                 if (arcaneCount > 0)
                     dmgTypesDict.Add("ARC", 225);
                 if (earthCount > 0)
-                    dmgTypesDict.Add("EAR", 0);
+                    dmgTypesDict.Add("PHY", 0);
                 if (fireCount > 0)
                     dmgTypesDict.Add("FIR", 60 + 19 * (fireCount - 1));
                 if (iceCount > 0)
@@ -102,6 +102,8 @@ public class Nova : MonoBehaviour
         if (!other.CompareTag("Player") && !other.CompareTag("Enemy"))
             return false;
 
+        // Si el personaje es el mismo que ha lanzado la Nova (y si la Nova se ha lanzado directamente en modo Area),
+        // no le afecta
         if (caster == other.gameObject)
             return false;
 
@@ -128,7 +130,12 @@ public class Nova : MonoBehaviour
         if (characterStats.health == 0)
             return;
         characterStats.TakeSpell(dmgTypes);
-        // Si la Nova contiene agua, empuja al personaje
+
+        // Si la Nova contiene Earth, aplica el efecto de estado Stunned
+        if (elements.ContainsKey("EAR"))
+            characterStats.TryApplyStunningEffect();
+
+        // Si la Nova contiene Water, empuja al personaje
         if (elements.ContainsKey("WAT"))
             other.GetComponent<Rigidbody>().velocity =
                 (other.transform.position - transform.position).normalized * 6;
