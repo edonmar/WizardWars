@@ -247,7 +247,8 @@ public class GameManager : MonoBehaviour
         float radius;
         int count = elements[elements.ElementAt(1).Key];
         float duration = 4 + 2 * (count - 1);
-        Color color = GetColorByElement(elements.ElementAt(1).Key);
+        Color startColor = GetColorByElement(elements.ElementAt(1).Key);
+        Color endColor = elements.Count > 2 ? GetColorByElement(elements.ElementAt(2).Key) : startColor;
         int numberOfObjects;
         int numOfIterations;
         bool evenNumberOfObjects;
@@ -321,7 +322,17 @@ public class GameManager : MonoBehaviour
             ParticleSystem.MainModule particleSystemMain = ps.main;
             ps.Stop();
             particleSystemMain.duration = duration;
-            particleSystemMain.startColor = color;
+
+            ParticleSystem.ColorOverLifetimeModule colorOverTime = ps.colorOverLifetime;
+            Gradient grad = new Gradient();
+            grad.SetKeys(
+                new GradientColorKey[] {new GradientColorKey(startColor, 0.0f), new GradientColorKey(endColor, 0.5f)},
+                new GradientAlphaKey[]
+                {
+                    /*new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(1.0f, 1.0f)*/
+                });
+            colorOverTime.color = grad;
+
             ps.Play();
         }
     }
