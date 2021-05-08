@@ -52,7 +52,7 @@ public class CharacterStats : MonoBehaviour
     private bool isWardActive;
     private bool isWet;
     private bool isChilled;
-    private bool isFrozen;
+    [HideInInspector] public bool isFrozen;
     private bool isBurning;
     private bool isWetAndChilled;
 

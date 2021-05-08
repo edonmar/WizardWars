@@ -465,6 +465,10 @@ public class Player : MonoBehaviour
         if (castType == "SEL" && spellType == "force")
             return;
 
+        // Si estoy congelado, sólo puedo realizar el tipo de lanzamiento SelfCast
+        if (characterStats.isFrozen && castType != "SEL")
+            return;
+
         Dictionary<string, int> elements = GetElementDictionary();
         CastSpell(elements, castType, spellType);
     }
