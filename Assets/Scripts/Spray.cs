@@ -76,7 +76,7 @@ public class Spray : MonoBehaviour
 
     private bool CanHitBarrier(Collider other)
     {
-        if (!other.CompareTag("Barrier"))
+        if (!other.CompareTag("Barrier") && !other.CompareTag("Wall"))
             return false;
         if (Physics.Linecast(originTransform.position, other.gameObject.transform.position, layerMask))
             return false;

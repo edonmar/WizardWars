@@ -61,7 +61,9 @@ public class GameManager : MonoBehaviour
         Vector3 originPos = originTransform.position;
         Vector3 originRot = originTransform.localEulerAngles;
         float radius;
-        float duration;
+        int duration;
+        int health;
+        int loseRate;
         int numberOfObjects;
         int numOfIterations;
         bool evenNumberOfObjects;
@@ -69,10 +71,18 @@ public class GameManager : MonoBehaviour
         int earthCount = elements.ContainsKey("EAR") ? elements["EAR"] : 0;
         int iceCount = elements.ContainsKey("ICE") ? elements["ICE"] : 0;
 
+        // Duración
+        // Contiene Earth: 20s + 10s por Earth adicional + 1s por cada Ice
+        // No contiene Earth: 1s por Ice
+        health = 750 + 250 * (earthCount + iceCount - 1);
         if (earthCount != 0)
-            duration = 20 + 10 * (earthCount - 1);
+            duration = 20 + 10 * (earthCount - 1) + iceCount;
         else
             duration = iceCount;
+
+        // Calculo el ratio al que debe perder vida para que duren el tiempo que he calculado,
+        // teniendo en cuenta que cada segundo la vida baja 4 veces
+        loseRate = -health / (duration * 4);
 
         switch (castType)
         {
@@ -130,7 +140,9 @@ public class GameManager : MonoBehaviour
 
         void InitialStepsNewWall(GameObject newObj)
         {
-            newObj.GetComponent<DestroyIn>().duration = duration;
+            BarrierStats barrierStats = newObj.GetComponent<BarrierStats>();
+            barrierStats.maxHealth = health;
+            barrierStats.loseRate = loseRate;
 
             // Le paso al wall los elementos que tendrá
             Dictionary<string, int> subDictElements =

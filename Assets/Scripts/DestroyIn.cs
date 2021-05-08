@@ -16,9 +16,6 @@ public class DestroyIn : MonoBehaviour
 
         switch (gameObject.tag)
         {
-            case "Wall":
-                gameObject.GetComponent<Wall>().DestroyThis();
-                break;
             case "WallAura":
                 gameObject.GetComponent<WallAura>().DestroyThis();
                 break;

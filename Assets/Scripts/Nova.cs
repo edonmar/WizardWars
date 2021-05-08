@@ -115,7 +115,7 @@ public class Nova : MonoBehaviour
 
     private bool CanHitBarrier(Collider other)
     {
-        if (!other.CompareTag("Barrier"))
+        if (!other.CompareTag("Barrier") && !other.CompareTag("Wall"))
             return false;
         if (Physics.Linecast(transform.position, other.gameObject.transform.position, layerMask))
             return false;

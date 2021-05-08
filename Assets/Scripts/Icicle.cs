@@ -55,7 +55,7 @@ public class Icicle : MonoBehaviour
 
     private bool CanHitBarrier(Collider other)
     {
-        return other.CompareTag("Barrier");
+        return other.CompareTag("Barrier") || other.CompareTag("Wall");
     }
 
     private void HitCharacter(Collider other)
