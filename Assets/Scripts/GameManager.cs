@@ -52,7 +52,8 @@ public class GameManager : MonoBehaviour
         }
 
         GameObject newObj = Instantiate(barrier, spawnPos, spawnRot);
-        newObj.GetComponent<BarrierStats>().loseRate = -50;
+        BarrierStats barrierStats = newObj.GetComponent<BarrierStats>();
+        barrierStats.loseRate = -barrierStats.maxHealth / 32;
     }
 
     public IEnumerator CastWalls(Dictionary<string, int> elements, string castType,
