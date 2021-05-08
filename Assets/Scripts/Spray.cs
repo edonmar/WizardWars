@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Spray : MonoBehaviour
@@ -11,7 +12,10 @@ public class Spray : MonoBehaviour
     public Dictionary<string, int> elements;
     private Dictionary<string, int> dmgTypes;
     private int layerMask;
-    private bool canHit;
+
+    // Listas con los personajes y barreras que están actualmente dentro del collider de Spray
+    private HashSet<Collider> charactersColliding = new HashSet<Collider>();
+    private HashSet<Collider> barriersColliding = new HashSet<Collider>();
 
     private void Start()
     {
@@ -44,43 +48,54 @@ public class Spray : MonoBehaviour
         return dmgTypesDict;
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
-        if (!canHit)
-            return;
-
-        if (CanHitCharacter(other))
-        {
-            HitCharacter(other);
-            canHit = false;
-        }
-        else if (CanHitBarrier(other))
-        {
-            HitBarrier(other);
-            canHit = false;
-        }
+        GameObject otherGameObject = other.gameObject;
+        if (IsCharacter(otherGameObject))
+            charactersColliding.Add(other);
+        else if (IsBarrier(otherGameObject))
+            barriersColliding.Add(other);
     }
 
-    private bool CanHitCharacter(Collider other)
+    private void OnTriggerExit(Collider other)
     {
-        if (!other.CompareTag("Player") && !other.CompareTag("Enemy"))
-            return false;
+        GameObject otherGameObject = other.gameObject;
+        if (IsCharacter(otherGameObject))
+            charactersColliding.Remove(other);
+        else if (IsBarrier(otherGameObject))
+            barriersColliding.Remove(other);
+    }
 
+    private void RemoveDestroyedElements()
+    {
+        charactersColliding.RemoveWhere(item => item == null);
+        barriersColliding.RemoveWhere(item => item == null);
+    }
+
+    private void HitCollidingObjects()
+    {
+        foreach (Collider c in charactersColliding.Where(c => CanHit(c)))
+            HitCharacter(c);
+
+        foreach (Collider c in barriersColliding.Where(c => CanHit(c)))
+            HitBarrier(c);
+    }
+
+    private bool IsCharacter(GameObject other)
+    {
+        return other.CompareTag("Player") || other.CompareTag("Enemy");
+    }
+
+    private bool IsBarrier(GameObject other)
+    {
+        return other.CompareTag("Barrier") || other.CompareTag("Wall");
+    }
+
+    private bool CanHit(Collider other)
+    {
         // Si las capas de layerMask están entre el punto de lanzamiento y el objeto que provoca el trigger,
         // el Spray no golpeará al objeto
-        if (Physics.Linecast(originTransform.position, other.gameObject.transform.position, layerMask))
-            return false;
-
-        return true;
-    }
-
-    private bool CanHitBarrier(Collider other)
-    {
-        if (!other.CompareTag("Barrier") && !other.CompareTag("Wall"))
-            return false;
-        if (Physics.Linecast(originTransform.position, other.gameObject.transform.position, layerMask))
-            return false;
-        return true;
+        return !Physics.Linecast(originTransform.position, other.gameObject.transform.position, layerMask);
     }
 
     private void HitCharacter(Collider other)
@@ -105,7 +120,8 @@ public class Spray : MonoBehaviour
     {
         while (true)
         {
-            canHit = true;
+            RemoveDestroyedElements();
+            HitCollidingObjects();
             yield return new WaitForSeconds(hitRate);
         }
     }
