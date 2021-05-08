@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,6 +12,7 @@ public class Player : MonoBehaviour
     [SerializeField] private Transform shootPoint;
     [SerializeField] private CharacterStats characterStats;
 
+    [SerializeField] private ParticleSystem selfCastParticles;
     [SerializeField] private ParticleSystem chargingParticles;
     [SerializeField] private ParticleSystem chargingFullParticles;
 
@@ -49,6 +51,7 @@ public class Player : MonoBehaviour
         manager = GameObject.Find("Manager").GetComponent<GameManager>();
         mainCamera = Camera.main;
 
+        selfCastParticles.gameObject.SetActive(true);
         chargingParticles.gameObject.SetActive(true);
         chargingFullParticles.gameObject.SetActive(true);
 
@@ -751,6 +754,7 @@ public class Player : MonoBehaviour
             case "selfCastEffect":
                 Dictionary<string, int> dmgTypes = GetSelfCastEffectDamageTypesDictionary(elements);
                 characterStats.TakeSpell(dmgTypes);
+                PlaySelfCastParticles(elements);
                 break;
 
             case "imbuedVerticalSwing":
@@ -894,5 +898,25 @@ public class Player : MonoBehaviour
             dmgTypesDict.Add("STE", 280 + 70 * (steamCount - 1));
 
         return dmgTypesDict;
+    }
+
+    private void PlaySelfCastParticles(Dictionary<string, int> elements)
+    {
+        Color startColor = manager.GetColorByElement(elements.ElementAt(0).Key);
+        Color endColor = elements.Count > 1 ? manager.GetColorByElement(elements.ElementAt(1).Key) : startColor;
+
+        ParticleSystem.ColorOverLifetimeModule colorOverTime = selfCastParticles.colorOverLifetime;
+        Gradient grad = new Gradient();
+        grad.SetKeys(
+            new GradientColorKey[]
+                {new GradientColorKey(startColor, 0.0f), new GradientColorKey(endColor, 1.0f)},
+            new GradientAlphaKey[]
+            {
+                new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(1f, 0.5f),
+                new GradientAlphaKey(0.0f, 1.0f)
+            });
+        colorOverTime.color = grad;
+
+        selfCastParticles.Play();
     }
 }
