@@ -135,8 +135,8 @@ public class Nova : MonoBehaviour
         if (elements.ContainsKey("EAR"))
             characterStats.TryApplyStunningEffect();
 
-        // Si la Nova contiene Water, empuja al personaje
-        if (elements.ContainsKey("WAT"))
+        // Si la Nova contiene Water y el personaje no es resistente al efecto Wet, es empujado
+        if (elements.ContainsKey("WAT") && !characterStats.statusEffectResistances["wet"])
             other.GetComponent<Rigidbody>().velocity =
                 (other.transform.position - transform.position).normalized * 6;
     }

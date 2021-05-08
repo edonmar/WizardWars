@@ -48,7 +48,7 @@ public class CharacterStats : MonoBehaviour
     // Diccionario con todos los tipos de daño y el porcentaje que recibirá de cada uno
     // Los cálculos de daño se harán con este diccionario
     private Dictionary<string, float> percDmgTypes;
-    private Dictionary<string, bool> statusEffectResistances;
+    public Dictionary<string, bool> statusEffectResistances;
 
     // Diccionario con los elementos que tendrá el ward, si es que existe
     private Dictionary<string, int> wardElements;

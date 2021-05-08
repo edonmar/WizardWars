@@ -104,8 +104,9 @@ public class Spray : MonoBehaviour
         if (characterStats.health == 0)
             return;
         characterStats.TakeSpell(dmgTypes);
-        // Si el Spray contiene Water, empuja al personaje
-        if (elements.ContainsKey("WAT"))
+
+        // Si el Spray contiene Water y el personaje no es resistente al efecto Wet, es empujado
+        if (elements.ContainsKey("WAT") && !characterStats.statusEffectResistances["wet"])
             other.GetComponent<Rigidbody>().velocity = originTransform.forward * 5;
     }
 
