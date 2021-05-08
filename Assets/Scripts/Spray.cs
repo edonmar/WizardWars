@@ -14,13 +14,17 @@ public class Spray : MonoBehaviour
     private int layerMask;
 
     // Listas con los personajes y barreras que están actualmente dentro del collider de Spray
-    private HashSet<Collider> charactersColliding = new HashSet<Collider>();
-    private HashSet<Collider> barriersColliding = new HashSet<Collider>();
+    private HashSet<Collider> charactersColliding;
+    private HashSet<Collider> barriersColliding;
 
     private void Start()
     {
         layerMask = LayerMask.GetMask("Terrain", "Barrier");
         dmgTypes = GetDamageTypesDictionary();
+
+        charactersColliding = new HashSet<Collider>();
+        barriersColliding = new HashSet<Collider>();
+
         StartCoroutine(HitTimer(0.25f));
     }
 
@@ -130,6 +134,9 @@ public class Spray : MonoBehaviour
     public void DestroyThis()
     {
         boxCollider.enabled = false;
+        charactersColliding = new HashSet<Collider>();
+        barriersColliding = new HashSet<Collider>();
+
         thisParticleSystem.Stop();
         ParticleSystem.MainModule particleSystemMain = thisParticleSystem.main;
         float duration = particleSystemMain.startLifetime.constant;
