@@ -11,6 +11,9 @@ public class Player : MonoBehaviour
     [SerializeField] private Transform shootPoint;
     [SerializeField] private CharacterStats characterStats;
 
+    [SerializeField] private ParticleSystem chargingParticles;
+    [SerializeField] private ParticleSystem chargingFullParticles;
+
     private Sprite spriteEleWater;
     private Sprite spriteEleLife;
     private Sprite spriteEleShield;
@@ -45,6 +48,9 @@ public class Player : MonoBehaviour
     {
         manager = GameObject.Find("Manager").GetComponent<GameManager>();
         mainCamera = Camera.main;
+
+        chargingParticles.gameObject.SetActive(true);
+        chargingFullParticles.gameObject.SetActive(true);
 
         spriteEleWater = Resources.Load<Sprite>("Images/ElementIcons/EleWater");
         spriteEleLife = Resources.Load<Sprite>("Images/ElementIcons/EleLife");
@@ -778,10 +784,15 @@ public class Player : MonoBehaviour
         isChargingSpell = true;
         chargingSpellCoroutine = ChargeSpell(1000, 2000, 1, finalDmgMultiplier, 45, 2, 2.75f);
         StartCoroutine(chargingSpellCoroutine);
+
+        chargingParticles.Play();
     }
 
     private void CastChargingSpell()
     {
+        chargingParticles.Stop();
+        chargingFullParticles.Stop();
+
         switch (chargedSpellType)
         {
             case "rock":
@@ -810,6 +821,9 @@ public class Player : MonoBehaviour
             chargedSpellAngle = Mathf.Lerp(initialAngle, finalangle, counter / duration);
             yield return null;
         }
+
+        chargingParticles.Stop();
+        chargingFullParticles.Play();
     }
 
     private void DestroyCurrentSpells()
