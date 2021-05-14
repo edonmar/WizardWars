@@ -19,7 +19,7 @@ public class Spray : MonoBehaviour
 
     private void Start()
     {
-        layerMask = LayerMask.GetMask("Terrain", "Barrier");
+        layerMask = LayerMask.GetMask("TerrainWall", "Barrier");
         dmgTypes = GetDamageTypesDictionary();
 
         charactersColliding = new HashSet<Collider>();

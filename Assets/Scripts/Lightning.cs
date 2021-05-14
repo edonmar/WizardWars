@@ -33,7 +33,7 @@ public class Lightning : MonoBehaviour
     {
         chainedCharacters = new List<GameObject>();
         lightningFragments = new List<GameObject>();
-        layerMask = LayerMask.GetMask("Terrain", "Barrier");
+        layerMask = LayerMask.GetMask("TerrainWall", "Barrier");
 
         GetPositionsAroundCaster();
         // Si el tipo de lanzamiento es de área, empiezo en L para que el primer golpe sea F

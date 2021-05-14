@@ -11,7 +11,7 @@ public class Nova : MonoBehaviour
 
     private void Start()
     {
-        layerMask = LayerMask.GetMask("Terrain", "Barrier");
+        layerMask = LayerMask.GetMask("TerrainWall", "Barrier");
         dmgTypes = GetDamageTypesDictionary();
     }
 

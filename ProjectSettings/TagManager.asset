@@ -22,7 +22,7 @@ TagManager:
   - Water
   - UI
   - CameraRayCollider
-  - Terrain
+  - TerrainWall
   - Characters
   - Projectiles
   - Beams
@@ -31,7 +31,7 @@ TagManager:
   - ProjectileIgnoreCharacter
   - Barrier
   - BarrierOnly
-  - 
+  - TerrainGround
   - 
   - 
   - 

@@ -14,7 +14,7 @@ public class Wall : MonoBehaviour
     private void Start()
     {
         manager = GameObject.Find("Manager").GetComponent<GameManager>();
-        layerMask = LayerMask.GetMask("Terrain");
+        layerMask = LayerMask.GetMask("TerrainWall");
 
         wallAura = CreateWallAuraIfNecessary();
         if (wallAura != null)
