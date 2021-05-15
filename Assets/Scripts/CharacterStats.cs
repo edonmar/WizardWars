@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class CharacterStats : MonoBehaviour
 {
@@ -26,6 +27,9 @@ public class CharacterStats : MonoBehaviour
     private int shield;
     public float baseMovSpeed;
     public float movSpeed;
+
+    private bool isNPC;
+    private NavMeshAgent navMeshAgent;
 
     // Estos son los valores iniciales, no los valores con los que se harán los cálculos
     public float physicPercTaken;
@@ -84,7 +88,11 @@ public class CharacterStats : MonoBehaviour
 
         health = maxHealth;
         shield = 0;
-        movSpeed = baseMovSpeed;
+        SetMovSpeed(baseMovSpeed);
+
+        isNPC = !CompareTag("Player");
+        navMeshAgent = isNPC ? GetComponent<NavMeshAgent>() : null;
+
         percDmgTypes = GetPercDmgTypes();
         statusEffectResistances = GetStatusEffectsResistances();
 
@@ -150,6 +158,13 @@ public class CharacterStats : MonoBehaviour
         };
 
         return statusEffectsResistancesDict;
+    }
+
+    private void SetMovSpeed(float amount)
+    {
+        movSpeed = amount;
+        if (isNPC)
+            navMeshAgent.speed = amount;
     }
 
     private void SetPercDmgType(string dmgType, float num)
@@ -595,7 +610,7 @@ public class CharacterStats : MonoBehaviour
             isChilled = true;
             chillCoroutine = ChillCoroutine();
             StartCoroutine(chillCoroutine);
-            movSpeed /= 4;
+            SetMovSpeed(movSpeed / 4);
             PlayFlamesParticles("chill");
         }
     }
@@ -607,7 +622,7 @@ public class CharacterStats : MonoBehaviour
 
         isChilled = false;
         StopCoroutine(chillCoroutine);
-        movSpeed = baseMovSpeed;
+        SetMovSpeed(baseMovSpeed);
         StopFlamesParticles();
     }
 
@@ -620,7 +635,7 @@ public class CharacterStats : MonoBehaviour
             isFrozen = true;
             freezeCoroutine = FreezeCoroutine();
             StartCoroutine(freezeCoroutine);
-            movSpeed = 0;
+            SetMovSpeed(0);
             SetPercDmgType("PHY", physicPercTaken * 3);
             SetPercDmgType("ICE", icePercTaken * 3);
             PlayFreezeParticles();
@@ -634,7 +649,7 @@ public class CharacterStats : MonoBehaviour
 
         isFrozen = false;
         StopCoroutine(freezeCoroutine);
-        movSpeed = baseMovSpeed;
+        SetMovSpeed(baseMovSpeed);
         SetPercDmgType("PHY", physicPercTaken);
         SetPercDmgType("ICE", icePercTaken);
         StopFreezeParticles();
@@ -649,7 +664,7 @@ public class CharacterStats : MonoBehaviour
             isStunned = true;
             stunCoroutine = StunCoroutine();
             StartCoroutine(stunCoroutine);
-            movSpeed = 0;
+            SetMovSpeed(0);
             PlayStunParticles();
         }
     }
@@ -661,7 +676,7 @@ public class CharacterStats : MonoBehaviour
 
         isStunned = false;
         StopCoroutine(stunCoroutine);
-        movSpeed = baseMovSpeed;
+        SetMovSpeed(baseMovSpeed);
         StopStunParticles();
     }
 
