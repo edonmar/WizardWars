@@ -4,18 +4,33 @@ using UnityEngine.AI;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private NavMeshAgent navMeshAgent;
+
+    private bool isNavMeshAgentEnabled;
     private Transform player;
     private CharacterStats playerCharacterStats;
 
-    void Start()
+    private void Start()
     {
+        isNavMeshAgentEnabled = true;
         player = GameObject.Find("Player").transform;
         playerCharacterStats = player.gameObject.GetComponent<CharacterStats>();
     }
 
-    void Update()
+    private void Update()
     {
-        if (playerCharacterStats.health > 0)
+        if (isNavMeshAgentEnabled && playerCharacterStats.health > 0)
             navMeshAgent.destination = player.position;
+    }
+
+    public void EnableNavMeshAgent()
+    {
+        navMeshAgent.enabled = true;
+        isNavMeshAgentEnabled = true;
+    }
+
+    public void DisableNavMeshAgent()
+    {
+        navMeshAgent.enabled = false;
+        isNavMeshAgentEnabled = false;
     }
 }

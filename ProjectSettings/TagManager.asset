@@ -14,6 +14,7 @@ TagManager:
   - WallAura
   - Beam
   - Lightning
+  - WaterIceCube
   layers:
   - Default
   - TransparentFX
