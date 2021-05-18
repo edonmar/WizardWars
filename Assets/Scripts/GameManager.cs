@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour
     {
         GameObject barrier = castType == "ARE" ? barrierFullPrefab : barrierHalfPrefab;
 
-        Vector3 spawnPos = originTransform.position - new Vector3(0, 0.5f, 0);
+        Vector3 spawnPos = originTransform.position;
         Quaternion spawnRot = originTransform.rotation;
 
         // Roto la barrera en el eje Y para que quede enfrente del personaje
@@ -457,8 +457,9 @@ public class GameManager : MonoBehaviour
         // Posición donde se creará el objeto
         float x = Mathf.Cos(finalAngle) * radius;
         float z = Mathf.Sin(finalAngle) * radius;
-        float y = prefab.name == "Mine" ? -0.5f : 0;
+        float y = prefab.name == "Mine" ? 0 : +0.5f;
 
+        originPos.y = 0;
         Vector3 spawnPos = originPos + new Vector3(x, y, z);
 
         // La rotación será mirando en la dirección contraria al centro del círculo
@@ -539,7 +540,7 @@ public class GameManager : MonoBehaviour
                 if (posZ == 0)
                     posZ = 0.01f;
 
-                spawnPos += new Vector3(posX, 5, posZ);
+                spawnPos += new Vector3(posX, 5.5f, posZ);
                 break;
         }
 
@@ -592,7 +593,7 @@ public class GameManager : MonoBehaviour
         float dmgMultiplier, List<Color> trailColors)
     {
         Vector3 shootPointPosition = originTransform.position;
-        Vector3 spawnPos = shootPointPosition + new Vector3(Random.Range(-2f, 2f), 3, Random.Range(-2f, 2f));
+        Vector3 spawnPos = shootPointPosition + new Vector3(Random.Range(-2f, 2f), 5.5f, Random.Range(-2f, 2f));
         Quaternion spawnRot = Quaternion.Euler(0, 0, 0);
 
         GameObject newObj = Instantiate(iciclePrefab, spawnPos, spawnRot);

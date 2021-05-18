@@ -35,8 +35,8 @@ public class LightningFragment : MonoBehaviour
     private void DrawLine()
     {
         Vector3[] points = new Vector3[2];
-        points[0] = startTransform.position;
-        points[1] = endTransform.position;
+        points[0] = startTransform.position + new Vector3(0, 0.5f, 0);
+        points[1] = endTransform.position + new Vector3(0, 0.5f, 0);
         lineRenderer.SetPositions(points);
     }
 }
