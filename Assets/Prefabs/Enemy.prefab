@@ -166,6 +166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4ed2b205d4549e4b8cc754aaa892fd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 0}
   shootPoint: {fileID: 17628892379456643}
   characterStats: {fileID: 0}
   selfCastParticles: {fileID: 0}
@@ -183,6 +184,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33b784f92011e0a4caa3696a6d9ba906, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 0}
   healthBar: {fileID: 3817531346609975953}
   wardParticles: {fileID: 0}
   flamesParticles: {fileID: 4683673738113085294}
@@ -192,6 +194,7 @@ MonoBehaviour:
   health: 0
   baseMovSpeed: 4
   movSpeed: 0
+  isDead: 0
   physicPercTaken: 100
   waterPercTaken: 0
   lifePercTaken: -100
@@ -242,6 +245,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd640e2b862da8f498245651286b58b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  characterStats: {fileID: -8411171711324007638}
   navMeshAgent: {fileID: 261251558439252928}
 --- !u!1 &17628892379456644
 GameObject:

@@ -3,6 +3,7 @@ using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
+    [SerializeField] private CharacterStats characterStats;
     [SerializeField] private NavMeshAgent navMeshAgent;
 
     private bool isNavMeshAgentEnabled;
@@ -18,6 +19,12 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
+        if (characterStats.isDead)
+        {
+            DisableNavMeshAgent();
+            return;
+        }
+
         if (isNavMeshAgentEnabled && playerCharacterStats.health > 0)
             navMeshAgent.destination = player.position;
     }

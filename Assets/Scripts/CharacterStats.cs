@@ -8,6 +8,7 @@ public class CharacterStats : MonoBehaviour
 {
     private GameManager manager;
 
+    [SerializeField] private Animator animator;
     [SerializeField] private HealthBar healthBar;
     [SerializeField] private GameObject wardParticles;
     [SerializeField] private GameObject flamesParticles;
@@ -18,17 +19,17 @@ public class CharacterStats : MonoBehaviour
     private ParticleSystem psFlames;
     private ParticleSystem psFrozen;
     private ParticleSystem psStun;
-    ParticleSystem.MainModule psMainWard;
-    ParticleSystem.MainModule psMainFlames;
-    ParticleSystem.MainModule psMainStun;
+    private ParticleSystem.MainModule psMainWard;
+    private ParticleSystem.MainModule psMainFlames;
 
     public int maxHealth;
     public int health;
     private int shield;
     public float baseMovSpeed;
     public float movSpeed;
+    [HideInInspector] public bool isDead;
 
-    private bool isNPC;
+    private bool isNpc;
     private NavMeshAgent navMeshAgent;
 
     // Estos son los valores iniciales, no los valores con los que se harán los cálculos
@@ -89,9 +90,10 @@ public class CharacterStats : MonoBehaviour
         health = maxHealth;
         shield = 0;
         SetMovSpeed(baseMovSpeed);
+        isDead = false;
 
-        isNPC = !CompareTag("Player");
-        navMeshAgent = isNPC ? GetComponent<NavMeshAgent>() : null;
+        isNpc = !CompareTag("Player");
+        navMeshAgent = isNpc ? GetComponent<NavMeshAgent>() : null;
 
         percDmgTypes = GetPercDmgTypes();
         statusEffectResistances = GetStatusEffectsResistances();
@@ -163,7 +165,7 @@ public class CharacterStats : MonoBehaviour
     private void SetMovSpeed(float amount)
     {
         movSpeed = amount;
-        if (isNPC)
+        if (isNpc)
             navMeshAgent.speed = amount;
     }
 
@@ -240,7 +242,16 @@ public class CharacterStats : MonoBehaviour
 
     private void Die()
     {
+        isDead = true;
         health = 0;
+        if (animator != null)
+            PlayDeathAnimation();
+        StartCoroutine(DestroyIn(2));
+    }
+
+    private IEnumerator DestroyIn(float time)
+    {
+        yield return new WaitForSeconds(time);
         Destroy(gameObject);
     }
 
@@ -569,7 +580,8 @@ public class CharacterStats : MonoBehaviour
             if (hitTimer <= 0)
             {
                 hitTimer = 0.25f;
-                TakeBurningDamage();
+                if (!isDead)
+                    TakeBurningDamage();
             }
 
             yield return null;
@@ -778,5 +790,10 @@ public class CharacterStats : MonoBehaviour
     private void StopWardParticles()
     {
         psWard.Stop();
+    }
+
+    private void PlayDeathAnimation()
+    {
+        animator.Play("die");
     }
 }

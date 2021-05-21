@@ -64,7 +64,7 @@ public class Icicle : MonoBehaviour
             return;
 
         CharacterStats characterStats = other.GetComponent<CharacterStats>();
-        if (characterStats.health != 0)
+        if (!characterStats.isDead)
             characterStats.TakeSpell(dmgTypes);
     }
 

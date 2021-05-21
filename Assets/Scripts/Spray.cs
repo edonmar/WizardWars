@@ -105,7 +105,7 @@ public class Spray : MonoBehaviour
     private void HitCharacter(Collider other)
     {
         CharacterStats characterStats = other.GetComponent<CharacterStats>();
-        if (characterStats.health == 0)
+        if (characterStats.isDead)
             return;
         characterStats.TakeSpell(dmgTypes);
 

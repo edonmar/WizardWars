@@ -9,12 +9,19 @@ public class Player : MonoBehaviour
     private GameManager manager;
     private Camera mainCamera;
 
+    [SerializeField] private Animator animator;
     [SerializeField] private Transform shootPoint;
     [SerializeField] private CharacterStats characterStats;
 
     [SerializeField] private ParticleSystem selfCastParticles;
     [SerializeField] private ParticleSystem chargingParticles;
     [SerializeField] private ParticleSystem chargingFullParticles;
+
+    private int hashParamMovSpeed;
+    private int hashStatusAttack01;
+    private int hashStatusAttack02;
+
+    private float movSpeed;
 
     private Sprite spriteEleWater;
     private Sprite spriteEleLife;
@@ -50,6 +57,10 @@ public class Player : MonoBehaviour
     {
         manager = GameObject.Find("Manager").GetComponent<GameManager>();
         mainCamera = Camera.main;
+
+        hashParamMovSpeed = Animator.StringToHash("MovSpeed");
+        hashStatusAttack01 = Animator.StringToHash("attack01");
+        hashStatusAttack02 = Animator.StringToHash("attack02");
 
         selfCastParticles.gameObject.SetActive(true);
         chargingParticles.gameObject.SetActive(true);
@@ -87,18 +98,27 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        RotatePlayerTowardsCamera();
-        if (Input.GetKey(KeyCode.Mouse0))
-        {
-            if (isChargingSpell)
-                CastChargingSpell();
-            else
-                DestroyCurrentSpells();
-            MovePlayerForward();
-        }
+        movSpeed = 0;
 
-        ElementInput();
-        CastInput();
+        if (!characterStats.isDead)
+        {
+            RotatePlayerTowardsCamera();
+            if (Input.GetKey(KeyCode.Mouse0))
+            {
+                if (isChargingSpell)
+                    CastChargingSpell();
+                else
+                    DestroyCurrentSpells();
+                MovePlayerForward();
+            }
+
+            ElementInput();
+            CastInput();
+        }
+        else
+            DestroyCurrentSpells();
+
+        animator.SetFloat(hashParamMovSpeed, movSpeed);
     }
 
     private void RotatePlayerTowardsCamera()
@@ -120,7 +140,7 @@ public class Player : MonoBehaviour
 
     private void MovePlayerForward()
     {
-        float movSpeed = characterStats.movSpeed;
+        movSpeed = characterStats.movSpeed;
         transform.Translate(transform.forward * (movSpeed * Time.deltaTime), Space.World);
     }
 
@@ -475,6 +495,7 @@ public class Player : MonoBehaviour
 
         Dictionary<string, int> elements = GetElementDictionary();
         CastSpell(elements, castType, spellType);
+        PlayAttackAnimation(castType);
     }
 
     // Obtengo un array con el valor de prioridad de cada elemento de loadedElements
@@ -775,6 +796,19 @@ public class Player : MonoBehaviour
 
             case "imbuedStab":
 
+                break;
+        }
+    }
+
+    private void PlayAttackAnimation(string castType)
+    {
+        switch (castType)
+        {
+            case "FOC":
+                animator.Play(hashStatusAttack01);
+                break;
+            default:
+                animator.Play(hashStatusAttack02);
                 break;
         }
     }

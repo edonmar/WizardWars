@@ -221,7 +221,7 @@ public class Lightning : MonoBehaviour
     private void HitCharacter(GameObject character)
     {
         CharacterStats characterStats = character.GetComponent<CharacterStats>();
-        if (characterStats.health != 0)
+        if (!characterStats.isDead)
             characterStats.TakeSpell(dmgTypes);
     }
 

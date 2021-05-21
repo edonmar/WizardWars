@@ -485,7 +485,7 @@ GameObject:
   - component: {fileID: 916608899314260879}
   - component: {fileID: 916608899314260864}
   m_Layer: 8
-  m_Name: Player (1) bueno con particulas
+  m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -520,7 +520,7 @@ Animator:
   m_GameObject: {fileID: 917933778675627840}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 3dc717adf98c7b043a3e77ed0130d470, type: 3}
-  m_Controller: {fileID: 9100000, guid: 0a15c11dbbde189499421a0ca9e248fa, type: 2}
+  m_Controller: {fileID: 9100000, guid: 6668d940df1a2e541ab6aca3c321b7d7, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -571,6 +571,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4ed2b205d4549e4b8cc754aaa892fd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 1002701142681534542}
   shootPoint: {fileID: 916608900692564358}
   characterStats: {fileID: 916608899314260864}
   selfCastParticles: {fileID: 938449304301069186}
@@ -588,6 +589,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33b784f92011e0a4caa3696a6d9ba906, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 1002701142681534542}
   healthBar: {fileID: 2038867278868166451}
   wardParticles: {fileID: 7240899616991392214}
   flamesParticles: {fileID: 2737543490870075759}
@@ -597,6 +599,7 @@ MonoBehaviour:
   health: 0
   baseMovSpeed: 4
   movSpeed: 0
+  isDead: 0
   physicPercTaken: 100
   waterPercTaken: 0
   lifePercTaken: -100

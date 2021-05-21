@@ -143,7 +143,7 @@ public class Beam : MonoBehaviour
     private void HitCharacter(Collider other)
     {
         CharacterStats characterStats = other.GetComponent<CharacterStats>();
-        if (characterStats.health != 0)
+        if (!characterStats.isDead)
             characterStats.TakeSpell(dmgTypes);
     }
 
