@@ -58,6 +58,9 @@ public class Enemy : MonoBehaviour
         if (!canHit)
             return false;
 
+        if (characterStats.isFrozen || characterStats.isStunned)
+            return false;
+
         if (playerCharacterStats.isDead)
             return false;
 
