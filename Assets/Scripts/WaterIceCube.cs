@@ -83,13 +83,13 @@ public class WaterIceCube : MonoBehaviour
 
     private void UnFreeze()
     {
+        DisableEnemiesCollidingNavMesh();
+        StopCoroutine(freezeCoroutine);
+
         navMeshObstacle.enabled = true;
         waterCube.SetActive(true);
         iceCube.SetActive(false);
         isFrozen = false;
-
-        StopCoroutine(freezeCoroutine);
-        DisableEnemiesCollidingNavMesh();
     }
 
     // Al descongelar el cubo, desactivo el NavMeshAgent de todos los enemigos que estén encima para que se hundan
