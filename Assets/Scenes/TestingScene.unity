@@ -6910,8 +6910,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 941861979}
   - {fileID: 380896526}
+  - {fileID: 941861979}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -11886,7 +11886,7 @@ Transform:
   - {fileID: 2124920277}
   - {fileID: 1835686445}
   m_Father: {fileID: 546279999}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &944014820
 PrefabInstance:
@@ -24333,7 +24333,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.083333336
+  m_VoxelSize: 0.11111111
   m_BuildHeightMesh: 0
   m_NavMeshData: {fileID: 23800000, guid: 178cb2e4313ccd944b7128e86e3fa32d, type: 2}
 --- !u!4 &1938064518

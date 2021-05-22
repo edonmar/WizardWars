@@ -48,7 +48,7 @@ GameObject:
   - component: {fileID: 261251558439252928}
   - component: {fileID: 2965661093482875062}
   m_Layer: 8
-  m_Name: Enemy
+  m_Name: EnemyCapsule
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -61,7 +61,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 17628892124413665}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: -0.49, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
@@ -74,7 +74,7 @@ Transform:
   - {fileID: 8307002465517511976}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!33 &17628892124413692
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -209,6 +209,16 @@ MonoBehaviour:
   freezeResistant: 0
   stunResistant: 0
   burningResistant: 0
+  meleeAttackSpeed: 0
+  meleePhysicDmg: 0
+  meleeWaterDmg: 0
+  meleeLifeDmg: 0
+  meleeColdDmg: 0
+  meleeLightningDmg: 0
+  meleeArcaneDmg: 0
+  meleeFireDmg: 0
+  meleeIceDmg: 0
+  meleeSteamDmg: 0
   isFrozen: 0
   isStunned: 0
 --- !u!195 &261251558439252928
@@ -245,6 +255,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd640e2b862da8f498245651286b58b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 0}
   characterStats: {fileID: -8411171711324007638}
   navMeshAgent: {fileID: 261251558439252928}
 --- !u!1 &17628892379456644

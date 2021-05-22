@@ -46,7 +46,7 @@ GameObject:
   - component: {fileID: -1911401302239457559}
   - component: {fileID: -3010007505195884469}
   m_Layer: 8
-  m_Name: Player
+  m_Name: PlayerCapsule
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -59,7 +59,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 17628892124413665}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
@@ -72,7 +72,7 @@ Transform:
   - {fileID: 8370054860439293003}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!33 &17628892124413692
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -164,6 +164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4ed2b205d4549e4b8cc754aaa892fd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 0}
   shootPoint: {fileID: 17628892379456643}
   characterStats: {fileID: -3010007505195884469}
   selfCastParticles: {fileID: 2075687965682527524}
@@ -181,6 +182,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33b784f92011e0a4caa3696a6d9ba906, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 0}
   healthBar: {fileID: 1660206647933381919}
   wardParticles: {fileID: 5720274080269893766}
   flamesParticles: {fileID: 1092621843876589464}
@@ -190,6 +192,7 @@ MonoBehaviour:
   health: 0
   baseMovSpeed: 4
   movSpeed: 0
+  isDead: 0
   physicPercTaken: 100
   waterPercTaken: 0
   lifePercTaken: -100
@@ -204,6 +207,16 @@ MonoBehaviour:
   freezeResistant: 0
   stunResistant: 0
   burningResistant: 0
+  meleeAttackSpeed: 0
+  meleePhysicDmg: 0
+  meleeWaterDmg: 0
+  meleeLifeDmg: 0
+  meleeColdDmg: 0
+  meleeLightningDmg: 0
+  meleeArcaneDmg: 0
+  meleeFireDmg: 0
+  meleeIceDmg: 0
+  meleeSteamDmg: 0
   isFrozen: 0
   isStunned: 0
 --- !u!1 &17628892379456644
