@@ -10,7 +10,7 @@ public class Enemy : MonoBehaviour
     private bool isNavMeshAgentEnabled;
     private Transform player;
     private CharacterStats playerCharacterStats;
-    
+
     private int hashParamMovSpeed;
 
     private void Start()
@@ -18,7 +18,7 @@ public class Enemy : MonoBehaviour
         isNavMeshAgentEnabled = true;
         player = GameObject.Find("Player").transform;
         playerCharacterStats = player.gameObject.GetComponent<CharacterStats>();
-        
+
         hashParamMovSpeed = Animator.StringToHash("MovSpeed");
     }
 
@@ -26,14 +26,15 @@ public class Enemy : MonoBehaviour
     {
         if (characterStats.isDead)
         {
-            DisableNavMeshAgent();
+            if (isNavMeshAgentEnabled)
+                DisableNavMeshAgent();
             return;
         }
 
         if (isNavMeshAgentEnabled && playerCharacterStats.health > 0)
             navMeshAgent.destination = player.position;
-        
-        float movSpeed = characterStats.movSpeed;
+
+        float movSpeed = navMeshAgent.velocity == Vector3.zero ? 0 : characterStats.movSpeed;
         animator.SetFloat(hashParamMovSpeed, movSpeed);
     }
 
