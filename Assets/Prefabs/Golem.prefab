@@ -100,6 +100,16 @@ MonoBehaviour:
   freezeResistant: 0
   stunResistant: 0
   burningResistant: 0
+  meleeAttackSpeed: 2
+  meleePhysicDmg: 0
+  meleeWaterDmg: 0
+  meleeLifeDmg: 0
+  meleeColdDmg: 0
+  meleeLightningDmg: 0
+  meleeArcaneDmg: 0
+  meleeFireDmg: 0
+  meleeIceDmg: 0
+  meleeSteamDmg: 0
   isFrozen: 0
   isStunned: 0
 --- !u!114 &611150

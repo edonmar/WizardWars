@@ -50,10 +50,25 @@ public class CharacterStats : MonoBehaviour
     public bool stunResistant;
     public bool burningResistant;
 
+    // Estos son los valores iniciales, no los valores con los que se harán los cálculos
+    public float meleeAttackSpeed;
+    [SerializeField] private int meleePhysicDmg;
+    [SerializeField] private int meleeWaterDmg;
+    [SerializeField] private int meleeLifeDmg;
+    [SerializeField] private int meleeColdDmg;
+    [SerializeField] private int meleeLightningDmg;
+    [SerializeField] private int meleeArcaneDmg;
+    [SerializeField] private int meleeFireDmg;
+    [SerializeField] private int meleeIceDmg;
+    [SerializeField] private int meleeSteamDmg;
+
     // Diccionario con todos los tipos de daño y el porcentaje que recibirá de cada uno
     // Los cálculos de daño se harán con este diccionario
     private Dictionary<string, float> percDmgTypes;
     public Dictionary<string, bool> statusEffectResistances;
+
+    // Diccionario con los tipos de daño del ataque cuerpo a cuerpo
+    public Dictionary<string, int> meleeDmgTypes;
 
     // Diccionario con los elementos que tendrá el ward, si es que existe
     private Dictionary<string, int> wardElements;
@@ -105,6 +120,8 @@ public class CharacterStats : MonoBehaviour
         isStunned = false;
         isBurning = false;
         isWetAndChilled = false;
+
+        meleeDmgTypes = GetMeleeDmgTypes();
 
         healthBar.SetMaxHealth(maxHealth);
         healthBar.SetHealth(health);
@@ -160,6 +177,32 @@ public class CharacterStats : MonoBehaviour
         };
 
         return statusEffectsResistancesDict;
+    }
+
+    private Dictionary<string, int> GetMeleeDmgTypes()
+    {
+        Dictionary<string, int> meleeDmgTypesDict = new Dictionary<string, int>();
+
+        if (meleePhysicDmg != 0)
+            meleeDmgTypesDict.Add("PHY", meleePhysicDmg);
+        if (meleeWaterDmg != 0)
+            meleeDmgTypesDict.Add("WAT", meleeWaterDmg);
+        if (meleeLifeDmg != 0)
+            meleeDmgTypesDict.Add("LIF", meleeLifeDmg);
+        if (meleeColdDmg != 0)
+            meleeDmgTypesDict.Add("COL", meleeColdDmg);
+        if (meleeLightningDmg != 0)
+            meleeDmgTypesDict.Add("LIG", meleeLightningDmg);
+        if (meleeArcaneDmg != 0)
+            meleeDmgTypesDict.Add("ARC", meleeArcaneDmg);
+        if (meleeFireDmg != 0)
+            meleeDmgTypesDict.Add("FIR", meleeFireDmg);
+        if (meleeIceDmg != 0)
+            meleeDmgTypesDict.Add("ICE", meleeIceDmg);
+        if (meleeSteamDmg != 0)
+            meleeDmgTypesDict.Add("STE", meleeSteamDmg);
+
+        return meleeDmgTypesDict;
     }
 
     private void SetMovSpeed(float amount)

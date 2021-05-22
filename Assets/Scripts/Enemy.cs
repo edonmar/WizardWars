@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -10,16 +12,20 @@ public class Enemy : MonoBehaviour
     private bool isNavMeshAgentEnabled;
     private Transform player;
     private CharacterStats playerCharacterStats;
+    private bool canHit;
 
     private int hashParamMovSpeed;
+    private int hashStatusAttack1h1;
 
     private void Start()
     {
         isNavMeshAgentEnabled = true;
         player = GameObject.Find("Player").transform;
         playerCharacterStats = player.gameObject.GetComponent<CharacterStats>();
+        canHit = true;
 
         hashParamMovSpeed = Animator.StringToHash("MovSpeed");
+        hashStatusAttack1h1 = Animator.StringToHash("attack1h1");
     }
 
     private void Update()
@@ -31,11 +37,47 @@ public class Enemy : MonoBehaviour
             return;
         }
 
+        // Seguir al jugador
         if (isNavMeshAgentEnabled && playerCharacterStats.health > 0)
             navMeshAgent.destination = player.position;
 
+        // Animación de movimiento
         float movSpeed = navMeshAgent.velocity == Vector3.zero ? 0 : characterStats.movSpeed;
         animator.SetFloat(hashParamMovSpeed, movSpeed);
+
+        if (CanHitPlayer())
+        {
+            HitPlayer();
+            StartCoroutine(HitTimer(characterStats.meleeAttackSpeed));
+            animator.Play(hashStatusAttack1h1);
+        }
+    }
+
+    private bool CanHitPlayer()
+    {
+        if (!canHit)
+            return false;
+
+        if (playerCharacterStats.isDead)
+            return false;
+
+        if (Vector3.Distance(player.position, transform.position) > navMeshAgent.stoppingDistance)
+            return false;
+
+        return true;
+    }
+
+    private void HitPlayer()
+    {
+        Dictionary<string, int> elements = characterStats.meleeDmgTypes;
+        playerCharacterStats.TakeSpell(elements);
+    }
+
+    private IEnumerator HitTimer(float hitRate)
+    {
+        canHit = false;
+        yield return new WaitForSeconds(hitRate);
+        canHit = true;
     }
 
     public void EnableNavMeshAgent()

@@ -12,6 +12,10 @@ PrefabInstance:
       value: -300
       objectReference: {fileID: 0}
     - target: {fileID: 611148, guid: 8dbd4da9bc861f24e86b737c16baea02, type: 3}
+      propertyPath: meleeColdDmg
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 611148, guid: 8dbd4da9bc861f24e86b737c16baea02, type: 3}
       propertyPath: coldPercTaken
       value: -2000
       objectReference: {fileID: 0}
