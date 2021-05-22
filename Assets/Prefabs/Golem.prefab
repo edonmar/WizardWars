@@ -114,6 +114,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd640e2b862da8f498245651286b58b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 1026920141599169757}
   characterStats: {fileID: 611148}
   navMeshAgent: {fileID: 611151}
 --- !u!195 &611151
@@ -168,7 +169,7 @@ PrefabInstance:
     - target: {fileID: -6057140222963153312, guid: db2b87ebf9bcf4c40b3c6871d8062c2c, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 3ecacfa393d9f2a4ca5f5df5e89b527c, type: 2}
+      objectReference: {fileID: 9100000, guid: dfcc5a855f7a5564da855c0efeeca336, type: 2}
     - target: {fileID: -6057140222963153312, guid: db2b87ebf9bcf4c40b3c6871d8062c2c, type: 3}
       propertyPath: m_ApplyRootMotion
       value: 0
