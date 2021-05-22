@@ -283,7 +283,7 @@ public class CharacterStats : MonoBehaviour
             healthBar.SetShield(shield);
     }
 
-    private void Die()
+    public void Die()
     {
         isDead = true;
         health = 0;
