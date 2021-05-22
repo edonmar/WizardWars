@@ -33,20 +33,6 @@ Transform:
   m_Father: {fileID: 6974485568786985383}
   m_RootOrder: 69
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &7432252234785486368
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6237767460543792052}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 1.04
-  m_Height: 4.09
-  m_Direction: 1
-  m_Center: {x: 0, y: 2.05, z: 0}
 --- !u!54 &611149
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -63,6 +49,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!136 &7432252234785486368
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6237767460543792052}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 1.04
+  m_Height: 4.09
+  m_Direction: 1
+  m_Center: {x: 0, y: 2.05, z: 0}
 --- !u!114 &611148
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81,7 +81,7 @@ MonoBehaviour:
   flamesParticles: {fileID: 8491012001687329669}
   frozenParticles: {fileID: 4070844161791450008}
   stunParticles: {fileID: 8353240307948222864}
-  maxHealth: 3000
+  maxHealth: 5000
   health: 0
   baseMovSpeed: 3
   movSpeed: 0
@@ -215,7 +215,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: db2b87ebf9bcf4c40b3c6871d8062c2c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.64
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: db2b87ebf9bcf4c40b3c6871d8062c2c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -223,7 +223,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: db2b87ebf9bcf4c40b3c6871d8062c2c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -2.61
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: db2b87ebf9bcf4c40b3c6871d8062c2c, type: 3}
       propertyPath: m_LocalRotation.w
