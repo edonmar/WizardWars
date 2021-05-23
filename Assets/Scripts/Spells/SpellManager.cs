@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class GameManager : MonoBehaviour
+public class SpellManager : MonoBehaviour
 {
     public Material matWater;
     public Material matLife;

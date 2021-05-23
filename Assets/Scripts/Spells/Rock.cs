@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Rock : MonoBehaviour
 {
-    private GameManager manager;
+    private SpellManager spellManager;
 
     public Dictionary<string, int> elements;
     private Dictionary<string, int> novaElements; // Después de eliminar EAR e ICE
@@ -13,7 +13,7 @@ public class Rock : MonoBehaviour
 
     private void Start()
     {
-        manager = GameObject.Find("Manager").GetComponent<GameManager>();
+        spellManager = GameObject.Find("Manager").GetComponent<SpellManager>();
         novaElements =
             elements.Where(e => e.Key != "EAR" && e.Key != "ICE")
                 .ToDictionary(e => e.Key, e => e.Value);
@@ -70,7 +70,7 @@ public class Rock : MonoBehaviour
 
     private void Explode()
     {
-        manager.CastNova(novaElements, transform, "rock");
+        spellManager.CastNova(novaElements, transform, "rock");
     }
 
     public void DestroyThis()

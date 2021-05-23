@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Wall : MonoBehaviour
 {
-    private GameManager manager;
+    private SpellManager spellManager;
 
     public Dictionary<string, int> elements; // Después de eliminar SHI
     public Dictionary<string, int> wallAuraElements;
@@ -13,7 +13,7 @@ public class Wall : MonoBehaviour
 
     private void Start()
     {
-        manager = GameObject.Find("Manager").GetComponent<GameManager>();
+        spellManager = GameObject.Find("Manager").GetComponent<SpellManager>();
         layerMask = LayerMask.GetMask("TerrainWall");
 
         wallAura = CreateWallAuraIfNecessary();
@@ -22,7 +22,7 @@ public class Wall : MonoBehaviour
             wallAuraElements = wallAura.GetComponent<WallAura>().elements;
         }
 
-        manager.CheckAndDestroyOverlappingSpells(gameObject, 0.625f);
+        spellManager.CheckAndDestroyOverlappingSpells(gameObject, 0.625f);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -45,7 +45,7 @@ public class Wall : MonoBehaviour
         if (subDictElements.Count <= 0)
             return null;
 
-        GameObject newObj = manager.InstantiateWallAura(transform, subDictElements);
+        GameObject newObj = spellManager.InstantiateWallAura(transform, subDictElements);
 
         // Calculo el efecto que tendrá el WallAura
         int effectMode;

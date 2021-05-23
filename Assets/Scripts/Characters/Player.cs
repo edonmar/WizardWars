@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-    private GameManager manager;
+    private SpellManager spellManager;
     private Camera mainCamera;
 
     [SerializeField] private Animator animator;
@@ -55,7 +55,7 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        manager = GameObject.Find("Manager").GetComponent<GameManager>();
+        spellManager = GameObject.Find("Manager").GetComponent<SpellManager>();
         mainCamera = Camera.main;
 
         hashParamMovSpeed = Animator.StringToHash("MovSpeed");
@@ -708,19 +708,19 @@ public class Player : MonoBehaviour
         switch (spellType)
         {
             case "barrier":
-                manager.CastBarrier(castType, transform);
+                spellManager.CastBarrier(castType, transform);
                 break;
 
             case "wall":
-                StartCoroutine(manager.CastWalls(elements, castType, transform));
+                StartCoroutine(spellManager.CastWalls(elements, castType, transform));
                 break;
 
             case "mines":
-                StartCoroutine(manager.CastMines(elements, castType, transform));
+                StartCoroutine(spellManager.CastMines(elements, castType, transform));
                 break;
 
             case "storm":
-                StartCoroutine(manager.CastStorms(elements, castType, transform));
+                StartCoroutine(spellManager.CastStorms(elements, castType, transform));
                 break;
 
             case "rock":
@@ -730,7 +730,7 @@ public class Player : MonoBehaviour
                         StartChargingSpell(elements, spellType);
                         break;
                     case "SEL":
-                        manager.CastRock(elements, castType, 1000, 1, transform, shootPoint);
+                        spellManager.CastRock(elements, castType, 1000, 1, transform, shootPoint);
                         break;
                 }
 
@@ -743,29 +743,29 @@ public class Player : MonoBehaviour
                         StartChargingSpell(elements, spellType);
                         break;
                     case "SEL":
-                        manager.CastIcicles(elements, castType, 1000, 1, chargedSpellAngle, transform, shootPoint);
+                        spellManager.CastIcicles(elements, castType, 1000, 1, chargedSpellAngle, transform, shootPoint);
                         break;
                 }
 
                 break;
 
             case "beam":
-                activeBeam = manager.CastBeam(elements, shootPoint);
+                activeBeam = spellManager.CastBeam(elements, shootPoint);
                 isBeamActive = true;
                 break;
 
             case "lightning":
-                activeLightning = manager.CastLightning(elements, castType, shootPoint, gameObject);
+                activeLightning = spellManager.CastLightning(elements, castType, shootPoint, gameObject);
                 isLightningActive = true;
                 break;
 
             case "spray":
-                activeSpray = manager.CastSpray(elements, shootPoint);
+                activeSpray = spellManager.CastSpray(elements, shootPoint);
                 isSprayActive = true;
                 break;
 
             case "nova":
-                manager.CastNova(elements, transform, "character");
+                spellManager.CastNova(elements, transform, "character");
                 break;
 
             case "force":
@@ -842,11 +842,11 @@ public class Player : MonoBehaviour
         switch (chargedSpellType)
         {
             case "rock":
-                manager.CastRock(chargedSpellElements, "FOC", chargedSpellForce, chargedSpellDmgMultiplier, transform,
+                spellManager.CastRock(chargedSpellElements, "FOC", chargedSpellForce, chargedSpellDmgMultiplier, transform,
                     shootPoint);
                 break;
             case "icicles":
-                manager.CastIcicles(chargedSpellElements, "FOC", chargedSpellForce, chargedSpellDmgMultiplier,
+                spellManager.CastIcicles(chargedSpellElements, "FOC", chargedSpellForce, chargedSpellDmgMultiplier,
                     chargedSpellAngle, transform, shootPoint);
                 break;
         }
@@ -944,8 +944,8 @@ public class Player : MonoBehaviour
 
     private void PlaySelfCastParticles(Dictionary<string, int> elements)
     {
-        Color startColor = manager.GetColorByElement(elements.ElementAt(0).Key);
-        Color endColor = elements.Count > 1 ? manager.GetColorByElement(elements.ElementAt(1).Key) : startColor;
+        Color startColor = spellManager.GetColorByElement(elements.ElementAt(0).Key);
+        Color endColor = elements.Count > 1 ? spellManager.GetColorByElement(elements.ElementAt(1).Key) : startColor;
 
         ParticleSystem.ColorOverLifetimeModule colorOverTime = selfCastParticles.colorOverLifetime;
         Gradient grad = new Gradient();

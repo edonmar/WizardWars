@@ -6,7 +6,7 @@ using UnityEngine.AI;
 
 public class CharacterStats : MonoBehaviour
 {
-    private GameManager manager;
+    private SpellManager spellManager;
 
     [SerializeField] private Animator animator;
     [SerializeField] private HealthBar healthBar;
@@ -101,7 +101,7 @@ public class CharacterStats : MonoBehaviour
 
     private void Start()
     {
-        manager = GameObject.Find("Manager").GetComponent<GameManager>();
+        spellManager = GameObject.Find("Manager").GetComponent<SpellManager>();
 
         health = maxHealth;
         shield = 0;
@@ -321,7 +321,7 @@ public class CharacterStats : MonoBehaviour
         healthBar.SetShield(shield);
         healthBar.ActivateShield();
 
-        psMainWard.startColor = manager.matShield.color;
+        psMainWard.startColor = spellManager.matShield.color;
         PlayWardParticles();
     }
 
@@ -459,9 +459,9 @@ public class CharacterStats : MonoBehaviour
     {
         // Lista con los colores de todos los elementos presentes en el Ward
         List<Color> wardColors = wardElements.Keys.Select(key => key == "PHY" ? "EAR" : key)
-            .Select(element => manager.GetColorByElement(element)).ToList();
+            .Select(element => spellManager.GetColorByElement(element)).ToList();
         // Asigno el primer elemento como color inicial
-        manager.SetParticleSystemColor(psWard, wardColors[0]);
+        spellManager.SetParticleSystemColor(psWard, wardColors[0]);
         float colorTimer = 1; // Cada cuánto tiempo cambiará de color, si es que hay más de un elemento
         int colorCount = wardColors.Count;
         int currentColor = 0;
@@ -493,7 +493,7 @@ public class CharacterStats : MonoBehaviour
                     currentColor++;
                     if (currentColor >= colorCount)
                         currentColor = 0;
-                    manager.SetParticleSystemColor(psWard, wardColors[currentColor]);
+                    spellManager.SetParticleSystemColor(psWard, wardColors[currentColor]);
                 }
             }
 
@@ -772,9 +772,9 @@ public class CharacterStats : MonoBehaviour
     {
         Color color = status switch
         {
-            "wet" => manager.matWater.color,
-            "chill" => manager.matCold.color,
-            "burning" => manager.matFire.color,
+            "wet" => spellManager.matWater.color,
+            "chill" => spellManager.matCold.color,
+            "burning" => spellManager.matFire.color,
             _ => default
         };
 
@@ -804,7 +804,7 @@ public class CharacterStats : MonoBehaviour
     {
         if (isWetAndChilled)
         {
-            psMainFlames.startColor = manager.matWater.color;
+            psMainFlames.startColor = spellManager.matWater.color;
             isWetAndChilled = false;
         }
         else

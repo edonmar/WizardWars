@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class Mine : MonoBehaviour
 {
-    private GameManager manager;
+    private SpellManager spellManager;
 
     public Dictionary<string, int> elements; // Después de eliminar SHI
     public bool destroyed;
 
     private void Start()
     {
-        manager = GameObject.Find("Manager").GetComponent<GameManager>();
+        spellManager = GameObject.Find("Manager").GetComponent<SpellManager>();
         destroyed = false;
-        manager.CheckAndDestroyOverlappingSpells(gameObject, 0.5f);
+        spellManager.CheckAndDestroyOverlappingSpells(gameObject, 0.5f);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -82,7 +82,7 @@ public class Mine : MonoBehaviour
 
     private void Explode()
     {
-        manager.InstantiateNova(elements, transform, "mine", 1);
+        spellManager.InstantiateNova(elements, transform, "mine", 1);
     }
 
     public void DestroyThis()

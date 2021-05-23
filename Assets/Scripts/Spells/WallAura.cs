@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WallAura : MonoBehaviour
 {
-    private GameManager manager;
+    private SpellManager spellManager;
 
     [SerializeField] private CapsuleCollider capsuleCollider;
     [SerializeField] private ParticleSystem thisParticleSystem;
@@ -21,7 +21,7 @@ public class WallAura : MonoBehaviour
 
     private void Start()
     {
-        manager = GameObject.Find("Manager").GetComponent<GameManager>();
+        spellManager = GameObject.Find("Manager").GetComponent<SpellManager>();
 
         if (effectMode == 0)
             return;
@@ -100,7 +100,7 @@ public class WallAura : MonoBehaviour
 
     private void Explode()
     {
-        manager.InstantiateNova(elements, transform, "wallAura", 1);
+        spellManager.InstantiateNova(elements, transform, "wallAura", 1);
     }
 
     public void DestroyThis()

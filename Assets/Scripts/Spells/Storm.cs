@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class Storm : MonoBehaviour
 {
-    private GameManager manager;
+    private SpellManager spellManager;
 
     [SerializeField] private CapsuleCollider capsuleCollider;
     [SerializeField] private ParticleSystem thisParticleSystem;
@@ -17,8 +17,8 @@ public class Storm : MonoBehaviour
 
     public void Start()
     {
-        manager = GameObject.Find("Manager").GetComponent<GameManager>();
-        manager.CheckAndDestroyOverlappingSpells(gameObject, 0.25f);
+        spellManager = GameObject.Find("Manager").GetComponent<SpellManager>();
+        spellManager.CheckAndDestroyOverlappingSpells(gameObject, 0.25f);
 
         dmgTypes = GetDamageTypesDictionary();
         StartCoroutine(HitTimer(0.25f));
