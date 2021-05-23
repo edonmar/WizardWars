@@ -591,6 +591,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 1002701142681534542}
   healthBar: {fileID: 2038867278868166451}
+  healthBarCanvas: {fileID: 7883381790189833804}
   wardParticles: {fileID: 7240899616991392214}
   flamesParticles: {fileID: 2737543490870075759}
   frozenParticles: {fileID: 7517946020683528587}
@@ -1231,14 +1232,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ac4aa81526fb93246be9d9d1a46bbf0f, type: 3}
---- !u!198 &6403328912216693634 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 6081340848464698848, guid: ac4aa81526fb93246be9d9d1a46bbf0f, type: 3}
-  m_PrefabInstance: {fileID: 916608900066018914}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6403328912216693632 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6081340848464698850, guid: ac4aa81526fb93246be9d9d1a46bbf0f, type: 3}
+  m_PrefabInstance: {fileID: 916608900066018914}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &6403328912216693634 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 6081340848464698848, guid: ac4aa81526fb93246be9d9d1a46bbf0f, type: 3}
   m_PrefabInstance: {fileID: 916608900066018914}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &916608900724097612
@@ -1464,14 +1465,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 744247c26a8803a43aa5342e61df6772, type: 3}
---- !u!1 &7517946020683528587 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7272590893133664049, guid: 744247c26a8803a43aa5342e61df6772, type: 3}
-  m_PrefabInstance: {fileID: 916608900875040442}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7517946020683528586 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7272590893133664048, guid: 744247c26a8803a43aa5342e61df6772, type: 3}
+  m_PrefabInstance: {fileID: 916608900875040442}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7517946020683528587 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7272590893133664049, guid: 744247c26a8803a43aa5342e61df6772, type: 3}
   m_PrefabInstance: {fileID: 916608900875040442}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &916608900910692551
@@ -1562,7 +1563,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7052380864708627815, guid: ffa1af1d954dedf4e82ed16a223742e0, type: 3}
       propertyPath: m_Name
-      value: Canvas character
+      value: CanvasHealthBar
       objectReference: {fileID: 0}
     - target: {fileID: 7052380864708627819, guid: ffa1af1d954dedf4e82ed16a223742e0, type: 3}
       propertyPath: m_Pivot.x
@@ -1680,9 +1681,14 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1221583861393044504, guid: ffa1af1d954dedf4e82ed16a223742e0, type: 3}
   m_PrefabInstance: {fileID: 916608900977132331}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 7883381790189833804}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6421274001ca3bd45adc3085283baf17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &7883381790189833804 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7052380864708627815, guid: ffa1af1d954dedf4e82ed16a223742e0, type: 3}
+  m_PrefabInstance: {fileID: 916608900977132331}
+  m_PrefabAsset: {fileID: 0}

@@ -77,6 +77,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 1026920141599169757}
   healthBar: {fileID: 5503422781026894451}
+  healthBarCanvas: {fileID: 4417172347760442124}
   wardParticles: {fileID: 0}
   flamesParticles: {fileID: 8491012001687329669}
   frozenParticles: {fileID: 4070844161791450008}
@@ -740,12 +741,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ffa1af1d954dedf4e82ed16a223742e0, type: 3}
+--- !u!1 &4417172347760442124 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7052380864708627815, guid: ffa1af1d954dedf4e82ed16a223742e0, type: 3}
+  m_PrefabInstance: {fileID: 6670928158311069291}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &5503422781026894451 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1221583861393044504, guid: ffa1af1d954dedf4e82ed16a223742e0, type: 3}
   m_PrefabInstance: {fileID: 6670928158311069291}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 4417172347760442124}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6421274001ca3bd45adc3085283baf17, type: 3}

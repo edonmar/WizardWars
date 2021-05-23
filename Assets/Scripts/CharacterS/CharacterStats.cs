@@ -10,6 +10,7 @@ public class CharacterStats : MonoBehaviour
 
     [SerializeField] private Animator animator;
     [SerializeField] private HealthBar healthBar;
+    [SerializeField] private GameObject healthBarCanvas;
     [SerializeField] private GameObject wardParticles;
     [SerializeField] private GameObject flamesParticles;
     [SerializeField] private GameObject frozenParticles;
@@ -289,6 +290,11 @@ public class CharacterStats : MonoBehaviour
         health = 0;
         if (animator != null)
             PlayDeathAnimation();
+
+        GetComponent<CapsuleCollider>().enabled = false;
+        GetComponent<Rigidbody>().isKinematic = true;
+        healthBarCanvas.SetActive(false);
+
         StartCoroutine(DestroyIn(2));
     }
 

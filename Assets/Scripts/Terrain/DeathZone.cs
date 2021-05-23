@@ -4,6 +4,8 @@ public class DeathZone : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {
-        other.GetComponent<CharacterStats>().Die();
+        CharacterStats characterStats = other.GetComponent<CharacterStats>();
+        if (!characterStats.isDead)
+            characterStats.Die();
     }
 }
