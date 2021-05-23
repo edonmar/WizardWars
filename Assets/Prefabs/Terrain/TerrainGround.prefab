@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 1091896787739935210}
   - component: {fileID: 8521951557070623673}
   m_Layer: 16
-  m_Name: GroundCube
-  m_TagString: Untagged
+  m_Name: TerrainGround
+  m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

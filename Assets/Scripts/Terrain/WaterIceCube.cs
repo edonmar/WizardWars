@@ -7,7 +7,6 @@ using UnityEngine.AI;
 public class WaterIceCube : MonoBehaviour
 {
     [SerializeField] private NavMeshObstacle navMeshObstacle;
-    [SerializeField] private GameObject waterCube;
     [SerializeField] private GameObject iceCube;
 
     private bool isFrozen;
@@ -52,7 +51,7 @@ public class WaterIceCube : MonoBehaviour
             _ => otherElements
         };
 
-        if (!isFrozen && otherElements.ContainsKey("COL"))
+        if (otherElements.ContainsKey("COL"))
             Freeze();
         if (isFrozen && otherElements.ContainsKey("FIR"))
             UnFreeze();
@@ -72,13 +71,17 @@ public class WaterIceCube : MonoBehaviour
 
     private void Freeze()
     {
-        navMeshObstacle.enabled = false;
-        waterCube.SetActive(false);
-        iceCube.SetActive(true);
-        isFrozen = true;
+        if (isFrozen)
+            freezeTimeRemaining = freezeTime;
+        else
+        {
+            navMeshObstacle.enabled = false;
+            iceCube.SetActive(true);
+            isFrozen = true;
 
-        freezeCoroutine = FreezeCoroutine();
-        StartCoroutine(freezeCoroutine);
+            freezeCoroutine = FreezeCoroutine();
+            StartCoroutine(freezeCoroutine);
+        }
     }
 
     private void UnFreeze()
@@ -87,7 +90,6 @@ public class WaterIceCube : MonoBehaviour
         StopCoroutine(freezeCoroutine);
 
         navMeshObstacle.enabled = true;
-        waterCube.SetActive(true);
         iceCube.SetActive(false);
         isFrozen = false;
     }
@@ -95,7 +97,54 @@ public class WaterIceCube : MonoBehaviour
     // Al descongelar el cubo, desactivo el NavMeshAgent de todos los enemigos que estén encima para que se hundan
     private void DisableEnemiesCollidingNavMesh()
     {
-        foreach (Enemy enemyScript in enemiesColliding.Select(c => c.gameObject.GetComponent<Enemy>()))
+        foreach (Collider c in enemiesColliding)
+        {
+            Vector3 gameObjectPos = c.gameObject.transform.position;
+            float radius = c.GetComponent<NavMeshAgent>().radius;
+
+            // Si desactivara el NavMeshAgent pero no se hundiera porque estuviera pisando suelo u otro hielo, el
+            // enemigo quedaría inmóvil para siempre. Para evitarlo:
+
+            // 1 - Si está pisando el hielo pero también una baldosa, no le desactivo el NavMeshAgent
+            if (HasFootOnFloor(gameObjectPos, radius))
+                continue;
+
+            // Si está pisando sólo el hielo y no el hielo más una baldosa:
+            // 2 - Desactivo su NavMeshAgent
+            Enemy enemyScript = c.gameObject.GetComponent<Enemy>();
             enemyScript.DisableNavMeshAgent();
+
+            // 3 - No sé si está pisando otro hielo o no, así que espero un momento y luego compruebo si está pisando
+            //     otro hielo. Debo esperar un momento porque normalmente se descongelará más de un hielo al mismo
+            //     tiempo, y quiero esperar a que estén todos descongelados antes de realizar la comprobación.
+            //     Además, el NavMeshAgent lo empujaría rápidamente si no lo dejara desactivado por poco tiempo.
+            // 4 - Si está está pisando otro hielo, le vuelvo a activar el NavMeshAgent
+            StartCoroutine(CheckFootOnIceIn(0.5f, gameObjectPos, radius, enemyScript));
+        }
+    }
+
+    private bool HasFootOnFloor(Vector3 center, float radius)
+    {
+        if (center.y < -0.5 || center.y > 0.5)
+            return false;
+        Collider[] hitColliders = Physics.OverlapSphere(center, radius);
+        return hitColliders.Select(hitCollider => hitCollider.gameObject)
+            .Any(hitObject => hitObject.CompareTag("Floor"));
+    }
+
+    private bool HasFootOnIce(Vector3 center, float radius)
+    {
+        if (center.y < -0.5 || center.y > 0.5)
+            return false;
+        Collider[] hitColliders = Physics.OverlapSphere(center, radius);
+        return hitColliders.Select(hitCollider => hitCollider.gameObject)
+            .Any(hitObject => hitObject.CompareTag("FloorIce"));
+    }
+
+    private IEnumerator CheckFootOnIceIn(float time, Vector3 center, float radius, Enemy enemyScript)
+    {
+        yield return new WaitForSeconds(time);
+        if (HasFootOnIce(center, radius))
+            enemyScript.EnableNavMeshAgent();
     }
 }
