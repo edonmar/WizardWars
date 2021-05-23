@@ -5,8 +5,11 @@ using Random = UnityEngine.Random;
 
 public class MapGeneration : MonoBehaviour
 {
-    public GameObject cube;
+    [SerializeField] private GameObject initialRoom;
+    [SerializeField] private GameObject corridor;
+
     private Dictionary<(int, int), bool> map; // Matriz con true o false según haya habitación en cada casilla
+    private float mapDimensions = 30;
     private readonly int minX = -4;
     private readonly int maxX = 4;
     private readonly int minZ = -4;
@@ -19,7 +22,7 @@ public class MapGeneration : MonoBehaviour
         InitializeEmptyMap();
         PlaceInitialRooms();
         PlaceRandomRooms(10); // Estas habitaciones son sin contar las 5 centrales
-        PlaceMapInScene();
+        InstantiateRooms();
     }
 
     // Inizializa el mapa vacío, sin habitaciones
@@ -109,13 +112,13 @@ public class MapGeneration : MonoBehaviour
     }
 
     // Instancia en el mapa todas las habitaciones del mapa, cada una en sus coordenadas
-    private void PlaceMapInScene()
+    private void InstantiateRooms()
     {
         for (int x = minX; x <= maxX; x++)
         for (int z = minZ; z <= maxZ; z++)
         {
             if (map[(x, z)])
-                Instantiate(cube, new Vector3(x, 0, z), Quaternion.identity);
+                Instantiate(initialRoom, new Vector3(mapDimensions * x, 0, mapDimensions * z), Quaternion.identity);
         }
     }
 }
