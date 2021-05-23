@@ -930,12 +930,12 @@ public class SpellManager : MonoBehaviour
     {
         Vector3 objPosition = originSpell.transform.position;
         Vector3 sphereCenter = new Vector3(objPosition.x, 0, objPosition.z);
-        List<GameObject> overlappingSpells = OverlappingSpells(sphereCenter, radius);
+        List<GameObject> overlappingSpells = GetOverlappingSpells(sphereCenter, radius);
         DestroyOverlappingSpells(overlappingSpells, originSpell);
     }
 
     // Obtiene una lista con todos los objetos de tipo Wall, Mine o Storm que ocupen la misma posición que este objeto
-    private List<GameObject> OverlappingSpells(Vector3 center, float radius)
+    private List<GameObject> GetOverlappingSpells(Vector3 center, float radius)
     {
         List<GameObject> overlappingSpells = new List<GameObject>();
         Collider[] hitColliders = Physics.OverlapSphere(center, radius);

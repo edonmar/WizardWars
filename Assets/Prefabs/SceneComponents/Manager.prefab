@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2832748577243614185
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2832748577243614183}
+  - component: {fileID: 2832748577243614182}
+  m_Layer: 0
+  m_Name: Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2832748577243614183
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2832748577243614185}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2832748577243614182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2832748577243614185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b08d93e23aa70f74fba8f72eec91f60e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  matWater: {fileID: 2100000, guid: c9d5b98c2be7cd342888ec92eb27942c, type: 2}
+  matLife: {fileID: 2100000, guid: 149e1aada7a3c374eb4068f0df998339, type: 2}
+  matShield: {fileID: 2100000, guid: 4cf8c11f18b859b459c71b1b5ed6c2ec, type: 2}
+  matCold: {fileID: 2100000, guid: 9721eff1c8572424dadd9b5f4a1f6d74, type: 2}
+  matLightning: {fileID: 2100000, guid: a537a86d883b5844ebe1865cd454a0b0, type: 2}
+  matArcane: {fileID: 2100000, guid: 6cda4b146594ab344ac2e78c69e77873, type: 2}
+  matEarth: {fileID: 2100000, guid: 2e197ac69c35bd445862ceebb1d682df, type: 2}
+  matFire: {fileID: 2100000, guid: 5b0b5b4260e65ae46983ebc129b356b8, type: 2}
+  matIce: {fileID: 2100000, guid: 9721eff1c8572424dadd9b5f4a1f6d74, type: 2}
+  matSteam: {fileID: 2100000, guid: 16b36140d59cd324b875487145a4b22d, type: 2}
+  matEarthTexture: {fileID: 2100000, guid: 2d9a216ddb8fea6458215d4ded62910b, type: 2}
+  matIceTexture: {fileID: 2100000, guid: 049f4eaa67c0d41489e82f6af89c35af, type: 2}
+  matBeamPrimary: {fileID: 2100000, guid: 0b44217c6aa89d845977b78f22e6b392, type: 2}
+  matBeamSecondary: {fileID: 2100000, guid: 40d717c09d47a6a48be9d4e906342a71, type: 2}
+  matBeamSpray: {fileID: 2100000, guid: cd60999fb9a940e48bccf663f8a68627, type: 2}
+  matBeamLightning: {fileID: 2100000, guid: 5b571ebbe3d81104faf281ad01fe913a, type: 2}
+  barrierFullPrefab: {fileID: 8166889117241251872, guid: aff98b7f66407934c876690bbd42df87, type: 3}
+  barrierHalfPrefab: {fileID: 4059316497810025204, guid: edc148d880b75d640b14a0fb1801bb23, type: 3}
+  wallPrefab: {fileID: 4525695405561118062, guid: 528f98469aeddcc4cad9373babf5c4ca, type: 3}
+  wallAuraPrefab: {fileID: 4525695405561118062, guid: 009d190d29cd6de4eaf24645637c417d, type: 3}
+  minePrefab: {fileID: 1874681338049451286, guid: fe8e1cd0083510c49bff23ae80c70dfd, type: 3}
+  stormPrefab: {fileID: 4525695405561118062, guid: 47a58013a3e85e34ebec9e9b8f2ac463, type: 3}
+  rockPrefab: {fileID: 2725022227948465791, guid: cdcbce7a4de7b8a4cac600ee925cbec0, type: 3}
+  iciclePrefab: {fileID: 284935705612498405, guid: 1204b05204a852242a543747aa504fc8, type: 3}
+  novaPrefab: {fileID: 8581941222268966208, guid: ec48645504257b74188516622f1fef15, type: 3}
+  beamPrefab: {fileID: 8459016341948996305, guid: f3654f1c5d604f7458df3b869f472b17, type: 3}
+  lightningPrefab: {fileID: 8459016341948996305, guid: 61359bb803e9367448ca2545bd5c9fb7, type: 3}
+  sprayPrefab: {fileID: 788494856509777952, guid: ac50910dc86bb814faffdd26585e6f45, type: 3}

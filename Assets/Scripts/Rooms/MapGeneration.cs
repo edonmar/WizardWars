@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class RoomGenerator : MonoBehaviour
+public class MapGeneration : MonoBehaviour
 {
     public GameObject cube;
     private Dictionary<(int, int), bool> map; // Matriz con true o false según haya habitación en cada casilla
