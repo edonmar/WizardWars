@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -19,7 +20,7 @@ public class MapGeneration : MonoBehaviour
     [SerializeField] private int minZ;
     [SerializeField] private int maxZ;
 
-    private Dictionary<(int, int), bool> mapRooms; // Matriz con true o false según haya habitación en cada casilla
+    private List<Tuple<int, int>> roomPositions; // Posiciones en las que habrá habitación
     private readonly float roomLength = 20;
     private readonly float corridorLength = 10;
     private float distanceBetweenRoomCenters;
@@ -27,28 +28,19 @@ public class MapGeneration : MonoBehaviour
 
     private void Start()
     {
-        mapRooms = new Dictionary<(int, int), bool>();
+        roomPositions = new List<Tuple<int, int>>();
         distanceBetweenRoomCenters = roomLength + corridorLength;
         remainingFloors = numberOfRooms;
 
-        InitializeEmptyMap();
         PlaceInitialRooms();
         while (remainingFloors > 0)
             PlaceRandomRoom();
         InstantiateRooms();
     }
 
-    // Inicializa el mapa vacío, sin habitaciones
-    private void InitializeEmptyMap()
-    {
-        for (int x = minX; x <= maxX; x++)
-        for (int z = minZ; z <= maxZ; z++)
-            mapRooms.Add((x, z), false);
-    }
-
     private void PlaceRoom(int x, int z)
     {
-        mapRooms[(x, z)] = true;
+        roomPositions.Add(Tuple.Create(x, z));
         remainingFloors--;
     }
 
@@ -62,13 +54,10 @@ public class MapGeneration : MonoBehaviour
 
         if (initialRoomPosZ + 1 <= maxZ && remainingFloors > 0) // Arriba
             PlaceRoom(0, 1);
-
         if (initialRoomPosX + 1 <= maxX && remainingFloors > 0) // Derecha
             PlaceRoom(1, 0);
-
         if (initialRoomPosZ - 1 >= minZ && remainingFloors > 0) // Abajo
             PlaceRoom(0, -1);
-
         if (initialRoomPosX - 1 >= minX && remainingFloors > 0) // Izquierda
             PlaceRoom(-1, 0);
     }
@@ -77,7 +66,7 @@ public class MapGeneration : MonoBehaviour
     // escoge una al azar y coloca una habitación en ella
     private void PlaceRandomRoom()
     {
-        List<Tuple<int, int>> possibleNewRooms = GetPossibleNewRooms();
+        List<Tuple<int, int>> possibleNewRooms = GetPossibleNewRoomPositions();
         if (possibleNewRooms.Count == 0)
             return;
 
@@ -88,28 +77,14 @@ public class MapGeneration : MonoBehaviour
 
     // Devuelve una lista con todas las casillas donde se podría colocar una habitación
     // Es decir, todas las casillas vacías que estén tocando una habitación ya colocada y que no se salgan del mapa
-    private List<Tuple<int, int>> GetPossibleNewRooms()
+    private List<Tuple<int, int>> GetPossibleNewRoomPositions()
     {
-        List<Tuple<int, int>> possibleNewRooms = new List<Tuple<int, int>>();
-
-        foreach (KeyValuePair<(int, int), bool> square in mapRooms)
-        {
-            if (!square.Value)
-                continue;
-
-            int x = square.Key.Item1;
-            int z = square.Key.Item2;
-            List<Tuple<int, int>> adjacentSquares = GetAdjacentSquares(x, z);
-            foreach (Tuple<int, int> adSquare in adjacentSquares)
-            {
-                int adX = adSquare.Item1;
-                int adZ = adSquare.Item2;
-                if (IsRoomPossibleInSquare(adX, adZ, possibleNewRooms))
-                    possibleNewRooms.Add(Tuple.Create(adX, adZ));
-            }
-        }
-
-        return possibleNewRooms;
+        return (from roomPos in roomPositions
+            from adSquare in GetAdjacentSquares(roomPos.Item1, roomPos.Item2)
+            let adX = adSquare.Item1
+            let adZ = adSquare.Item2
+            where !roomPositions.Contains(Tuple.Create(adX, adZ))
+            select Tuple.Create(adX, adZ)).ToList();
     }
 
     // Devuelve las 4 casillas que rodean a una habitación
@@ -129,32 +104,14 @@ public class MapGeneration : MonoBehaviour
         return adjacentSquares;
     }
 
-    // Devuelve si se puede crear una habitación en esa casilla
-    private bool IsRoomPossibleInSquare(int x, int z, List<Tuple<int, int>> possibleNewRooms)
-    {
-        // Si ya está ocupada
-        if (mapRooms[(x, z)])
-            return false;
-
-        // Si ya está añadida a la lista de posibles posiciones para nueva habitación
-        if (possibleNewRooms.Contains(Tuple.Create(x, z)))
-            return false;
-
-        return true;
-    }
-
     // Instancia en el mapa todas las habitaciones del mapa, cada una en sus coordenadas
     private void InstantiateRooms()
     {
-        foreach (KeyValuePair<(int, int), bool> square in mapRooms)
+        foreach (var (x, z) in roomPositions)
         {
-            if (!square.Value)
-                continue;
-
-            int x = square.Key.Item1;
-            int z = square.Key.Item2;
-            Instantiate(initialRoom, new Vector3(distanceBetweenRoomCenters * x, 0, distanceBetweenRoomCenters * z),
-                Quaternion.identity);
+            Vector3 roomPositionInScene =
+                new Vector3(distanceBetweenRoomCenters * x, 0, distanceBetweenRoomCenters * z);
+            Instantiate(initialRoom, roomPositionInScene, Quaternion.identity);
         }
     }
 }
