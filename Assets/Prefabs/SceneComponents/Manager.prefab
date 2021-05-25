@@ -44,9 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 134c4e19c7727f548b45a8369804d215, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialRoom: {fileID: 2805820576700447330, guid: 64b2f567c6c4ff44faece7eb11478930, type: 3}
-  corridor: {fileID: 2766946866428550496, guid: d504b869c3e46ac4b90ed97527c25bb6, type: 3}
-  numberOfRooms: 10
+  initialRoomPrefab: {fileID: 2805820576700447330, guid: 64b2f567c6c4ff44faece7eb11478930, type: 3}
+  corridorPrefab: {fileID: 2766946866428550496, guid: d504b869c3e46ac4b90ed97527c25bb6, type: 3}
+  numberOfRooms: 15
   initialRoomPosX: 0
   initialRoomPosZ: 0
   guaranteedSurroundedInitialRoom: 1

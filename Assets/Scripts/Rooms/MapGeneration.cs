@@ -6,8 +6,8 @@ using Random = UnityEngine.Random;
 
 public class MapGeneration : MonoBehaviour
 {
-    [SerializeField] private GameObject initialRoom;
-    [SerializeField] private GameObject corridor;
+    [SerializeField] private GameObject initialRoomPrefab;
+    [SerializeField] private GameObject corridorPrefab;
 
     [SerializeField] private int numberOfRooms;
     [SerializeField] private int initialRoomPosX;
@@ -21,6 +21,7 @@ public class MapGeneration : MonoBehaviour
     [SerializeField] private int maxZ;
 
     private List<Tuple<int, int>> roomPositions; // Posiciones en las que habrá habitación
+    private Dictionary<(int, int), bool> corridorPositions; // Posiciones en las que habrá pasillo, y si estará rotado
     private readonly float roomLength = 20;
     private readonly float corridorLength = 10;
     private float distanceBetweenRoomCenters;
@@ -29,6 +30,7 @@ public class MapGeneration : MonoBehaviour
     private void Start()
     {
         roomPositions = new List<Tuple<int, int>>();
+        corridorPositions = new Dictionary<(int, int), bool>();
         distanceBetweenRoomCenters = roomLength + corridorLength;
         remainingFloors = numberOfRooms;
 
@@ -36,12 +38,19 @@ public class MapGeneration : MonoBehaviour
         while (remainingFloors > 0)
             PlaceRandomRoom();
         InstantiateRooms();
+        PlaceCorridors();
+        InstantiateCorridors();
     }
 
     private void PlaceRoom(int x, int z)
     {
         roomPositions.Add(Tuple.Create(x, z));
         remainingFloors--;
+    }
+
+    private void PlaceCorridor(int x, int z, bool rotated)
+    {
+        corridorPositions.Add((x, z), rotated);
     }
 
     // Crea la habitación inicial y las habitaciones que la rodean
@@ -104,6 +113,39 @@ public class MapGeneration : MonoBehaviour
         return adjacentSquares;
     }
 
+    /*
+     * TODO tengo que modificar este algoritmo. Para mapas pequeños puede valer, pero tiene los problemas:
+     * 1 - El número de pasillos siempre es igual al número de habitaciones menos uno. Aunque conecta todas las
+     *     habitaciones, no conecta todas con sus circundantes, y a veces hay que dar un rodeo para ir de una habitación
+     *     a otra que está al lado, porque no ha generado pasillo entre las dos
+     * 2 - (No ha pasado nunca en mapas pequeños de 15 habitaciones, pero es raro el mapa de 100 habitaciones en el que
+     *     no se repite el error varias veces). En ocasiones poco frecuentes crea un pasillo dentro de una habitación,
+     *     o un pasillo que no lleva a ninguna parte. A veces (muy raro) esto deja habitaciones a las que no se
+     *     puede acceder
+     * 3 - Es muy lento si hay números muy grandes de habitaciones. Hasta 100 carga rápido, a partir de ahí el tiempo
+     *     de carga aumenta exponencialmente
+     */
+    private void PlaceCorridors()
+    {
+        foreach (var (x, z) in roomPositions)
+        {
+            PlaceCorridorIfPossible(x, z + 1, true); // Arriba
+            PlaceCorridorIfPossible(x + 1, z, false); // Derecha
+            PlaceCorridorIfPossible(x, z - 1, true); // Abajo
+            PlaceCorridorIfPossible(x - 1, z, false); // Izquierda
+        }
+    }
+
+    private void PlaceCorridorIfPossible(int x, int z, bool rotated)
+    {
+        if (corridorPositions.ContainsKey((x, z)))
+            return;
+        if (x == 0 && z == 0)
+            return;
+        if (roomPositions.Contains(Tuple.Create(x, z)))
+            PlaceCorridor(x, z, rotated);
+    }
+
     // Instancia en el mapa todas las habitaciones del mapa, cada una en sus coordenadas
     private void InstantiateRooms()
     {
@@ -111,7 +153,37 @@ public class MapGeneration : MonoBehaviour
         {
             Vector3 roomPositionInScene =
                 new Vector3(distanceBetweenRoomCenters * x, 0, distanceBetweenRoomCenters * z);
-            Instantiate(initialRoom, roomPositionInScene, Quaternion.identity);
+            Instantiate(initialRoomPrefab, roomPositionInScene, Quaternion.identity);
+        }
+    }
+
+    private void InstantiateCorridors()
+    {
+        foreach (KeyValuePair<(int, int), bool> corridorPos in corridorPositions)
+        {
+            int x = corridorPos.Key.Item1;
+            int z = corridorPos.Key.Item2;
+            bool rotated = corridorPos.Value;
+
+            float offsetX = distanceBetweenRoomCenters;
+            float offsetZ = distanceBetweenRoomCenters;
+
+            if (!rotated)
+                offsetX /= 2;
+            else
+                offsetZ /= 2;
+
+            float posX = x == 0 ? 0 : offsetX + (Math.Abs(x) - 1) * distanceBetweenRoomCenters;
+            float posZ = z == 0 ? 0 : offsetZ + (Math.Abs(z) - 1) * distanceBetweenRoomCenters;
+
+            if (x < 0)
+                posX = -posX;
+            if (z < 0)
+                posZ = -posZ;
+
+            Vector3 corridorPositionInScene = new Vector3(posX, 0, posZ);
+            Quaternion corridorRotation = rotated ? Quaternion.Euler(0, 90, 0) : Quaternion.identity;
+            Instantiate(corridorPrefab, corridorPositionInScene, corridorRotation);
         }
     }
 }
