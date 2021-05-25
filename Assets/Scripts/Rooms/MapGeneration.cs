@@ -8,45 +8,82 @@ public class MapGeneration : MonoBehaviour
     [SerializeField] private GameObject initialRoom;
     [SerializeField] private GameObject corridor;
 
-    private Dictionary<(int, int), bool> map; // Matriz con true o false según haya habitación en cada casilla
-    private float mapDimensions = 30;
-    private readonly int minX = -4;
-    private readonly int maxX = 4;
-    private readonly int minZ = -4;
-    private readonly int maxZ = 4;
+    [SerializeField] private int numberOfRooms;
+    [SerializeField] private int initialRoomPosX;
+    [SerializeField] private int initialRoomPosZ;
+    [SerializeField] private bool guaranteedSurroundedInitialRoom;
+
+    // Límites del mapa
+    [SerializeField] private int minX;
+    [SerializeField] private int maxX;
+    [SerializeField] private int minZ;
+    [SerializeField] private int maxZ;
+
+    private Dictionary<(int, int), bool> mapRooms; // Matriz con true o false según haya habitación en cada casilla
+    private readonly float roomLength = 20;
+    private readonly float corridorLength = 10;
+    private float distanceBetweenRoomCenters;
+    private int remainingFloors;
 
     private void Start()
     {
-        map = new Dictionary<(int, int), bool>();
+        mapRooms = new Dictionary<(int, int), bool>();
+        distanceBetweenRoomCenters = roomLength + corridorLength;
+        remainingFloors = numberOfRooms;
 
         InitializeEmptyMap();
         PlaceInitialRooms();
-        PlaceRandomRooms(10); // Estas habitaciones son sin contar las 5 centrales
+        while (remainingFloors > 0)
+            PlaceRandomRoom();
         InstantiateRooms();
     }
 
-    // Inizializa el mapa vacío, sin habitaciones
+    // Inicializa el mapa vacío, sin habitaciones
     private void InitializeEmptyMap()
     {
         for (int x = minX; x <= maxX; x++)
         for (int z = minZ; z <= maxZ; z++)
-            map.Add((x, z), false);
+            mapRooms.Add((x, z), false);
+    }
+
+    private void PlaceRoom(int x, int z)
+    {
+        mapRooms[(x, z)] = true;
+        remainingFloors--;
+    }
+
+    // Crea la habitación inicial y las habitaciones que la rodean
+    private void PlaceInitialRooms()
+    {
+        PlaceRoom(0, 0); // Habitación central
+
+        if (!guaranteedSurroundedInitialRoom)
+            return;
+
+        if (initialRoomPosZ + 1 <= maxZ && remainingFloors > 0) // Arriba
+            PlaceRoom(0, 1);
+
+        if (initialRoomPosX + 1 <= maxX && remainingFloors > 0) // Derecha
+            PlaceRoom(1, 0);
+
+        if (initialRoomPosZ - 1 >= minZ && remainingFloors > 0) // Abajo
+            PlaceRoom(0, -1);
+
+        if (initialRoomPosX - 1 >= minX && remainingFloors > 0) // Izquierda
+            PlaceRoom(-1, 0);
     }
 
     // En cada iteración, obtiene todas las casillas en las que se podría colocar una habitación, y de esas casillas
     // escoge una al azar y coloca una habitación en ella
-    private void PlaceRandomRooms(int num)
+    private void PlaceRandomRoom()
     {
-        for (int i = 0; i < num; i++)
-        {
-            List<Tuple<int, int>> possibleNewRooms = GetPossibleNewRooms();
-            if (possibleNewRooms.Count == 0)
-                return;
+        List<Tuple<int, int>> possibleNewRooms = GetPossibleNewRooms();
+        if (possibleNewRooms.Count == 0)
+            return;
 
-            int pos = Random.Range(0, possibleNewRooms.Count);
-            Tuple<int, int> square = possibleNewRooms[pos];
-            map[(square.Item1, square.Item2)] = true;
-        }
+        int pos = Random.Range(0, possibleNewRooms.Count);
+        Tuple<int, int> square = possibleNewRooms[pos];
+        PlaceRoom(square.Item1, square.Item2);
     }
 
     // Devuelve una lista con todas las casillas donde se podría colocar una habitación
@@ -55,16 +92,21 @@ public class MapGeneration : MonoBehaviour
     {
         List<Tuple<int, int>> possibleNewRooms = new List<Tuple<int, int>>();
 
-        for (int x = minX; x <= maxX; x++)
-        for (int z = minZ; z <= maxZ; z++)
+        foreach (KeyValuePair<(int, int), bool> square in mapRooms)
         {
-            if (!map[(x, z)])
+            if (!square.Value)
                 continue;
 
+            int x = square.Key.Item1;
+            int z = square.Key.Item2;
             List<Tuple<int, int>> adjacentSquares = GetAdjacentSquares(x, z);
-            foreach (Tuple<int, int> square in adjacentSquares)
-                if (IsRoomPossible(square.Item1, square.Item2, possibleNewRooms))
-                    possibleNewRooms.Add(Tuple.Create(square.Item1, square.Item2));
+            foreach (Tuple<int, int> adSquare in adjacentSquares)
+            {
+                int adX = adSquare.Item1;
+                int adZ = adSquare.Item2;
+                if (IsRoomPossibleInSquare(adX, adZ, possibleNewRooms))
+                    possibleNewRooms.Add(Tuple.Create(adX, adZ));
+            }
         }
 
         return possibleNewRooms;
@@ -75,23 +117,23 @@ public class MapGeneration : MonoBehaviour
     {
         List<Tuple<int, int>> adjacentSquares = new List<Tuple<int, int>>();
 
-        adjacentSquares.Add(Tuple.Create(x, z + 1)); // Arriba
-        adjacentSquares.Add(Tuple.Create(x + 1, z)); // Derecha
-        adjacentSquares.Add(Tuple.Create(x, z - 1)); // Abajo
-        adjacentSquares.Add(Tuple.Create(x - 1, z)); // Izquierda
+        if (z + 1 <= maxZ)
+            adjacentSquares.Add(Tuple.Create(x, z + 1)); // Arriba
+        if (x + 1 <= maxX)
+            adjacentSquares.Add(Tuple.Create(x + 1, z)); // Derecha
+        if (z - 1 >= minZ)
+            adjacentSquares.Add(Tuple.Create(x, z - 1)); // Abajo
+        if (x - 1 >= minX)
+            adjacentSquares.Add(Tuple.Create(x - 1, z)); // Izquierda
 
         return adjacentSquares;
     }
 
     // Devuelve si se puede crear una habitación en esa casilla
-    private bool IsRoomPossible(int x, int z, List<Tuple<int, int>> possibleNewRooms)
+    private bool IsRoomPossibleInSquare(int x, int z, List<Tuple<int, int>> possibleNewRooms)
     {
-        // Si se sale de los límites mapa
-        if (x < minX || x > maxX || z < minZ || z > maxZ)
-            return false;
-
         // Si ya está ocupada
-        if (map[(x, z)])
+        if (mapRooms[(x, z)])
             return false;
 
         // Si ya está añadida a la lista de posibles posiciones para nueva habitación
@@ -101,24 +143,18 @@ public class MapGeneration : MonoBehaviour
         return true;
     }
 
-    // Crea las 5 habitaciones centrales
-    private void PlaceInitialRooms()
-    {
-        map[(0, 0)] = true; // Habitación central
-        map[(0, 1)] = true; // Arriba
-        map[(1, 0)] = true; // Derecha
-        map[(0, -1)] = true; // Abajo
-        map[(-1, 0)] = true; // Izquierda
-    }
-
     // Instancia en el mapa todas las habitaciones del mapa, cada una en sus coordenadas
     private void InstantiateRooms()
     {
-        for (int x = minX; x <= maxX; x++)
-        for (int z = minZ; z <= maxZ; z++)
+        foreach (KeyValuePair<(int, int), bool> square in mapRooms)
         {
-            if (map[(x, z)])
-                Instantiate(initialRoom, new Vector3(mapDimensions * x, 0, mapDimensions * z), Quaternion.identity);
+            if (!square.Value)
+                continue;
+
+            int x = square.Key.Item1;
+            int z = square.Key.Item2;
+            Instantiate(initialRoom, new Vector3(distanceBetweenRoomCenters * x, 0, distanceBetweenRoomCenters * z),
+                Quaternion.identity);
         }
     }
 }
