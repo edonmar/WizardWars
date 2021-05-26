@@ -51,6 +51,7 @@ public class MapGeneration : MonoBehaviour
     {
         corridorPositions.Add(Tuple.Create(x, z));
         GameObject newCorridor = InstantiateCorridors(x, z, rotated);
+        SetCorridorInRooms(newCorridor, x, z, rotated);
     }
 
     private GameObject InstantiateRoom(int x, int z)
@@ -68,6 +69,38 @@ public class MapGeneration : MonoBehaviour
         Vector3 corridorPositionInScene = new Vector3(posX, 0, posZ);
         Quaternion corridorRotation = rotated ? Quaternion.Euler(0, 90, 0) : Quaternion.identity;
         return Instantiate(corridorPrefab, corridorPositionInScene, corridorRotation);
+    }
+
+    // Obtiene las dos habitaciones que conecta el pasillo, y le pasa al script de cada habitación el objeto del pasillo
+    // y su posición (en cuál de los lados de la habitación está el pasillo)
+    private void SetCorridorInRooms(GameObject corridor, float x, float z, bool rotated)
+    {
+        GameObject room1;
+        GameObject room2;
+        string pos1;
+        string pos2;
+
+        if (rotated)
+        {
+            pos1 = "TL";
+            pos2 = "BR";
+            int z1 = (int) (z - 0.5f);
+            int z2 = (int) (z + 0.5f);
+            room1 = roomPositions[((int) x, z1)];
+            room2 = roomPositions[((int) x, z2)];
+        }
+        else
+        {
+            pos1 = "TR";
+            pos2 = "BL";
+            int x1 = (int) (x - 0.5f);
+            int x2 = (int) (x + 0.5f);
+            room1 = roomPositions[(x1, (int) z)];
+            room2 = roomPositions[(x2, (int) z)];
+        }
+
+        room1.GetComponent<Room>().SetCorridorAndDestroyDoorSpace(pos1, corridor);
+        room2.GetComponent<Room>().SetCorridorAndDestroyDoorSpace(pos2, corridor);
     }
 
     // Crea la habitación inicial y las habitaciones que la rodean
