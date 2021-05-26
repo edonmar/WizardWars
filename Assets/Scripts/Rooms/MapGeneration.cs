@@ -26,6 +26,7 @@ public class MapGeneration : MonoBehaviour
     private readonly float corridorLength = 10;
     private float distanceBetweenRoomCenters;
     private int remainingFloors;
+    private GameObject player;
 
     private void Start()
     {
@@ -33,11 +34,15 @@ public class MapGeneration : MonoBehaviour
         corridorPositions = new List<Tuple<float, float>>();
         distanceBetweenRoomCenters = roomLength + corridorLength;
         remainingFloors = numberOfRooms;
+        player = GameObject.Find("Player").gameObject;
 
+        DisablePlayer();
         PlaceInitialRooms();
         while (remainingFloors > 0)
             PlaceRandomRoom();
         PlaceCorridors();
+        MovePlayer();
+        EnablePlayer();
     }
 
     private void PlaceRoom(int x, int z)
@@ -75,6 +80,7 @@ public class MapGeneration : MonoBehaviour
     // y su posición (en cuál de los lados de la habitación está el pasillo)
     private void SetCorridorInRooms(GameObject corridor, float x, float z, bool rotated)
     {
+        Corridor corridorScript = corridor.GetComponent<Corridor>();
         GameObject room1;
         GameObject room2;
         string pos1;
@@ -88,6 +94,8 @@ public class MapGeneration : MonoBehaviour
             int z2 = (int) (z + 0.5f);
             room1 = roomPositions[((int) x, z1)];
             room2 = roomPositions[((int) x, z2)];
+            corridorScript.roomA = room2;
+            corridorScript.roomB = room1;
         }
         else
         {
@@ -97,6 +105,8 @@ public class MapGeneration : MonoBehaviour
             int x2 = (int) (x + 0.5f);
             room1 = roomPositions[(x1, (int) z)];
             room2 = roomPositions[(x2, (int) z)];
+            corridorScript.roomA = room1;
+            corridorScript.roomB = room2;
         }
 
         room1.GetComponent<Room>().SetCorridorAndDestroyDoorSpace(pos1, corridor);
@@ -188,5 +198,22 @@ public class MapGeneration : MonoBehaviour
             return;
         if (roomPositions.ContainsKey((x + offsetX, z + offsetZ)))
             PlaceCorridor(middleX, middleZ, rotated);
+    }
+
+    private void MovePlayer()
+    {
+        Vector3 initialRoomPos =
+            new Vector3(distanceBetweenRoomCenters * initialRoomPosX, 0, distanceBetweenRoomCenters * initialRoomPosZ);
+        player.transform.position = initialRoomPos;
+    }
+
+    private void EnablePlayer()
+    {
+        player.SetActive(true);
+    }
+
+    private void DisablePlayer()
+    {
+        player.SetActive(false);
     }
 }

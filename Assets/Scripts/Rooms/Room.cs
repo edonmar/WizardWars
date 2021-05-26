@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class Room : MonoBehaviour
 {
+    public Transform cameraPosition;
     [SerializeField] private GameObject doorSpaceTL;
     [SerializeField] private GameObject doorSpaceTR;
     [SerializeField] private GameObject doorSpaceBR;

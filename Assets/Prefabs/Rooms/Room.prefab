@@ -878,6 +878,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c777fad4da2f904c91dc593c95c48fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cameraPosition: {fileID: 2805820576929360000}
   doorSpaceTL: {fileID: 2805820576562949960}
   doorSpaceTR: {fileID: 2805820575769829026}
   doorSpaceBR: {fileID: 2805820575747666653}
