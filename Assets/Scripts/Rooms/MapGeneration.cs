@@ -20,8 +20,8 @@ public class MapGeneration : MonoBehaviour
     [SerializeField] private int minZ;
     [SerializeField] private int maxZ;
 
-    private List<Tuple<int, int>> roomPositions; // Posiciones en las que habrá habitación
-    private Dictionary<(int, int), bool> corridorPositions; // Posiciones en las que habrá pasillo, y si estará rotado
+    private Dictionary<(int, int), GameObject> roomPositions; // Posiciones en las que habrá habitación
+    private List<Tuple<float, float>> corridorPositions; // Posiciones en las que habrá pasillo
     private readonly float roomLength = 20;
     private readonly float corridorLength = 10;
     private float distanceBetweenRoomCenters;
@@ -29,28 +29,45 @@ public class MapGeneration : MonoBehaviour
 
     private void Start()
     {
-        roomPositions = new List<Tuple<int, int>>();
-        corridorPositions = new Dictionary<(int, int), bool>();
+        roomPositions = new Dictionary<(int, int), GameObject>();
+        corridorPositions = new List<Tuple<float, float>>();
         distanceBetweenRoomCenters = roomLength + corridorLength;
         remainingFloors = numberOfRooms;
 
         PlaceInitialRooms();
         while (remainingFloors > 0)
             PlaceRandomRoom();
-        InstantiateRooms();
         PlaceCorridors();
-        InstantiateCorridors();
     }
 
     private void PlaceRoom(int x, int z)
     {
-        roomPositions.Add(Tuple.Create(x, z));
+        GameObject newRoom = InstantiateRoom(x, z);
+        roomPositions.Add((x, z), newRoom);
         remainingFloors--;
     }
 
-    private void PlaceCorridor(int x, int z, bool rotated)
+    private void PlaceCorridor(float x, float z, bool rotated)
     {
-        corridorPositions.Add((x, z), rotated);
+        corridorPositions.Add(Tuple.Create(x, z));
+        GameObject newCorridor = InstantiateCorridors(x, z, rotated);
+    }
+
+    private GameObject InstantiateRoom(int x, int z)
+    {
+        Vector3 roomPositionInScene =
+            new Vector3(distanceBetweenRoomCenters * x, 0, distanceBetweenRoomCenters * z);
+        return Instantiate(initialRoomPrefab, roomPositionInScene, Quaternion.identity);
+    }
+
+    private GameObject InstantiateCorridors(float x, float z, bool rotated)
+    {
+        float posX = x * distanceBetweenRoomCenters;
+        float posZ = z * distanceBetweenRoomCenters;
+
+        Vector3 corridorPositionInScene = new Vector3(posX, 0, posZ);
+        Quaternion corridorRotation = rotated ? Quaternion.Euler(0, 90, 0) : Quaternion.identity;
+        return Instantiate(corridorPrefab, corridorPositionInScene, corridorRotation);
     }
 
     // Crea la habitación inicial y las habitaciones que la rodean
@@ -89,10 +106,10 @@ public class MapGeneration : MonoBehaviour
     private List<Tuple<int, int>> GetPossibleNewRoomPositions()
     {
         return (from roomPos in roomPositions
-            from adSquare in GetAdjacentSquares(roomPos.Item1, roomPos.Item2)
+            from adSquare in GetAdjacentSquares(roomPos.Key.Item1, roomPos.Key.Item2)
             let adX = adSquare.Item1
             let adZ = adSquare.Item2
-            where !roomPositions.Contains(Tuple.Create(adX, adZ))
+            where !roomPositions.ContainsKey((adX, adZ))
             select Tuple.Create(adX, adZ)).ToList();
     }
 
@@ -113,77 +130,30 @@ public class MapGeneration : MonoBehaviour
         return adjacentSquares;
     }
 
-    /*
-     * TODO tengo que modificar este algoritmo. Para mapas pequeños puede valer, pero tiene los problemas:
-     * 1 - El número de pasillos siempre es igual al número de habitaciones menos uno. Aunque conecta todas las
-     *     habitaciones, no conecta todas con sus circundantes, y a veces hay que dar un rodeo para ir de una habitación
-     *     a otra que está al lado, porque no ha generado pasillo entre las dos
-     * 2 - (No ha pasado nunca en mapas pequeños de 15 habitaciones, pero es raro el mapa de 100 habitaciones en el que
-     *     no se repite el error varias veces). En ocasiones poco frecuentes crea un pasillo dentro de una habitación,
-     *     o un pasillo que no lleva a ninguna parte. A veces (muy raro) esto deja habitaciones a las que no se
-     *     puede acceder
-     * 3 - Es muy lento si hay números muy grandes de habitaciones. Hasta 100 carga rápido, a partir de ahí el tiempo
-     *     de carga aumenta exponencialmente
-     */
+    // TODO en mapas grandes podría ser más eficiente si no comprobara las habitaciones que ya están rodeadas
     private void PlaceCorridors()
     {
-        foreach (var (x, z) in roomPositions)
+        foreach (KeyValuePair<(int, int), GameObject> roomPos in roomPositions)
         {
-            PlaceCorridorIfPossible(x, z + 1, true); // Arriba
-            PlaceCorridorIfPossible(x + 1, z, false); // Derecha
-            PlaceCorridorIfPossible(x, z - 1, true); // Abajo
-            PlaceCorridorIfPossible(x - 1, z, false); // Izquierda
+            int x = roomPos.Key.Item1;
+            int z = roomPos.Key.Item2;
+            PlaceCorridorIfPossible(x, z, 0, 1, true); // Arriba
+            PlaceCorridorIfPossible(x, z, 1, 0, false); // Derecha
+            PlaceCorridorIfPossible(x, z, 0, -1, true); // Abajo
+            PlaceCorridorIfPossible(x, z, -1, 0, false); // Izquierda
         }
     }
 
-    private void PlaceCorridorIfPossible(int x, int z, bool rotated)
+    // Sabiendo que hay habitación en (x, z), comprueba si hay habitación en (x + offsetX, z + offsetZ)
+    // Si la hay, crea un pasillo en la posición media entre ambas habitaciones
+    private void PlaceCorridorIfPossible(int x, int z, int offsetX, int offsetZ, bool rotated)
     {
-        if (corridorPositions.ContainsKey((x, z)))
+        float middleX = x + (float) offsetX / 2;
+        float middleZ = z + (float) offsetZ / 2;
+
+        if (corridorPositions.Contains(Tuple.Create(middleX, middleZ)))
             return;
-        if (x == 0 && z == 0)
-            return;
-        if (roomPositions.Contains(Tuple.Create(x, z)))
-            PlaceCorridor(x, z, rotated);
-    }
-
-    // Instancia en el mapa todas las habitaciones del mapa, cada una en sus coordenadas
-    private void InstantiateRooms()
-    {
-        foreach (var (x, z) in roomPositions)
-        {
-            Vector3 roomPositionInScene =
-                new Vector3(distanceBetweenRoomCenters * x, 0, distanceBetweenRoomCenters * z);
-            Instantiate(initialRoomPrefab, roomPositionInScene, Quaternion.identity);
-        }
-    }
-
-    private void InstantiateCorridors()
-    {
-        foreach (KeyValuePair<(int, int), bool> corridorPos in corridorPositions)
-        {
-            int x = corridorPos.Key.Item1;
-            int z = corridorPos.Key.Item2;
-            bool rotated = corridorPos.Value;
-
-            float offsetX = distanceBetweenRoomCenters;
-            float offsetZ = distanceBetweenRoomCenters;
-
-            if (!rotated)
-                offsetX /= 2;
-            else
-                offsetZ /= 2;
-
-            float posX = x == 0 ? 0 : offsetX + (Math.Abs(x) - 1) * distanceBetweenRoomCenters;
-            float posZ = z == 0 ? 0 : offsetZ + (Math.Abs(z) - 1) * distanceBetweenRoomCenters;
-
-            if (x < 0)
-                posX = -posX;
-            if (z < 0)
-                posZ = -posZ;
-
-            Vector3 corridorPositionInScene = new Vector3(posX, 0, posZ);
-            Quaternion corridorRotation = rotated ? Quaternion.Euler(0, 90, 0) : Quaternion.identity;
-            Instantiate(corridorPrefab, corridorPositionInScene, corridorRotation);
-        }
+        if (roomPositions.ContainsKey((x + offsetX, z + offsetZ)))
+            PlaceCorridor(middleX, middleZ, rotated);
     }
 }
