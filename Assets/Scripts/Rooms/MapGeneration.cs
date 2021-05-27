@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.AI;
 using Random = UnityEngine.Random;
 
 public class MapGeneration : MonoBehaviour
@@ -29,6 +30,7 @@ public class MapGeneration : MonoBehaviour
     private float distanceBetweenRoomCenters;
     private int remainingFloors;
     private GameObject player;
+    private GameObject navMeshSurfaces;
 
     private void Start()
     {
@@ -39,6 +41,7 @@ public class MapGeneration : MonoBehaviour
         distanceBetweenRoomCenters = roomLength + corridorLength;
         remainingFloors = numberOfRooms;
         player = GameObject.Find("Player").gameObject;
+        navMeshSurfaces = GameObject.Find("NavMeshSurfaces").gameObject;
 
         DisablePlayer();
         PlaceInitialRooms();
@@ -47,6 +50,7 @@ public class MapGeneration : MonoBehaviour
         PlaceCorridors();
         MovePlayer();
         EnablePlayer();
+        BakeNavMeshSurfaces();
     }
 
     private GameObject GetRandomRoom()
@@ -226,5 +230,14 @@ public class MapGeneration : MonoBehaviour
     private void DisablePlayer()
     {
         player.SetActive(false);
+    }
+
+    private void BakeNavMeshSurfaces()
+    {
+        foreach (Transform nms in navMeshSurfaces.transform)
+        {
+            NavMeshSurface nmsScript = nms.GetComponent<NavMeshSurface>();
+            nmsScript.BuildNavMesh();
+        }
     }
 }

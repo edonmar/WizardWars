@@ -176,7 +176,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7257598820109147174, guid: b6915a31ca63e3f4dbf79afe76d7be85, type: 3}
       propertyPath: m_Name
-      value: NavMeshSurfacesEnemies
+      value: NavMeshSurfaces
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b6915a31ca63e3f4dbf79afe76d7be85, type: 3}
