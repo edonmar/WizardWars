@@ -22,8 +22,10 @@ public class MapGeneration : MonoBehaviour
 
     private Dictionary<(int, int), GameObject> roomPositions; // Posiciones en las que habrá habitación
     private List<Tuple<float, float>> corridorPositions; // Posiciones en las que habrá pasillo
-    private readonly float roomLength = 20;
-    private readonly float corridorLength = 10;
+    private GameObject[] roomPrefabs; // Cada habitación entre inicio y fin será una de estas elegida al azar
+    private int roomPrefabsCount; // Número de habitaciones disponibles para elegir
+    private readonly float roomLength = 20; // Tamaño en metros de cada habitación
+    private readonly float corridorLength = 10; // Tamaño en metros de cada pasillo
     private float distanceBetweenRoomCenters;
     private int remainingFloors;
     private GameObject player;
@@ -32,6 +34,8 @@ public class MapGeneration : MonoBehaviour
     {
         roomPositions = new Dictionary<(int, int), GameObject>();
         corridorPositions = new List<Tuple<float, float>>();
+        roomPrefabs = Resources.LoadAll<GameObject>("Rooms");
+        roomPrefabsCount = roomPrefabs.Length;
         distanceBetweenRoomCenters = roomLength + corridorLength;
         remainingFloors = numberOfRooms;
         player = GameObject.Find("Player").gameObject;
@@ -39,15 +43,22 @@ public class MapGeneration : MonoBehaviour
         DisablePlayer();
         PlaceInitialRooms();
         while (remainingFloors > 0)
-            PlaceRandomRoom();
+            PlaceRoomInRandomSquare();
         PlaceCorridors();
         MovePlayer();
         EnablePlayer();
     }
 
-    private void PlaceRoom(int x, int z)
+    private GameObject GetRandomRoom()
     {
-        GameObject newRoom = InstantiateRoom(x, z);
+        int pos = Random.Range(0, roomPrefabsCount);
+        GameObject room = roomPrefabs[pos];
+        return room;
+    }
+
+    private void PlaceRoom(int x, int z, GameObject room)
+    {
+        GameObject newRoom = InstantiateRoom(x, z, room);
         roomPositions.Add((x, z), newRoom);
         remainingFloors--;
     }
@@ -59,11 +70,11 @@ public class MapGeneration : MonoBehaviour
         SetCorridorInRooms(newCorridor, x, z, rotated);
     }
 
-    private GameObject InstantiateRoom(int x, int z)
+    private GameObject InstantiateRoom(int x, int z, GameObject room)
     {
         Vector3 roomPositionInScene =
             new Vector3(distanceBetweenRoomCenters * x, 0, distanceBetweenRoomCenters * z);
-        return Instantiate(initialRoomPrefab, roomPositionInScene, Quaternion.identity);
+        return Instantiate(room, roomPositionInScene, Quaternion.identity);
     }
 
     private GameObject InstantiateCorridors(float x, float z, bool rotated)
@@ -116,24 +127,24 @@ public class MapGeneration : MonoBehaviour
     // Crea la habitación inicial y las habitaciones que la rodean
     private void PlaceInitialRooms()
     {
-        PlaceRoom(0, 0); // Habitación central
+        PlaceRoom(0, 0, initialRoomPrefab); // Habitación central
 
         if (!guaranteedSurroundedInitialRoom)
             return;
 
         if (initialRoomPosZ + 1 <= maxZ && remainingFloors > 0) // Arriba
-            PlaceRoom(0, 1);
+            PlaceRoom(0, 1, GetRandomRoom());
         if (initialRoomPosX + 1 <= maxX && remainingFloors > 0) // Derecha
-            PlaceRoom(1, 0);
+            PlaceRoom(1, 0, GetRandomRoom());
         if (initialRoomPosZ - 1 >= minZ && remainingFloors > 0) // Abajo
-            PlaceRoom(0, -1);
+            PlaceRoom(0, -1, GetRandomRoom());
         if (initialRoomPosX - 1 >= minX && remainingFloors > 0) // Izquierda
-            PlaceRoom(-1, 0);
+            PlaceRoom(-1, 0, GetRandomRoom());
     }
 
     // En cada iteración, obtiene todas las casillas en las que se podría colocar una habitación, y de esas casillas
     // escoge una al azar y coloca una habitación en ella
-    private void PlaceRandomRoom()
+    private void PlaceRoomInRandomSquare()
     {
         List<Tuple<int, int>> possibleNewRooms = GetPossibleNewRoomPositions();
         if (possibleNewRooms.Count == 0)
@@ -141,7 +152,7 @@ public class MapGeneration : MonoBehaviour
 
         int pos = Random.Range(0, possibleNewRooms.Count);
         Tuple<int, int> square = possibleNewRooms[pos];
-        PlaceRoom(square.Item1, square.Item2);
+        PlaceRoom(square.Item1, square.Item2, GetRandomRoom());
     }
 
     // Devuelve una lista con todas las casillas donde se podría colocar una habitación
