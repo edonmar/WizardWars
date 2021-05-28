@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: -6318454904849206429}
   - component: {fileID: -7388662999765417976}
   - component: {fileID: 2051589359179248245}
+  - component: {fileID: 255703500259248857}
   m_Layer: 9
   m_Name: Icicle
   m_TagString: Untagged
@@ -245,6 +246,19 @@ TrailRenderer:
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
   m_Emitting: 1
+--- !u!114 &255703500259248857
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 284935705612498405}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bea063033315aed40a4af2c9365ccd1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  duration: 3
 --- !u!1 &2956861827351002831
 GameObject:
   m_ObjectHideFlags: 0
