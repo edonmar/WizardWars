@@ -28,6 +28,7 @@ public class CharacterStats : MonoBehaviour
     private int shield;
     public float baseMovSpeed;
     public float movSpeed;
+    public float chilledMovSpeed;
     [HideInInspector] public bool isDead;
 
     private bool isNpc;
@@ -107,6 +108,7 @@ public class CharacterStats : MonoBehaviour
         health = maxHealth;
         shield = 0;
         SetMovSpeed(baseMovSpeed);
+        chilledMovSpeed = baseMovSpeed / 4;
         isDead = false;
 
         isNpc = !CompareTag("Player");
@@ -434,7 +436,10 @@ public class CharacterStats : MonoBehaviour
             statusEffectResistances["wet"] = wetResistant;
 
         if (wardElements.ContainsKey("COL"))
+        {
             statusEffectResistances["chill"] = chillResistant;
+            statusEffectResistances["freeze"] = chillResistant;
+        }
 
         if (wardElements.ContainsKey("PHY"))
             statusEffectResistances["stun"] = stunResistant;
@@ -679,7 +684,7 @@ public class CharacterStats : MonoBehaviour
             isChilled = true;
             chillCoroutine = ChillCoroutine();
             StartCoroutine(chillCoroutine);
-            SetMovSpeed(movSpeed / 4);
+            SetMovSpeed(chilledMovSpeed);
             PlayFlamesParticles("chill");
         }
     }
@@ -720,7 +725,7 @@ public class CharacterStats : MonoBehaviour
 
         isFrozen = false;
         StopCoroutine(freezeCoroutine);
-        SetMovSpeed(baseMovSpeed);
+        SetMovSpeed(isChilled ? chilledMovSpeed : baseMovSpeed);
         SetPercDmgType("PHY", physicPercTaken);
         SetPercDmgType("ICE", icePercTaken);
         StopFreezeParticles();
@@ -749,7 +754,7 @@ public class CharacterStats : MonoBehaviour
 
         isStunned = false;
         StopCoroutine(stunCoroutine);
-        SetMovSpeed(baseMovSpeed);
+        SetMovSpeed(isChilled ? chilledMovSpeed : baseMovSpeed);
         StopStunParticles();
     }
 
