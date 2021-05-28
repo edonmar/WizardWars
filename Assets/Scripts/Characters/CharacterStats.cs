@@ -293,6 +293,8 @@ public class CharacterStats : MonoBehaviour
 
         GetComponent<CapsuleCollider>().enabled = false;
         GetComponent<Rigidbody>().isKinematic = true;
+        StopFreezeParticles();
+        StopStunParticles();
         healthBarCanvas.SetActive(false);
 
         if (CompareTag("Enemy"))

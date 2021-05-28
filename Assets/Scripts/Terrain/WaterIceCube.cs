@@ -99,6 +99,9 @@ public class WaterIceCube : MonoBehaviour
     {
         foreach (Collider c in enemiesColliding)
         {
+            if (c == null)
+                continue;
+
             Vector3 gameObjectPos = c.gameObject.transform.position;
             float radius = c.GetComponent<NavMeshAgent>().radius;
 

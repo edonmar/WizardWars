@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -30,10 +31,9 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
-        if (characterStats.isDead)
+        if (characterStats.isDead || playerCharacterStats.isDead)
         {
-            if (isNavMeshAgentEnabled)
-                DisableNavMeshAgent();
+            DisableEnemy();
             return;
         }
 
@@ -93,5 +93,14 @@ public class Enemy : MonoBehaviour
     {
         navMeshAgent.enabled = false;
         isNavMeshAgentEnabled = false;
+    }
+
+    private void DisableEnemy()
+    {
+        // Si no se cumple esta condición, es que han caído al vacío y no están sobre el NavMesh
+        if (Math.Abs(transform.position.y) < 1)
+            navMeshAgent.isStopped = true;
+        animator.SetFloat(hashParamMovSpeed, 0);
+        enabled = false;
     }
 }

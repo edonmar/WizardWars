@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
@@ -9,6 +10,7 @@ public class MapGeneration : MonoBehaviour
 {
     [SerializeField] private GameObject initialRoomPrefab;
     [SerializeField] private GameObject corridorPrefab;
+    [SerializeField] private GameObject deathZonePrefab;
 
     [SerializeField] private int numberOfRooms;
     [SerializeField] private int initialRoomPosX;
@@ -48,6 +50,7 @@ public class MapGeneration : MonoBehaviour
         while (remainingFloors > 0)
             PlaceRoomInRandomSquare();
         PlaceCorridors();
+        PlaceDeathZone();
         MovePlayer();
         EnablePlayer();
         BakeNavMeshSurfaces();
@@ -239,5 +242,19 @@ public class MapGeneration : MonoBehaviour
             NavMeshSurface nmsScript = nms.GetComponent<NavMeshSurface>();
             nmsScript.BuildNavMesh();
         }
+    }
+
+    private void PlaceDeathZone()
+    {
+        float sizeXInRooms = Math.Abs(maxX - minX + 1);
+        float sizeZInRooms = Math.Abs(maxZ - minZ + 1);
+        float posX = sizeXInRooms / 2f;
+        float posZ = sizeZInRooms / 2f;
+        float scaleX = (sizeXInRooms + 2) * 1.5f * roomLength;
+        float scaleZ = (sizeZInRooms + 2) * 1.5f * roomLength;
+        Vector3 pos = new Vector3(posX, -5, posZ);
+
+        GameObject deathZone = Instantiate(deathZonePrefab, pos, quaternion.identity);
+        deathZone.transform.localScale = new Vector3(scaleX, 1, scaleZ);
     }
 }

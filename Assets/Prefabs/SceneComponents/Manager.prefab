@@ -46,6 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   initialRoomPrefab: {fileID: 7279776551711175299, guid: 26b7991152bc1be4695015f4f71c3386, type: 3}
   corridorPrefab: {fileID: 2766946866428550496, guid: d504b869c3e46ac4b90ed97527c25bb6, type: 3}
+  deathZonePrefab: {fileID: 531846691714150489, guid: 589b4c959b0d9eb40a6c0770d27e1b6b, type: 3}
   numberOfRooms: 15
   initialRoomPosX: 0
   initialRoomPosZ: 0

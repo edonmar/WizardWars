@@ -98,25 +98,25 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        movSpeed = 0;
-
-        if (!characterStats.isDead)
+        if (characterStats.isDead)
         {
-            RotatePlayerTowardsCamera();
-            if (Input.GetKey(KeyCode.Mouse0))
-            {
-                if (isChargingSpell)
-                    CastChargingSpell();
-                else
-                    DestroyCurrentSpells();
-                MovePlayerForward();
-            }
-
-            ElementInput();
-            CastInput();
-        }
-        else
             DestroyCurrentSpells();
+            enabled = false;
+        }
+
+        movSpeed = 0;
+        RotatePlayerTowardsCamera();
+        if (Input.GetKey(KeyCode.Mouse0))
+        {
+            if (isChargingSpell)
+                CastChargingSpell();
+            else
+                DestroyCurrentSpells();
+            MovePlayerForward();
+        }
+
+        ElementInput();
+        CastInput();
 
         animator.SetFloat(hashParamMovSpeed, movSpeed);
     }
@@ -842,7 +842,8 @@ public class Player : MonoBehaviour
         switch (chargedSpellType)
         {
             case "rock":
-                spellManager.CastRock(chargedSpellElements, "FOC", chargedSpellForce, chargedSpellDmgMultiplier, transform,
+                spellManager.CastRock(chargedSpellElements, "FOC", chargedSpellForce, chargedSpellDmgMultiplier,
+                    transform,
                     shootPoint);
                 break;
             case "icicles":
@@ -880,6 +881,8 @@ public class Player : MonoBehaviour
             DestroyLightning();
         else if (isSprayActive)
             DestroySpray();
+        chargingParticles.Stop();
+        chargingFullParticles.Stop();
     }
 
     private void DestroyBeam()
