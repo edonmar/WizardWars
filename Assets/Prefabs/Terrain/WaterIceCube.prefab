@@ -422,7 +422,7 @@ GameObject:
   - component: {fileID: 4764144632364214942}
   - component: {fileID: 6151742865782255506}
   - component: {fileID: 2841310790438514869}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: SmallCube (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -499,7 +499,7 @@ GameObject:
   - component: {fileID: 503603312383682644}
   - component: {fileID: 6823103845131427039}
   - component: {fileID: 1585208184765846738}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: SmallCube (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -576,7 +576,7 @@ GameObject:
   - component: {fileID: 7694448668955793972}
   - component: {fileID: 8295439680878572015}
   - component: {fileID: 7022130660284383041}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: SmallCube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -653,7 +653,7 @@ GameObject:
   - component: {fileID: 4201545456789681216}
   - component: {fileID: 8166281393161376554}
   - component: {fileID: 5358453273201854755}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: SmallCube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
