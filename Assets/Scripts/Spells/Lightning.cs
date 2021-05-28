@@ -15,7 +15,8 @@ public class Lightning : MonoBehaviour
     public float size;
     public Color color;
 
-    private List<GameObject> chainedCharacters; // Personajes por los que pasará el rayo, siendo el primero el lanzador
+    private List<GameObject>
+        chainedCharacters; // Personajes (o Walls) por los que pasará el rayo, siendo el primero el lanzador
 
     // del hechizo y el último el último enemigo golpeado por el rayo
     private List<GameObject> lightningFragments; // LineRenderer que formarán los fragmentos de la cadena de relámpagos
@@ -136,6 +137,7 @@ public class Lightning : MonoBehaviour
             {
                 case "Player":
                 case "Enemy":
+                case "Wall":
                     nearCharacters.Add(hitObject);
                     break;
             }
@@ -212,7 +214,20 @@ public class Lightning : MonoBehaviour
             }
 
             for (int i = 1; i < chainedCharacters.Count; i++)
-                HitCharacter(chainedCharacters[i]);
+            {
+                if (chainedCharacters[i].CompareTag("Wall"))
+                {
+                    GameObject wall = chainedCharacters[i];
+                    HitWall(wall);
+                    Wall wallScript = wall.GetComponent<Wall>();
+
+                    if (wallScript.wallAura != null)
+                        if (LightningDestroysWallAura(wallScript.wallAuraElements))
+                            wallScript.DestroyWallAura();
+                }
+                else
+                    HitCharacter(chainedCharacters[i]);
+            }
 
             yield return new WaitForSeconds(hitRate);
         }
@@ -223,6 +238,44 @@ public class Lightning : MonoBehaviour
         CharacterStats characterStats = character.GetComponent<CharacterStats>();
         if (!characterStats.isDead)
             characterStats.TakeSpell(dmgTypes);
+    }
+
+    private void HitWall(GameObject wall)
+    {
+        BarrierStats barrierStats = wall.GetComponent<BarrierStats>();
+        if (barrierStats.health != 0)
+        {
+            barrierStats.TakeSpell(dmgTypes);
+            barrierStats.TakeSpell(dmgTypes);
+        }
+    }
+
+    // Devuelve true si el aura del Wall golpeado por el Lightning debe ser destruida porque el Lightning contiene
+    // determinados elementos
+    private bool LightningDestroysWallAura(Dictionary<string, int> wallAuraElements)
+    {
+        bool destroys = false;
+        List<string> elementsThatDestroysWallAura = new List<string>();
+
+        // Según los elementos del wallAura hechizo, obtengo una lista con los elementos que la destruyen
+        if (wallAuraElements.ContainsKey("WAT"))
+            elementsThatDestroysWallAura.Add("FIR");
+        if (wallAuraElements.ContainsKey("COL"))
+        {
+            elementsThatDestroysWallAura.Add("FIR");
+            elementsThatDestroysWallAura.Add("STE");
+        }
+
+        if (wallAuraElements.ContainsKey("FIR"))
+            elementsThatDestroysWallAura.Add("WAT");
+        if (wallAuraElements.ContainsKey("STE"))
+            elementsThatDestroysWallAura.Add("COL");
+
+        // Si la lista de elementos del Lightning contiene uno de los elementos que destruyen al wallAura, devuelvo true
+        if (elementsThatDestroysWallAura.Any(e => elements.ContainsKey(e)))
+            destroys = true;
+
+        return destroys;
     }
 
     private void ChangeDirection()
