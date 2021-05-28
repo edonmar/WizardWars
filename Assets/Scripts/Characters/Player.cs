@@ -873,6 +873,17 @@ public class Player : MonoBehaviour
         chargingFullParticles.Play();
     }
 
+    public void GetStunnedOrFrozen()
+    {
+        if (isChargingSpell)
+        {
+            isChargingSpell = false;
+            StopCoroutine(chargingSpellCoroutine);
+        }
+        else
+            DestroyCurrentSpells();
+    }
+
     private void DestroyCurrentSpells()
     {
         if (isBeamActive)

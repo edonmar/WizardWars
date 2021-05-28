@@ -32,6 +32,7 @@ public class CharacterStats : MonoBehaviour
 
     private bool isNpc;
     private NavMeshAgent navMeshAgent;
+    private Player playerScript;
 
     // Estos son los valores iniciales, no los valores con los que se harán los cálculos
     public float physicPercTaken;
@@ -110,6 +111,8 @@ public class CharacterStats : MonoBehaviour
 
         isNpc = !CompareTag("Player");
         navMeshAgent = isNpc ? GetComponent<NavMeshAgent>() : null;
+        if (CompareTag("Player"))
+            playerScript = GetComponent<Player>();
 
         percDmgTypes = GetPercDmgTypes();
         statusEffectResistances = GetStatusEffectsResistances();
@@ -705,6 +708,8 @@ public class CharacterStats : MonoBehaviour
             SetPercDmgType("PHY", physicPercTaken * 3);
             SetPercDmgType("ICE", icePercTaken * 3);
             PlayFreezeParticles();
+            if (CompareTag("Player"))
+                playerScript.GetStunnedOrFrozen();
         }
     }
 
@@ -732,6 +737,8 @@ public class CharacterStats : MonoBehaviour
             StartCoroutine(stunCoroutine);
             SetMovSpeed(0);
             PlayStunParticles();
+            if (CompareTag("Player"))
+                playerScript.GetStunnedOrFrozen();
         }
     }
 
