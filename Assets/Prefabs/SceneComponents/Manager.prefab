@@ -94,4 +94,4 @@ MonoBehaviour:
   novaPrefab: {fileID: 8581941222268966208, guid: ec48645504257b74188516622f1fef15, type: 3}
   beamPrefab: {fileID: 8459016341948996305, guid: f3654f1c5d604f7458df3b869f472b17, type: 3}
   lightningPrefab: {fileID: 8459016341948996305, guid: 61359bb803e9367448ca2545bd5c9fb7, type: 3}
-  sprayPrefab: {fileID: 788494856509777952, guid: ac50910dc86bb814faffdd26585e6f45, type: 3}
+  sprayPrefab: {fileID: 8677929939740596106, guid: ac50910dc86bb814faffdd26585e6f45, type: 3}

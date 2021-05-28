@@ -693,12 +693,14 @@ public class SpellManager : MonoBehaviour
     private GameObject InstantiateSpray(Dictionary<string, int> elements, Transform originTransform, int size)
     {
         float scale = 2 + (size - 1) * 1;
-        Vector3 spawnPos = originTransform.position + originTransform.forward * (scale / 2);
+        Vector3 originForward = originTransform.forward;
+        Vector3 spawnPos = originTransform.position + originForward * (scale / 2) + originForward * 0.4f;
+        Quaternion spawnRot = originTransform.rotation * Quaternion.Euler(90, 0, 0);
 
-        GameObject newObj = Instantiate(sprayPrefab, spawnPos, originTransform.rotation);
+        GameObject newObj = Instantiate(sprayPrefab, spawnPos, spawnRot);
         Transform activeSprayTransform = newObj.transform;
         Vector3 activeSprayLocalScale = activeSprayTransform.localScale;
-        activeSprayTransform.localScale = new Vector3(activeSprayLocalScale.x, activeSprayLocalScale.y, scale);
+        activeSprayTransform.localScale = new Vector3(activeSprayLocalScale.x, scale / 2, activeSprayLocalScale.z);
         activeSprayTransform.SetParent(originTransform);
 
         // Le paso al spray los elementos que tendrá y su transform de origen
@@ -713,7 +715,7 @@ public class SpellManager : MonoBehaviour
         ParticleSystem ps = newObj.transform.GetChild(0).GetComponent<ParticleSystem>();
         ParticleSystem.MainModule particleSystemMain = ps.main;
         ps.Stop();
-        particleSystemMain.startLifetime = scale / particleSystemMain.startSpeed.constant;
+        particleSystemMain.startLifetime = scale / particleSystemMain.startSpeed.constant + 0.0375f;
         particleSystemMain.startColor = GetColorByElement(elements.ElementAt(0).Key);
         ps.Play();
 

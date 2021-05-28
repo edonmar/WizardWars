@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Spray : MonoBehaviour
 {
-    [SerializeField] private BoxCollider boxCollider;
+    [SerializeField] private CapsuleCollider capsuleCollider;
     [SerializeField] private ParticleSystem thisParticleSystem;
 
     [HideInInspector] public Transform originTransform;
@@ -133,7 +133,7 @@ public class Spray : MonoBehaviour
 
     public void DestroyThis()
     {
-        boxCollider.enabled = false;
+        capsuleCollider.enabled = false;
         charactersColliding = new HashSet<Collider>();
         barriersColliding = new HashSet<Collider>();
 
