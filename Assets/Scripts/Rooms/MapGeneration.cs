@@ -65,9 +65,11 @@ public class MapGeneration : MonoBehaviour
         return room;
     }
 
-    private void PlaceRoom(int x, int z, GameObject room)
+    private void PlaceRoom(int x, int z, GameObject room, bool active)
     {
         GameObject newRoom = InstantiateRoom(x, z, room);
+        if (!active)
+            newRoom.SetActive(false);
         roomPositions.Add((x, z), newRoom);
         remainingFloors--;
     }
@@ -136,19 +138,19 @@ public class MapGeneration : MonoBehaviour
     // Crea la habitación inicial y las habitaciones que la rodean
     private void PlaceInitialRooms()
     {
-        PlaceRoom(0, 0, initialRoomPrefab); // Habitación central
+        PlaceRoom(0, 0, initialRoomPrefab, true); // Habitación central
 
         if (!guaranteedSurroundedInitialRoom)
             return;
 
         if (initialRoomPosZ + 1 <= maxZ && remainingFloors > 0) // Arriba
-            PlaceRoom(0, 1, GetRandomRoom());
+            PlaceRoom(0, 1, GetRandomRoom(), false);
         if (initialRoomPosX + 1 <= maxX && remainingFloors > 0) // Derecha
-            PlaceRoom(1, 0, GetRandomRoom());
+            PlaceRoom(1, 0, GetRandomRoom(), false);
         if (initialRoomPosZ - 1 >= minZ && remainingFloors > 0) // Abajo
-            PlaceRoom(0, -1, GetRandomRoom());
+            PlaceRoom(0, -1, GetRandomRoom(), false);
         if (initialRoomPosX - 1 >= minX && remainingFloors > 0) // Izquierda
-            PlaceRoom(-1, 0, GetRandomRoom());
+            PlaceRoom(-1, 0, GetRandomRoom(), false);
     }
 
     private void PlaceFinalRoom()
@@ -166,7 +168,7 @@ public class MapGeneration : MonoBehaviour
 
         int pos = Random.Range(0, possibleNewRooms.Count);
         Tuple<int, int> square = possibleNewRooms[pos];
-        PlaceRoom(square.Item1, square.Item2, room);
+        PlaceRoom(square.Item1, square.Item2, room, false);
     }
 
     // Devuelve una lista con todas las casillas donde se podría colocar una habitación
@@ -242,7 +244,7 @@ public class MapGeneration : MonoBehaviour
         player.SetActive(false);
     }
 
-    private void BakeNavMeshSurfaces()
+    public void BakeNavMeshSurfaces()
     {
         foreach (Transform nms in navMeshSurfaces.transform)
         {
