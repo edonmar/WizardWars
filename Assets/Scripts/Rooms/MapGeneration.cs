@@ -9,6 +9,7 @@ using Random = UnityEngine.Random;
 public class MapGeneration : MonoBehaviour
 {
     [SerializeField] private GameObject initialRoomPrefab;
+    [SerializeField] private GameObject finalRoomPrefab;
     [SerializeField] private GameObject corridorPrefab;
     [SerializeField] private GameObject deathZonePrefab;
 
@@ -47,8 +48,9 @@ public class MapGeneration : MonoBehaviour
 
         DisablePlayer();
         PlaceInitialRooms();
-        while (remainingFloors > 0)
-            PlaceRoomInRandomSquare();
+        while (remainingFloors > 1)
+            PlaceRoomInRandomSquare(GetRandomRoom());
+        PlaceFinalRoom();
         PlaceCorridors();
         PlaceDeathZone();
         MovePlayer();
@@ -149,9 +151,14 @@ public class MapGeneration : MonoBehaviour
             PlaceRoom(-1, 0, GetRandomRoom());
     }
 
-    // En cada iteración, obtiene todas las casillas en las que se podría colocar una habitación, y de esas casillas
+    private void PlaceFinalRoom()
+    {
+        PlaceRoomInRandomSquare(finalRoomPrefab);
+    }
+
+    // Obtiene todas las casillas en las que se podría colocar una habitación, y de esas casillas
     // escoge una al azar y coloca una habitación en ella
-    private void PlaceRoomInRandomSquare()
+    private void PlaceRoomInRandomSquare(GameObject room)
     {
         List<Tuple<int, int>> possibleNewRooms = GetPossibleNewRoomPositions();
         if (possibleNewRooms.Count == 0)
@@ -159,7 +166,7 @@ public class MapGeneration : MonoBehaviour
 
         int pos = Random.Range(0, possibleNewRooms.Count);
         Tuple<int, int> square = possibleNewRooms[pos];
-        PlaceRoom(square.Item1, square.Item2, GetRandomRoom());
+        PlaceRoom(square.Item1, square.Item2, room);
     }
 
     // Devuelve una lista con todas las casillas donde se podría colocar una habitación
