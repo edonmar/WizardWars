@@ -360,7 +360,7 @@ MonoBehaviour:
   corridorScript: {fileID: 5243594189835024666}
   exitPoint: {fileID: 3941547402157951008}
   otherTrigger: {fileID: 5908736452732023519}
-  exitRoomChar: 65
+  nextRoomChar: 65
 --- !u!1 &5908736452732023519
 GameObject:
   m_ObjectHideFlags: 0
@@ -472,7 +472,7 @@ MonoBehaviour:
   corridorScript: {fileID: 5243594189835024666}
   exitPoint: {fileID: 2389070337528635100}
   otherTrigger: {fileID: 5746695724830171083}
-  exitRoomChar: 66
+  nextRoomChar: 66
 --- !u!1 &6083733190342866279
 GameObject:
   m_ObjectHideFlags: 0

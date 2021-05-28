@@ -425,6 +425,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraPosition: {fileID: 2805820576929360000}
+  enemies: {fileID: 2805820576837698679}
   doorSpaceTL: {fileID: 2805820576562949960}
   doorSpaceTR: {fileID: 2805820575769829026}
   doorSpaceBR: {fileID: 2805820575747666653}

@@ -6,11 +6,12 @@ public class RoomTransition : MonoBehaviour
     [SerializeField] private Corridor corridorScript;
     [SerializeField] private Transform exitPoint;
     [SerializeField] private GameObject otherTrigger;
-    [SerializeField] private char exitRoomChar;
+    [SerializeField] private char nextRoomChar;
 
     private Transform player;
     private Transform cameras;
-    private GameObject exitRoom;
+    private GameObject nextRoom;
+    private Room nextRoomScript;
     private Transform newCameraPosition;
 
     private void Start()
@@ -19,10 +20,11 @@ public class RoomTransition : MonoBehaviour
         cameras = GameObject.Find("Cameras").transform;
 
         // Cada Corridor tiene dos objetos que provocan trigger, uno a cada lado. Cada uno lleva al lado contrario
-        exitRoom = exitRoomChar == 'A'
+        nextRoom = nextRoomChar == 'A'
             ? corridorScript.GetComponent<Corridor>().roomA
             : corridorScript.GetComponent<Corridor>().roomB;
-        newCameraPosition = exitRoom.GetComponent<Room>().cameraPosition;
+        nextRoomScript = nextRoom.GetComponent<Room>();
+        newCameraPosition = nextRoom.GetComponent<Room>().cameraPosition;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -48,6 +50,7 @@ public class RoomTransition : MonoBehaviour
             yield return null;
         }
 
+        EnableNextRoomEnemies();
         EnableOtherTrigger();
     }
 
@@ -59,5 +62,10 @@ public class RoomTransition : MonoBehaviour
     private void DisableOtherTrigger()
     {
         otherTrigger.SetActive(false);
+    }
+
+    private void EnableNextRoomEnemies()
+    {
+        nextRoomScript.EnableEnemies();
     }
 }

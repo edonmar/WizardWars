@@ -4,6 +4,7 @@ using UnityEngine;
 public class Room : MonoBehaviour
 {
     public Transform cameraPosition;
+    public GameObject enemies;
     [SerializeField] private GameObject doorSpaceTL;
     [SerializeField] private GameObject doorSpaceTR;
     [SerializeField] private GameObject doorSpaceBR;
@@ -36,5 +37,10 @@ public class Room : MonoBehaviour
                 Destroy(doorSpaceBL);
                 break;
         }
+    }
+
+    public void EnableEnemies()
+    {
+        enemies.SetActive(true);
     }
 }
