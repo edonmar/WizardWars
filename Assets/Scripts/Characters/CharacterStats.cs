@@ -295,6 +295,9 @@ public class CharacterStats : MonoBehaviour
         GetComponent<Rigidbody>().isKinematic = true;
         healthBarCanvas.SetActive(false);
 
+        if (CompareTag("Enemy"))
+            transform.parent.gameObject.GetComponent<RoomEnemies>().EnemyKilled();
+
         StartCoroutine(DestroyIn(2));
     }
 

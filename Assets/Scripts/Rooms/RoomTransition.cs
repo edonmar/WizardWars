@@ -52,6 +52,8 @@ public class RoomTransition : MonoBehaviour
 
         EnableNextRoomEnemies();
         EnableOtherTrigger();
+        if (nextRoomScript.enemies.GetComponent<RoomEnemies>().CountEnemies() != 0)
+            CloseNextRoomDoors();
     }
 
     private void EnableOtherTrigger()
@@ -62,6 +64,11 @@ public class RoomTransition : MonoBehaviour
     private void DisableOtherTrigger()
     {
         otherTrigger.SetActive(false);
+    }
+
+    private void CloseNextRoomDoors()
+    {
+        nextRoomScript.CloseDoors();
     }
 
     private void EnableNextRoomEnemies()

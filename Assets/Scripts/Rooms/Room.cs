@@ -43,4 +43,16 @@ public class Room : MonoBehaviour
     {
         enemies.SetActive(true);
     }
+
+    public void OpenDoors()
+    {
+        foreach (KeyValuePair<string, GameObject> c in corridors)
+            c.Value.GetComponent<Corridor>().OpenDoors();
+    }
+
+    public void CloseDoors()
+    {
+        foreach (KeyValuePair<string, GameObject> c in corridors)
+            c.Value.GetComponent<Corridor>().CloseDoors();
+    }
 }
