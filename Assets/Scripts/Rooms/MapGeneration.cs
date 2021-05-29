@@ -29,7 +29,7 @@ public class MapGeneration : MonoBehaviour
     private GameObject[] roomPrefabs; // Cada habitación entre inicio y fin será una de estas elegida al azar
     private int roomPrefabsCount; // Número de habitaciones disponibles para elegir
     private readonly float roomLength = 20; // Tamaño en metros de cada habitación
-    private readonly float corridorLength = 10; // Tamaño en metros de cada pasillo
+    private readonly float corridorLength = 12; // Tamaño en metros de cada pasillo
     private float distanceBetweenRoomCenters;
     private int remainingFloors;
     private GameObject player;
