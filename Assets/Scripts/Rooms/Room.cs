@@ -69,4 +69,9 @@ public class Room : MonoBehaviour
         OpenDoors();
         stageManager.RoomCleared();
     }
+
+    public void SetCurrentRoom()
+    {
+        stageManager.currentRoom = gameObject;
+    }
 }

@@ -6,6 +6,7 @@ public class StageManager : MonoBehaviour
     private bool isTimerActive;
     private int totalRooms;
     private int remainingRooms;
+    [HideInInspector] public GameObject currentRoom;
 
     private void Start()
     {

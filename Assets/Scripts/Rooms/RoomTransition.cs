@@ -49,7 +49,8 @@ public class RoomTransition : MonoBehaviour
     // 2 - Activo la habitación a la que voy a pasar y vuelvo a generar los NavMesh
     // 3 - Muevo poco a poco el jugador al otro extremo del pasillo y la cámara a la nueva habitación
     // 4 - Activo los enemigos de la nueva habitación y cierro sus puertas
-    // 5 - Vuelvo a activar el otro trigger del pasillo y desactivo la habitación de la que acabo de salir
+    // 5 - Establezco la nueva habitación como la habitación actual en StageManager
+    // 6 - Vuelvo a activar el otro trigger del pasillo y desactivo la habitación de la que acabo de salir
     private IEnumerator MakeTransition(Vector3 playerInitial, Vector3 playerFinal, Vector3 cameraInitial,
         Vector3 cameraFinal, float duration)
     {
@@ -70,6 +71,7 @@ public class RoomTransition : MonoBehaviour
         EnableNextRoomEnemiesScripts();
         if (nextRoomScript.enemies.GetComponent<RoomEnemies>().CountEnemies() != 0)
             CloseNextRoomDoors();
+        nextRoomScript.SetCurrentRoom();
         EnableOtherTrigger();
         DisableRoom(previousRoom);
     }

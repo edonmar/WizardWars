@@ -58,6 +58,7 @@ public class MapGeneration : MonoBehaviour
         BakeNavMeshSurfaces();
         MovePlayer();
         EnablePlayer();
+        stageManager.currentRoom = roomPositions[(initialRoomPosX, initialRoomPosZ)];
         stageManager.StartTimer();
         stageManager.SetTotalRooms(numberOfRooms - 2);
     }
