@@ -32,6 +32,7 @@ public class MapGeneration : MonoBehaviour
     private readonly float corridorLength = 12; // Tamaño en metros de cada pasillo
     private float distanceBetweenRoomCenters;
     private int remainingFloors;
+    private StageManager stageManager;
     private GameObject player;
     private GameObject navMeshSurfaces;
 
@@ -45,6 +46,7 @@ public class MapGeneration : MonoBehaviour
         remainingFloors = numberOfRooms;
         player = GameObject.Find("Player").gameObject;
         navMeshSurfaces = GameObject.Find("NavMeshSurfaces").gameObject;
+        stageManager = GameObject.Find("Manager").GetComponent<StageManager>();
 
         DisablePlayer();
         PlaceInitialRooms();
@@ -53,9 +55,10 @@ public class MapGeneration : MonoBehaviour
         PlaceFinalRoom();
         PlaceCorridors();
         PlaceDeathZone();
+        BakeNavMeshSurfaces();
         MovePlayer();
         EnablePlayer();
-        BakeNavMeshSurfaces();
+        stageManager.StartTimer();
     }
 
     private GameObject GetRandomRoom()
