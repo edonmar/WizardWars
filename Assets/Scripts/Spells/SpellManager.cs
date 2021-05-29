@@ -36,6 +36,13 @@ public class SpellManager : MonoBehaviour
     [SerializeField] private GameObject lightningPrefab;
     [SerializeField] private GameObject sprayPrefab;
 
+    [HideInInspector] public int layerMaskBarriers;
+
+    private void Start()
+    {
+        layerMaskBarriers = LayerMask.GetMask("TerrainWall", "Barrier");
+    }
+
     public void CastBarrier(string castType, Transform originTransform)
     {
         GameObject barrier = castType == "ARE" ? barrierFullPrefab : barrierHalfPrefab;

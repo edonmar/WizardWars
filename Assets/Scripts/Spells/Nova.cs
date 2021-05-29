@@ -3,15 +3,16 @@ using UnityEngine;
 
 public class Nova : MonoBehaviour
 {
+    private SpellManager spellManager;
+
     public Dictionary<string, int> elements;
     private Dictionary<string, int> dmgTypes;
     public string originType;
     public GameObject caster;
-    private int layerMask;
 
     private void Start()
     {
-        layerMask = LayerMask.GetMask("TerrainWall", "Barrier");
+        spellManager = GameObject.Find("Manager").GetComponent<SpellManager>();
         dmgTypes = GetDamageTypesDictionary();
     }
 
@@ -109,7 +110,7 @@ public class Nova : MonoBehaviour
 
         // Si las capas de layerMask están entre el centro de la nova y el objeto que provoca el trigger,
         // el Spray no golpeará al objeto
-        if (Physics.Linecast(transform.position, other.gameObject.transform.position, layerMask))
+        if (Physics.Linecast(transform.position, other.gameObject.transform.position, spellManager.layerMaskBarriers))
             return false;
 
         return true;
@@ -119,7 +120,7 @@ public class Nova : MonoBehaviour
     {
         if (!other.CompareTag("Barrier") && !other.CompareTag("Wall"))
             return false;
-        if (Physics.Linecast(transform.position, other.gameObject.transform.position, layerMask))
+        if (Physics.Linecast(transform.position, other.gameObject.transform.position, spellManager.layerMaskBarriers))
             return false;
         return true;
     }

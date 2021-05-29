@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -99,6 +98,17 @@ public class Storm : MonoBehaviour
         // devuelvo true
         if (elementsThatDestroysThis.Any(e => otherElements.ContainsKey(e)))
             destroys = true;
+
+        // Si hay determinadas capas entre el hechizo y este objecto, no se eliminará
+        if (otherGameObj.CompareTag("Spray"))
+        {
+            if (Physics.Linecast(transform.position, otherGameObj.GetComponent<Spray>().originTransform.position,
+                spellManager.layerMaskBarriers))
+                return false;
+        }
+        else if (Physics.Linecast(transform.position, otherGameObj.gameObject.transform.position,
+            spellManager.layerMaskBarriers))
+            return false;
 
         return destroys;
     }

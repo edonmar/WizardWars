@@ -5,13 +5,14 @@ using UnityEngine;
 
 public class Spray : MonoBehaviour
 {
+    private SpellManager spellManager;
+
     [SerializeField] private CapsuleCollider capsuleCollider;
     [SerializeField] private ParticleSystem thisParticleSystem;
 
     [HideInInspector] public Transform originTransform;
     public Dictionary<string, int> elements;
     private Dictionary<string, int> dmgTypes;
-    private int layerMask;
 
     // Listas con los personajes y barreras que están actualmente dentro del collider de Spray
     private HashSet<Collider> charactersColliding;
@@ -19,7 +20,8 @@ public class Spray : MonoBehaviour
 
     private void Start()
     {
-        layerMask = LayerMask.GetMask("TerrainWall", "Barrier");
+        spellManager = GameObject.Find("Manager").GetComponent<SpellManager>();
+
         dmgTypes = GetDamageTypesDictionary();
 
         charactersColliding = new HashSet<Collider>();
@@ -99,7 +101,8 @@ public class Spray : MonoBehaviour
     {
         // Si las capas de layerMask están entre el punto de lanzamiento y el objeto que provoca el trigger,
         // el Spray no golpeará al objeto
-        return !Physics.Linecast(originTransform.position, other.gameObject.transform.position, layerMask);
+        return !Physics.Linecast(originTransform.position, other.gameObject.transform.position,
+            spellManager.layerMaskBarriers);
     }
 
     private void HitCharacter(Collider other)
