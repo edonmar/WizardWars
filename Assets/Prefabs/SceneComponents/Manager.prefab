@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2832748577243614183}
   - component: {fileID: 5899158172593575736}
   - component: {fileID: 2832748577243614182}
+  - component: {fileID: 4449086285369186588}
   - component: {fileID: 7276869054607881810}
   m_Layer: 0
   m_Name: Manager
@@ -98,6 +99,18 @@ MonoBehaviour:
   lightningPrefab: {fileID: 8459016341948996305, guid: 61359bb803e9367448ca2545bd5c9fb7, type: 3}
   sprayPrefab: {fileID: 8677929939740596106, guid: ac50910dc86bb814faffdd26585e6f45, type: 3}
   layerMaskBarriers: 0
+--- !u!114 &4449086285369186588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2832748577243614185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19c8640b9cdfaae4d993024de5beadab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &7276869054607881810
 MonoBehaviour:
   m_ObjectHideFlags: 0

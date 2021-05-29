@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
     private SpellManager spellManager;
+    private MagickManager magickManager;
     private Camera mainCamera;
 
     [SerializeField] private Animator animator;
@@ -55,7 +56,9 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        spellManager = GameObject.Find("Manager").GetComponent<SpellManager>();
+        GameObject manager = GameObject.Find("Manager");
+        spellManager = manager.GetComponent<SpellManager>();
+        magickManager = manager.GetComponent<MagickManager>();
         mainCamera = Camera.main;
 
         hashParamMovSpeed = Animator.StringToHash("MovSpeed");
@@ -450,6 +453,8 @@ public class Player : MonoBehaviour
             castType = "SEL";
         else if (Input.GetKeyDown(KeyCode.Alpha4))
             castType = "WEA";
+        else if (Input.GetKeyDown(KeyCode.Alpha5))
+            castType = "MAG";
 
         // Si levanto el botón, desactivo los hechizos que esté lanzando
         if (Input.GetKeyUp(KeyCode.Alpha1))
@@ -474,6 +479,16 @@ public class Player : MonoBehaviour
             case "WEA" when loadedElements.Count == 0:
                 // Ataque de arma
                 print("Ataque de arma");
+                return;
+            case "MAG":
+                string magickName = magickManager.WrittenMagick(loadedElements);
+                print("Magick: " + magickName);
+                if (magickName != "")
+                {
+                    magickManager.CastMagick(magickName);
+                    PlayAttackAnimation(castType);
+                }
+
                 return;
         }
 
