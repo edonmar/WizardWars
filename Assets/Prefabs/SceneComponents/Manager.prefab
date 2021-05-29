@@ -111,7 +111,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19c8640b9cdfaae4d993024de5beadab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  magickTransform: {fileID: 2800699498962673593, guid: 469749d31b3bfd54c8d9007a85096ee0, type: 3}
+  magickTransformPrefab: {fileID: 2800699498962673593, guid: 469749d31b3bfd54c8d9007a85096ee0, type: 3}
 --- !u!114 &7276869054607881810
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124,3 +124,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82da92d2fe106c94e8edc37a61b8af57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentRoom: {fileID: 0}

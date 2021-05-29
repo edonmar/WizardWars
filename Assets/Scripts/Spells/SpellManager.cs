@@ -518,7 +518,7 @@ public class SpellManager : MonoBehaviour
         return newObj;
     }
 
-    private void InstantiateRock(Dictionary<string, int> elements, Transform originTransform, int size, int force,
+    public void InstantiateRock(Dictionary<string, int> elements, Transform originTransform, int size, int force,
         float dmgMultiplier, string castType, List<Color> trailColors)
     {
         float scale = 0.25f + size * 0.1f;
@@ -745,7 +745,7 @@ public class SpellManager : MonoBehaviour
         crystal.GetComponent<MeshRenderer>().material = elements.ContainsKey("EAR") ? matEarthTexture : matIceTexture;
     }
 
-    private List<Color> GetTrailColorsRock(Dictionary<string, int> elements)
+    public List<Color> GetTrailColorsRock(Dictionary<string, int> elements)
     {
         List<Color> trailColors = new List<Color>();
 
