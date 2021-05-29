@@ -20,6 +20,6 @@ public class RoomEnemies : MonoBehaviour
     {
         enemyCount--;
         if (enemyCount == 0)
-            roomScript.OpenDoors();
+            roomScript.ClearRoom();
     }
 }

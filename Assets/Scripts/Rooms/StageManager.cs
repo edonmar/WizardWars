@@ -4,6 +4,8 @@ public class StageManager : MonoBehaviour
 {
     private float gameTime;
     private bool isTimerActive;
+    private int totalRooms;
+    private int remainingRooms;
 
     private void Start()
     {
@@ -32,6 +34,7 @@ public class StageManager : MonoBehaviour
         PauseTimer();
         print("WIN");
         print(ConvertTime());
+        print("Rooms: " + (totalRooms - remainingRooms) + "/" + totalRooms);
     }
 
     private string ConvertTime()
@@ -49,5 +52,16 @@ public class StageManager : MonoBehaviour
             strMinutes = "0" + strMinutes;
 
         return strMinutes + ":" + strSeconds;
+    }
+
+    public void SetTotalRooms(int num)
+    {
+        totalRooms = num;
+        remainingRooms = totalRooms;
+    }
+
+    public void RoomCleared()
+    {
+        remainingRooms--;
     }
 }

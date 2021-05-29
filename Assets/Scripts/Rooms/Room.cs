@@ -10,10 +10,12 @@ public class Room : MonoBehaviour
     [SerializeField] private GameObject doorSpaceBR;
     [SerializeField] private GameObject doorSpaceBL;
 
+    private StageManager stageManager;
     private Dictionary<string, GameObject> corridors;
 
     private void Awake()
     {
+        stageManager = GameObject.Find("Manager").GetComponent<StageManager>();
         corridors = new Dictionary<string, GameObject>();
     }
 
@@ -44,7 +46,7 @@ public class Room : MonoBehaviour
         enemies.SetActive(true);
     }
 
-    public void OpenDoors()
+    private void OpenDoors()
     {
         foreach (KeyValuePair<string, GameObject> c in corridors)
             c.Value.GetComponent<Corridor>().OpenDoors();
@@ -54,5 +56,11 @@ public class Room : MonoBehaviour
     {
         foreach (KeyValuePair<string, GameObject> c in corridors)
             c.Value.GetComponent<Corridor>().CloseDoors();
+    }
+
+    public void ClearRoom()
+    {
+        OpenDoors();
+        stageManager.RoomCleared();
     }
 }

@@ -59,6 +59,7 @@ public class MapGeneration : MonoBehaviour
         MovePlayer();
         EnablePlayer();
         stageManager.StartTimer();
+        stageManager.SetTotalRooms(numberOfRooms - 2);
     }
 
     private GameObject GetRandomRoom()
