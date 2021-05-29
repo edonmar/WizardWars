@@ -46,6 +46,12 @@ public class Room : MonoBehaviour
         enemies.SetActive(true);
     }
 
+    public void EnableEnemiesScripts()
+    {
+        foreach (Transform enemy in enemies.transform)
+            enemy.GetComponent<Enemy>().enabled = true;
+    }
+
     private void OpenDoors()
     {
         foreach (KeyValuePair<string, GameObject> c in corridors)

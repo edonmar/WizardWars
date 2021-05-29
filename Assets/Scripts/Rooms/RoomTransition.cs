@@ -56,6 +56,7 @@ public class RoomTransition : MonoBehaviour
         DisableOtherTrigger();
         EnableRoom(nextRoom);
         mapGeneration.BakeNavMeshSurfaces();
+        EnableNextRoomEnemies();
 
         float counter = 0f;
         while (counter < duration)
@@ -66,7 +67,7 @@ public class RoomTransition : MonoBehaviour
             yield return null;
         }
 
-        EnableNextRoomEnemies();
+        EnableNextRoomEnemiesScripts();
         if (nextRoomScript.enemies.GetComponent<RoomEnemies>().CountEnemies() != 0)
             CloseNextRoomDoors();
         EnableOtherTrigger();
@@ -101,5 +102,10 @@ public class RoomTransition : MonoBehaviour
     private void EnableNextRoomEnemies()
     {
         nextRoomScript.EnableEnemies();
+    }
+
+    private void EnableNextRoomEnemiesScripts()
+    {
+        nextRoomScript.EnableEnemiesScripts();
     }
 }
