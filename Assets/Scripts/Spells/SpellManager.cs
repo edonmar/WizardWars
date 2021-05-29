@@ -618,13 +618,15 @@ public class SpellManager : MonoBehaviour
         ApplyTrailColorAndWidth(newObj, trailColors, 0);
     }
 
-    // Si el origen de la nova es el jugador
+    // TODO si el origen de la nova es una roca que cae encima de un Barrier, a veces afecta a los
+    // personajes que estén debajo del barrier, cuando no debería
     public void InstantiateNova(Dictionary<string, int> elements, Transform originTransform, string originType,
         int size)
     {
         float scale = size * 4f;
+        float offsetY = originType == "wallAura" ? -0.3f : 0.2f;
         Vector3 originPosition = originTransform.position;
-        Vector3 spawnPos = new Vector3(originPosition.x, 0.2f, originPosition.z);
+        Vector3 spawnPos = originPosition + new Vector3(0, offsetY, 0);
         Quaternion spawnRot = Quaternion.Euler(0, 0, 0);
 
         GameObject newObj = Instantiate(novaPrefab, spawnPos, spawnRot);
