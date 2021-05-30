@@ -371,4 +371,44 @@ public class MagickManager : MonoBehaviour
 
         Destroy(magickTransform.gameObject);
     }
+
+    private void LockMagick(string magickName)
+    {
+        List<string> list = magickDict[magickName].Item1;
+        Tuple<List<string>, bool> newTuple = Tuple.Create(list, false);
+        magickDict[magickName] = newTuple;
+    }
+
+    private void UnlockMagick(string magickName)
+    {
+        List<string> list = magickDict[magickName].Item1;
+        Tuple<List<string>, bool> newTuple = Tuple.Create(list, true);
+        magickDict[magickName] = newTuple;
+    }
+
+    private void LockAllMagicks()
+    {
+        List<string> unlockedMagics = (from magick in magickDict where magick.Value.Item2 select magick.Key).ToList();
+        foreach (string magick in unlockedMagics)
+            LockMagick(magick);
+    }
+
+    private void UnlockAllMagicks()
+    {
+        List<string> unlockedMagics = (from magick in magickDict where !magick.Value.Item2 select magick.Key).ToList();
+        foreach (string magick in unlockedMagics)
+            UnlockMagick(magick);
+    }
+
+    private void UnlockRandomMagick()
+    {
+        List<string> lockedMagics = (from magick in magickDict where !magick.Value.Item2 select magick.Key).ToList();
+        int lockedMagicsCount = lockedMagics.Count;
+        if (lockedMagicsCount == 0)
+            return;
+        int magickPos = Random.Range(0, lockedMagicsCount);
+        string magickName = lockedMagics[magickPos];
+        UnlockMagick(magickName);
+        print("Unlocked: " + magickName);
+    }
 }
