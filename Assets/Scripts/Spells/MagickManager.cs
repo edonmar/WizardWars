@@ -39,6 +39,12 @@ public class MagickManager : MonoBehaviour
         elementList = new List<string> {"FIR", "EAR", "STE", "EAR", "FIR"};
         tuple = Tuple.Create(elementList, true);
         magickDict.Add("MeteorShower", tuple);
+
+        // Hailstorm
+        // Llueven bolas de hielo, frío y agua explosivas por toda la habitación
+        elementList = new List<string> {"COL", "ICE", "COL"};
+        tuple = Tuple.Create(elementList, true);
+        magickDict.Add("Hailstorm", tuple);
     }
 
     // El nombre del magick correspondiente a una lista de elementos determinada
@@ -64,17 +70,35 @@ public class MagickManager : MonoBehaviour
     {
         switch (magickName)
         {
+            case "Hailstorm":
+                CastHailStorm();
+                break;
             case "MeteorShower":
-                StartCoroutine(MeteorShower());
+                CastMeteorShower();
                 break;
         }
     }
 
-    private IEnumerator MeteorShower()
+    private void CastHailStorm()
+    {
+        float rate = 0.2f;
+        Dictionary<string, int> elements = new Dictionary<string, int> {{"EAR", 2}, {"ICE", 1}, {"COL", 2}};
+        StartCoroutine(RockRain(elements, rate));
+        elements = new Dictionary<string, int> {{"EAR", 2}, {"ICE", 1}, {"WAT", 2}};
+        StartCoroutine(RockRain(elements, rate));
+    }
+
+    private void CastMeteorShower()
+    {
+        float rate = 0.1f;
+        Dictionary<string, int> elements = new Dictionary<string, int> {{"EAR", 3}, {"FIR", 2}};
+        StartCoroutine(RockRain(elements, rate));
+    }
+
+    private IEnumerator RockRain(Dictionary<string, int> elements, float rate)
     {
         float timeRemaining = 10;
-        float hitTimer = 0.1f;
-        float hitTimerRemaining = 0.1f;
+        float rateTimer = rate;
 
         Vector3 roomPos = stageManager.currentRoom.transform.position;
         float minX = roomPos.x - 10;
@@ -84,17 +108,16 @@ public class MagickManager : MonoBehaviour
 
         Transform magickTransform = Instantiate(magickTransformPrefab, roomPos, quaternion.identity);
 
-        Dictionary<string, int> elements = new Dictionary<string, int> {{"EAR", 3}, {"FIR", 2}};
         int size = elements["EAR"];
         List<Color> trailColors = spellManager.GetTrailColorsRock(elements);
 
         while (timeRemaining > 0)
         {
             timeRemaining -= Time.deltaTime;
-            hitTimerRemaining -= Time.deltaTime;
-            if (hitTimerRemaining <= 0)
+            rateTimer -= Time.deltaTime;
+            if (rateTimer <= 0)
             {
-                hitTimerRemaining = hitTimer;
+                rateTimer = rate;
 
                 float posX = Random.Range(minX, maxX);
                 float posZ = Random.Range(minZ, maxZ);
