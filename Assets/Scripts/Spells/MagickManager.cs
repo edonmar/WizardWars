@@ -46,6 +46,12 @@ public class MagickManager : MonoBehaviour
         tuple = Tuple.Create(elementList, true);
         magickDict.Add("ImmolationAura", tuple);
 
+        // Levitation
+        // Durante los siguientes segundos, el jugador levita (se desactiva su gravedad) y no puede caer al vacío
+        elementList = new List<string> {"STE", "ARC", "STE"};
+        tuple = Tuple.Create(elementList, true);
+        magickDict.Add("Levitation", tuple);
+
         // Meteor shower
         // Llueven bolas de fuego explosivas por toda la habitación
         elementList = new List<string> {"FIR", "EAR", "STE", "EAR", "FIR"};
@@ -88,6 +94,9 @@ public class MagickManager : MonoBehaviour
             case "ImmolationAura":
                 CastImmolationAura(caster);
                 break;
+            case "Levitation":
+                CastLevitation(caster);
+                break;
             case "MeteorShower":
                 CastMeteorShower();
                 break;
@@ -114,6 +123,13 @@ public class MagickManager : MonoBehaviour
         StartCoroutine(PeriodicNovas(elements, caster.transform, "character", size, rate));
     }
 
+    private void CastLevitation(GameObject caster)
+    {
+        Rigidbody casterRb = caster.GetComponent<Rigidbody>();
+        casterRb.useGravity = false;
+        StartCoroutine(ActivateGravityIn(casterRb, 10));
+    }
+
     private void CastMeteorShower()
     {
         float rate = 0.1f;
@@ -132,6 +148,14 @@ public class MagickManager : MonoBehaviour
         spellManager.InstantiateNova(elements, caster.transform, "character", size);
     }
 
+    private IEnumerator ActivateGravityIn(Rigidbody casterRb, float time)
+    {
+        yield return new WaitForSeconds(time);
+        CharacterStats characterStats = casterRb.gameObject.GetComponent<CharacterStats>();
+        if (!characterStats.isDead)
+            casterRb.useGravity = true;
+    }
+
     private IEnumerator PeriodicNovas(Dictionary<string, int> elements, Transform originTransform, string originType,
         int size, float rate)
     {
@@ -146,7 +170,7 @@ public class MagickManager : MonoBehaviour
             rateTimer -= Time.deltaTime;
             if (rateTimer <= 0)
             {
-                if (characterStats.health <= 0) // Si el personaje que la está lanzando muere, temrino la corutina
+                if (characterStats.isDead) // Si el personaje que la está lanzando muere, temrino la corutina
                     break;
                 rateTimer = rate;
                 spellManager.InstantiateNova(elements, originTransform, originType, size);
