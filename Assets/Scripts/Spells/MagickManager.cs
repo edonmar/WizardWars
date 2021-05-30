@@ -34,17 +34,23 @@ public class MagickManager : MonoBehaviour
         List<string> elementList;
         Tuple<List<string>, bool> tuple;
 
-        // Meteor shower
-        // Llueven bolas de fuego explosivas por toda la habitación
-        elementList = new List<string> {"FIR", "EAR", "STE", "EAR", "FIR"};
-        tuple = Tuple.Create(elementList, true);
-        magickDict.Add("MeteorShower", tuple);
-
         // Hailstorm
         // Llueven bolas de hielo, frío y agua explosivas por toda la habitación
         elementList = new List<string> {"COL", "ICE", "COL"};
         tuple = Tuple.Create(elementList, true);
         magickDict.Add("Hailstorm", tuple);
+
+        // Immolation aura
+        // Durante los siguientes segundos, se producen explosiones de fuego alrededor del jugador
+        elementList = new List<string> {"FIR", "STE", "FIR"};
+        tuple = Tuple.Create(elementList, true);
+        magickDict.Add("ImmolationAura", tuple);
+
+        // Meteor shower
+        // Llueven bolas de fuego explosivas por toda la habitación
+        elementList = new List<string> {"FIR", "EAR", "STE", "EAR", "FIR"};
+        tuple = Tuple.Create(elementList, true);
+        magickDict.Add("MeteorShower", tuple);
 
         // Sacrifice
         // Reduce la vida del jugador a 1, pero hace mucho daño alrededor
@@ -79,6 +85,9 @@ public class MagickManager : MonoBehaviour
             case "Hailstorm":
                 CastHailStorm();
                 break;
+            case "ImmolationAura":
+                CastImmolationAura(caster);
+                break;
             case "MeteorShower":
                 CastMeteorShower();
                 break;
@@ -95,6 +104,14 @@ public class MagickManager : MonoBehaviour
         StartCoroutine(RockRain(elements, rate));
         elements = new Dictionary<string, int> {{"EAR", 2}, {"ICE", 1}, {"WAT", 2}};
         StartCoroutine(RockRain(elements, rate));
+    }
+
+    private void CastImmolationAura(GameObject caster)
+    {
+        int size = 3;
+        float rate = 0.5f;
+        Dictionary<string, int> elements = new Dictionary<string, int> {{"FIR", 5}};
+        StartCoroutine(PeriodicNovas(elements, caster.transform, "character", size, rate));
     }
 
     private void CastMeteorShower()
@@ -115,10 +132,34 @@ public class MagickManager : MonoBehaviour
         spellManager.InstantiateNova(elements, caster.transform, "character", size);
     }
 
+    private IEnumerator PeriodicNovas(Dictionary<string, int> elements, Transform originTransform, string originType,
+        int size, float rate)
+    {
+        CharacterStats characterStats = originTransform.gameObject.GetComponent<CharacterStats>();
+
+        float timeRemaining = 5;
+        float rateTimer = 0;
+
+        while (timeRemaining > 0)
+        {
+            timeRemaining -= Time.deltaTime;
+            rateTimer -= Time.deltaTime;
+            if (rateTimer <= 0)
+            {
+                if (characterStats.health <= 0) // Si el personaje que la está lanzando muere, temrino la corutina
+                    break;
+                rateTimer = rate;
+                spellManager.InstantiateNova(elements, originTransform, originType, size);
+            }
+
+            yield return null;
+        }
+    }
+
     private IEnumerator RockRain(Dictionary<string, int> elements, float rate)
     {
         float timeRemaining = 10;
-        float rateTimer = rate;
+        float rateTimer = 0;
 
         Vector3 roomPos = stageManager.currentRoom.transform.position;
         float minX = roomPos.x - 10;
