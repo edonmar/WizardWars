@@ -41,6 +41,12 @@ public class MagickManager : MonoBehaviour
         tuple = Tuple.Create(elementList, true);
         magickDict.Add("Hailstorm", tuple);
 
+        // Haste
+        // Aumenta la velocidad de movimiento del jugador durante unos segundos
+        elementList = new List<string> {"LIG", "ARC", "FIR"};
+        tuple = Tuple.Create(elementList, true);
+        magickDict.Add("Haste", tuple);
+
         // Immolation aura
         // Durante los siguientes segundos, se producen explosiones de fuego alrededor del jugador
         elementList = new List<string> {"FIR", "STE", "FIR"};
@@ -111,6 +117,9 @@ public class MagickManager : MonoBehaviour
             case "Hailstorm":
                 CastHailStorm();
                 break;
+            case "Haste":
+                CastHaste(caster);
+                break;
             case "ImmolationAura":
                 CastImmolationAura(caster);
                 break;
@@ -142,6 +151,12 @@ public class MagickManager : MonoBehaviour
         StartCoroutine(RockRain(elements, rate));
         elements = new Dictionary<string, int> {{"EAR", 2}, {"ICE", 1}, {"WAT", 2}};
         StartCoroutine(RockRain(elements, rate));
+    }
+
+    private void CastHaste(GameObject caster)
+    {
+        CharacterStats characterStats = caster.GetComponent<CharacterStats>();
+        characterStats.ApplyHaste(10);
     }
 
     private void CastImmolationAura(GameObject caster)

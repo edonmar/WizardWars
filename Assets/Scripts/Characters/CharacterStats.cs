@@ -28,7 +28,6 @@ public class CharacterStats : MonoBehaviour
     private int shield;
     public float baseMovSpeed;
     public float movSpeed;
-    public float chilledMovSpeed;
     [HideInInspector] public bool isDead;
 
     private bool isNpc;
@@ -83,23 +82,27 @@ public class CharacterStats : MonoBehaviour
     [HideInInspector] public bool isStunned;
     private bool isBurning;
     private bool isWetAndChilled;
+    private bool isHasted;
 
     private float wardTime;
     private float chillTime;
     private float freezeTime;
     private float stunTime;
     private float burningTime;
+    private float hasteTime;
     private float wardTimeRemaining;
     private float chillTimeRemaining;
     private float freezeTimeRemaining;
     private float stunTimeRemaining;
     private float burningTimeRemaining;
+    private float hasteTimeRemaining;
 
     private IEnumerator wardCoroutine;
     private IEnumerator chillCoroutine;
     private IEnumerator freezeCoroutine;
     private IEnumerator stunCoroutine;
     private IEnumerator burningCoroutine;
+    private IEnumerator hasteCoroutine;
 
     private void Start()
     {
@@ -108,7 +111,6 @@ public class CharacterStats : MonoBehaviour
         health = maxHealth;
         shield = 0;
         SetMovSpeed(baseMovSpeed);
-        chilledMovSpeed = baseMovSpeed / 4;
         isDead = false;
 
         isNpc = !CompareTag("Player");
@@ -652,6 +654,18 @@ public class CharacterStats : MonoBehaviour
         DispelBurning();
     }
 
+    private IEnumerator HasteCoroutine()
+    {
+        hasteTimeRemaining = hasteTime;
+        while (hasteTimeRemaining > 0)
+        {
+            hasteTimeRemaining -= Time.deltaTime;
+            yield return null;
+        }
+
+        DispelHaste();
+    }
+
     private void ApplyWet()
     {
         bool reapplied = isWet;
@@ -684,7 +698,7 @@ public class CharacterStats : MonoBehaviour
             isChilled = true;
             chillCoroutine = ChillCoroutine();
             StartCoroutine(chillCoroutine);
-            SetMovSpeed(chilledMovSpeed);
+            SetMovSpeed(CalculateMovSpeed());
             PlayFlamesParticles("chill");
         }
     }
@@ -696,7 +710,7 @@ public class CharacterStats : MonoBehaviour
 
         isChilled = false;
         StopCoroutine(chillCoroutine);
-        SetMovSpeed(baseMovSpeed);
+        SetMovSpeed(CalculateMovSpeed());
         StopFlamesParticles();
     }
 
@@ -725,7 +739,7 @@ public class CharacterStats : MonoBehaviour
 
         isFrozen = false;
         StopCoroutine(freezeCoroutine);
-        SetMovSpeed(isChilled ? chilledMovSpeed : baseMovSpeed);
+        SetMovSpeed(CalculateMovSpeed());
         SetPercDmgType("PHY", physicPercTaken);
         SetPercDmgType("ICE", icePercTaken);
         StopFreezeParticles();
@@ -754,7 +768,7 @@ public class CharacterStats : MonoBehaviour
 
         isStunned = false;
         StopCoroutine(stunCoroutine);
-        SetMovSpeed(isChilled ? chilledMovSpeed : baseMovSpeed);
+        SetMovSpeed(CalculateMovSpeed());
         StopStunParticles();
     }
 
@@ -779,6 +793,47 @@ public class CharacterStats : MonoBehaviour
         isBurning = false;
         StopCoroutine(burningCoroutine);
         StopFlamesParticles();
+    }
+
+    public void ApplyHaste(float duration)
+    {
+        hasteTime = duration;
+        if (isHasted)
+            hasteTimeRemaining = hasteTime;
+        else
+        {
+            isHasted = true;
+            hasteCoroutine = HasteCoroutine();
+            StartCoroutine(hasteCoroutine);
+            SetMovSpeed(CalculateMovSpeed());
+        }
+    }
+
+    private void DispelHaste()
+    {
+        if (!isHasted)
+            return;
+
+        isHasted = false;
+        StopCoroutine(hasteCoroutine);
+        SetMovSpeed(CalculateMovSpeed());
+    }
+
+    private float CalculateMovSpeed()
+    {
+        float currentMovSpeed = baseMovSpeed;
+
+        if (isFrozen || isStunned)
+            currentMovSpeed = 0;
+        else
+        {
+            if (isChilled)
+                currentMovSpeed /= 4;
+            if (isHasted)
+                currentMovSpeed *= 2;
+        }
+
+        return currentMovSpeed;
     }
 
     // FlamesParticles dibuja 3 efectos: Wet, Chilled y Burning
