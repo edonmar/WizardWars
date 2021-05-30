@@ -114,7 +114,12 @@ public class Spray : MonoBehaviour
 
         // Si el Spray contiene Water y el personaje no es resistente al efecto Wet, es empujado
         if (elements.ContainsKey("WAT") && !characterStats.statusEffectResistances["wet"])
+        {
             other.GetComponent<Rigidbody>().velocity = originTransform.forward * 5;
+            Enemy enemyScript = other.GetComponent<Enemy>();
+            if (enemyScript != null)
+                enemyScript.ApplyPush();
+        }
     }
 
     private void HitBarrier(Collider other)

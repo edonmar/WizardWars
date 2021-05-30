@@ -138,8 +138,13 @@ public class Nova : MonoBehaviour
 
         // Si la Nova contiene Water y el personaje no es resistente al efecto Wet, es empujado
         if (elements.ContainsKey("WAT") && !characterStats.statusEffectResistances["wet"])
+        {
             other.GetComponent<Rigidbody>().velocity =
                 (other.transform.position - transform.position).normalized * 6;
+            Enemy enemyScript = other.GetComponent<Enemy>();
+            if (enemyScript != null)
+                enemyScript.ApplyPush();
+        }
     }
 
     private void HitBarrier(Collider other)

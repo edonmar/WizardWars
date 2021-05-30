@@ -102,6 +102,7 @@ public class WaterIceCube : MonoBehaviour
             if (c == null)
                 continue;
 
+            Enemy enemyScript = c.gameObject.GetComponent<Enemy>();
             Vector3 gameObjectPos = c.gameObject.transform.position;
             float radius = c.GetComponent<NavMeshAgent>().radius;
 
@@ -109,12 +110,11 @@ public class WaterIceCube : MonoBehaviour
             // enemigo quedaría inmóvil para siempre. Para evitarlo:
 
             // 1 - Si está pisando el hielo pero también una baldosa, no le desactivo el NavMeshAgent
-            if (HasFootOnFloor(gameObjectPos, radius))
+            if (enemyScript.HasFootOnFloor(gameObjectPos, radius))
                 continue;
 
             // Si está pisando sólo el hielo y no el hielo más una baldosa:
             // 2 - Desactivo su NavMeshAgent
-            Enemy enemyScript = c.gameObject.GetComponent<Enemy>();
             enemyScript.DisableNavMeshAgent();
 
             // 3 - No sé si está pisando otro hielo o no, así que espero un momento y luego compruebo si está pisando
@@ -122,32 +122,7 @@ public class WaterIceCube : MonoBehaviour
             //     tiempo, y quiero esperar a que estén todos descongelados antes de realizar la comprobación.
             //     Además, el NavMeshAgent lo empujaría rápidamente si no lo dejara desactivado por poco tiempo.
             // 4 - Si está está pisando otro hielo, le vuelvo a activar el NavMeshAgent
-            StartCoroutine(CheckFootOnIceIn(0.5f, gameObjectPos, radius, enemyScript));
+            StartCoroutine(enemyScript.CheckFootOnIceIn(0.5f, gameObjectPos, radius));
         }
-    }
-
-    private bool HasFootOnFloor(Vector3 center, float radius)
-    {
-        if (center.y < -0.5 || center.y > 0.5)
-            return false;
-        Collider[] hitColliders = Physics.OverlapSphere(center, radius);
-        return hitColliders.Select(hitCollider => hitCollider.gameObject)
-            .Any(hitObject => hitObject.CompareTag("Floor"));
-    }
-
-    private bool HasFootOnIce(Vector3 center, float radius)
-    {
-        if (center.y < -0.5 || center.y > 0.5)
-            return false;
-        Collider[] hitColliders = Physics.OverlapSphere(center, radius);
-        return hitColliders.Select(hitCollider => hitCollider.gameObject)
-            .Any(hitObject => hitObject.CompareTag("FloorIce"));
-    }
-
-    private IEnumerator CheckFootOnIceIn(float time, Vector3 center, float radius, Enemy enemyScript)
-    {
-        yield return new WaitForSeconds(time);
-        if (HasFootOnIce(center, radius))
-            enemyScript.EnableNavMeshAgent();
     }
 }
