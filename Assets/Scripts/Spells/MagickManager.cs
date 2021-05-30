@@ -20,12 +20,14 @@ public class MagickManager : MonoBehaviour
     // List<string> es la lista de elementos que hacen de combinación al magick
     // Bool, true significa que está desbloqueado y se puede usar
     private Dictionary<string, Tuple<List<string>, bool>> magickDict;
+    private int teleportlayerMask;
 
     private void Start()
     {
         GameObject manager = GameObject.Find("Manager");
         spellManager = manager.GetComponent<SpellManager>();
         stageManager = manager.GetComponent<StageManager>();
+        teleportlayerMask = LayerMask.GetMask("TerrainWall");
         MakeMagickDict();
     }
 
@@ -84,6 +86,13 @@ public class MagickManager : MonoBehaviour
         tuple = Tuple.Create(elementList, true);
         magickDict.Add("SummonDeath", tuple);
 
+        // Teleport
+        // Teletransporta al jugador hacia delante, hasta el siguiente muro de terreno que se encuentre en la
+        // posición en la que está mirando
+        elementList = new List<string> {"LIG", "ARC", "LIG"};
+        tuple = Tuple.Create(elementList, true);
+        magickDict.Add("Teleport", tuple);
+
         // Thunder bolt
         // Cae un trueno en un enemigo aleatorio
         elementList = new List<string> {"STE", "LIG", "ARC", "LIG"};
@@ -137,6 +146,9 @@ public class MagickManager : MonoBehaviour
                 break;
             case "SummonDeath":
                 CastSummonDeath(caster);
+                break;
+            case "Teleport":
+                CastTeleport(caster);
                 break;
             case "ThunderBolt":
                 CastThunderBolt();
@@ -243,6 +255,21 @@ public class MagickManager : MonoBehaviour
             int maxHealth = characterStats.maxHealth;
             return health * 100 / (float) maxHealth;
         }
+    }
+
+    private void CastTeleport(GameObject caster)
+    {
+        Transform casterTransform = caster.transform;
+        Vector3 casterPos = casterTransform.position;
+
+        if (!Physics.Raycast(casterPos, casterTransform.forward, out RaycastHit hit, 5000,
+            teleportlayerMask)) return;
+        if (!hit.collider)
+            return;
+
+        Vector3 newPos = hit.transform.position - casterTransform.forward * 0.6f;
+        newPos.y = 0;
+        caster.transform.position = newPos;
     }
 
     private void CastThunderBolt()
