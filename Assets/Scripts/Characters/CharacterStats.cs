@@ -83,6 +83,7 @@ public class CharacterStats : MonoBehaviour
     private bool isBurning;
     private bool isWetAndChilled;
     private bool isHasted;
+    private bool isLevitating;
 
     private float wardTime;
     private float chillTime;
@@ -90,12 +91,14 @@ public class CharacterStats : MonoBehaviour
     private float stunTime;
     private float burningTime;
     private float hasteTime;
+    private float levitateTime;
     private float wardTimeRemaining;
     private float chillTimeRemaining;
     private float freezeTimeRemaining;
     private float stunTimeRemaining;
     private float burningTimeRemaining;
     private float hasteTimeRemaining;
+    private float levitateTimeRemaining;
 
     private IEnumerator wardCoroutine;
     private IEnumerator chillCoroutine;
@@ -103,6 +106,7 @@ public class CharacterStats : MonoBehaviour
     private IEnumerator stunCoroutine;
     private IEnumerator burningCoroutine;
     private IEnumerator hasteCoroutine;
+    private IEnumerator levitateCoroutine;
 
     private void Start()
     {
@@ -666,6 +670,18 @@ public class CharacterStats : MonoBehaviour
         DispelHaste();
     }
 
+    private IEnumerator LevitateCoroutine()
+    {
+        levitateTimeRemaining = levitateTime;
+        while (levitateTimeRemaining > 0)
+        {
+            levitateTimeRemaining -= Time.deltaTime;
+            yield return null;
+        }
+
+        DispelLevitation();
+    }
+
     private void ApplyWet()
     {
         bool reapplied = isWet;
@@ -817,6 +833,32 @@ public class CharacterStats : MonoBehaviour
         isHasted = false;
         StopCoroutine(hasteCoroutine);
         SetMovSpeed(CalculateMovSpeed());
+    }
+
+    public void ApplyLevitation(float duration)
+    {
+        levitateTime = duration;
+        if (isLevitating)
+            levitateTimeRemaining = levitateTime;
+        else
+        {
+            isLevitating = true;
+            levitateCoroutine = LevitateCoroutine();
+            StartCoroutine(levitateCoroutine);
+            Rigidbody casterRb = GetComponent<Rigidbody>();
+            casterRb.useGravity = false;
+        }
+    }
+
+    private void DispelLevitation()
+    {
+        if (!isLevitating)
+            return;
+
+        isLevitating = false;
+        StopCoroutine(levitateCoroutine);
+        Rigidbody casterRb = GetComponent<Rigidbody>();
+        casterRb.useGravity = true;
     }
 
     private float CalculateMovSpeed()

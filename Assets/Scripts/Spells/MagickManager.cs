@@ -169,9 +169,8 @@ public class MagickManager : MonoBehaviour
 
     private void CastLevitation(GameObject caster)
     {
-        Rigidbody casterRb = caster.GetComponent<Rigidbody>();
-        casterRb.useGravity = false;
-        StartCoroutine(ActivateGravityIn(casterRb, 10));
+        CharacterStats characterStats = caster.GetComponent<CharacterStats>();
+        characterStats.ApplyLevitation(10);
     }
 
     private void CastMeteorShower()
