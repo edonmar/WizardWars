@@ -1795,7 +1795,7 @@ MonoBehaviour:
   stunParticles: {fileID: 361539066904014717}
   maxHealth: 1000
   health: 0
-  baseMovSpeed: 4
+  baseMovSpeed: 3
   movSpeed: 0
   isDead: 0
   physicPercTaken: 100
@@ -1813,7 +1813,7 @@ MonoBehaviour:
   stunResistant: 0
   burningResistant: 0
   meleeAttackSpeed: 1.5
-  meleePhysicDmg: 200
+  meleePhysicDmg: 100
   meleeWaterDmg: 0
   meleeLifeDmg: 0
   meleeColdDmg: 0
