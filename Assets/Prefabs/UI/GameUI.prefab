@@ -1764,6 +1764,7 @@ GameObject:
   - component: {fileID: 4260134554279703515}
   - component: {fileID: 4260134554279703514}
   - component: {fileID: 4260134554279703513}
+  - component: {fileID: 4107079555017879768}
   m_Layer: 5
   m_Name: GameUI
   m_TagString: Untagged
@@ -1804,7 +1805,7 @@ Canvas:
   m_RenderMode: 0
   m_Camera: {fileID: 0}
   m_PlaneDistance: 100
-  m_PixelPerfect: 0
+  m_PixelPerfect: 1
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
@@ -1853,6 +1854,19 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &4107079555017879768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4260134554279703512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 826086c2ae7c4a04889d71c7ba410a22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentElements: {fileID: 4260134554644205616}
 --- !u!1 &4260134554287421042
 GameObject:
   m_ObjectHideFlags: 0

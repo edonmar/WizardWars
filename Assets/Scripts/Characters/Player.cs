@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     private SpellManager spellManager;
     private MagickManager magickManager;
     private StageManager stageManager;
+    private GameUIManager gameUIManager;
     private Camera mainCamera;
 
     [SerializeField] private Animator animator;
@@ -24,19 +25,6 @@ public class Player : MonoBehaviour
     private int hashStatusAttack02;
 
     private float movSpeed;
-
-    private Sprite spriteEleWater;
-    private Sprite spriteEleLife;
-    private Sprite spriteEleShield;
-    private Sprite spriteEleCold;
-    private Sprite spriteEleLightning;
-    private Sprite spriteEleArcane;
-    private Sprite spriteEleEarth;
-    private Sprite spriteEleFire;
-    private Sprite spriteEleIce;
-    private Sprite spriteEleSteam;
-
-    private Image[] imgCurrEle;
 
     private List<string> loadedElements;
 
@@ -61,6 +49,8 @@ public class Player : MonoBehaviour
         spellManager = manager.GetComponent<SpellManager>();
         magickManager = manager.GetComponent<MagickManager>();
         stageManager = manager.GetComponent<StageManager>();
+        gameUIManager = GameObject.Find("GameUI").GetComponent<GameUIManager>();
+
         mainCamera = Camera.main;
 
         hashParamMovSpeed = Animator.StringToHash("MovSpeed");
@@ -70,25 +60,6 @@ public class Player : MonoBehaviour
         selfCastParticles.gameObject.SetActive(true);
         chargingParticles.gameObject.SetActive(true);
         chargingFullParticles.gameObject.SetActive(true);
-
-        spriteEleWater = Resources.Load<Sprite>("Images/ElementIcons/EleWater");
-        spriteEleLife = Resources.Load<Sprite>("Images/ElementIcons/EleLife");
-        spriteEleShield = Resources.Load<Sprite>("Images/ElementIcons/EleShield");
-        spriteEleCold = Resources.Load<Sprite>("Images/ElementIcons/EleCold");
-        spriteEleLightning = Resources.Load<Sprite>("Images/ElementIcons/EleLightning");
-        spriteEleArcane = Resources.Load<Sprite>("Images/ElementIcons/EleArcane");
-        spriteEleEarth = Resources.Load<Sprite>("Images/ElementIcons/EleEarth");
-        spriteEleFire = Resources.Load<Sprite>("Images/ElementIcons/EleFire");
-        spriteEleIce = Resources.Load<Sprite>("Images/ElementIcons/EleIce");
-        spriteEleSteam = Resources.Load<Sprite>("Images/ElementIcons/EleSteam");
-
-        Transform gameUITransform = GameObject.Find("GameUI").transform;
-        imgCurrEle = new Image[5];
-        imgCurrEle[0] = gameUITransform.Find("CurrentElements/Ele0").GetComponent<Image>();
-        imgCurrEle[1] = gameUITransform.Find("CurrentElements/Ele1").GetComponent<Image>();
-        imgCurrEle[2] = gameUITransform.transform.Find("CurrentElements/Ele2").GetComponent<Image>();
-        imgCurrEle[3] = gameUITransform.transform.Find("CurrentElements/Ele3").GetComponent<Image>();
-        imgCurrEle[4] = gameUITransform.transform.Find("CurrentElements/Ele4").GetComponent<Image>();
 
         loadedElements = new List<string>();
         isBeamActive = false;
@@ -173,14 +144,14 @@ public class Player : MonoBehaviour
         {
             element = "";
             loadedElements.Clear();
-            ShowLoadedElements();
+            gameUIManager.ShowLoadedElements(loadedElements);
         }
 
         if (element == "")
             return;
 
         LoadElement(element);
-        ShowLoadedElements();
+        gameUIManager.ShowLoadedElements(loadedElements);
     }
 
     // Añade un elemento a la combinación, comprueba sus reacciones con los elementos ya añadidos y si es necesario
@@ -406,41 +377,6 @@ public class Player : MonoBehaviour
 
         if (loadedElements.Count == 6)
             loadedElements.RemoveAt(5);
-    }
-
-    // Muestra los elementos seleccionados actualmente
-    private void ShowLoadedElements()
-    {
-        int len = loadedElements.Count;
-        int casillasVacias = 5 - len;
-
-        // Hace invisibles las casillas vacías
-        for (int i = 5; i > 5 - casillasVacias; i--)
-        {
-            imgCurrEle[i - 1].sprite = null;
-            imgCurrEle[i - 1].color = new Color(255, 255, 255, 0f);
-        }
-
-        // Muestra las casillas ocupadas
-        for (int i = 0; i < len; i++)
-        {
-            imgCurrEle[i].color = new Color(255, 255, 255, 1f);
-
-            imgCurrEle[i].sprite = loadedElements[i] switch
-            {
-                "WAT" => spriteEleWater,
-                "LIF" => spriteEleLife,
-                "SHI" => spriteEleShield,
-                "COL" => spriteEleCold,
-                "LIG" => spriteEleLightning,
-                "ARC" => spriteEleArcane,
-                "EAR" => spriteEleEarth,
-                "FIR" => spriteEleFire,
-                "ICE" => spriteEleIce,
-                "STE" => spriteEleSteam,
-                _ => imgCurrEle[i].sprite
-            };
-        }
     }
 
     private void CastInput()
