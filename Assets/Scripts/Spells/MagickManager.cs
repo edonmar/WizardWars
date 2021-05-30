@@ -58,6 +58,12 @@ public class MagickManager : MonoBehaviour
         tuple = Tuple.Create(elementList, true);
         magickDict.Add("MeteorShower", tuple);
 
+        // Plasma bomb
+        // Cae una bola explosiva en una posición aleatoria cercana al jugador
+        elementList = new List<string> {"FIR", "STE", "ARC"};
+        tuple = Tuple.Create(elementList, true);
+        magickDict.Add("PlasmaBomb", tuple);
+
         // Sacrifice
         // Reduce la vida del jugador a 1, pero hace mucho daño alrededor
         elementList = new List<string> {"ARC", "ARC", "ARC", "LIG"};
@@ -107,6 +113,9 @@ public class MagickManager : MonoBehaviour
             case "MeteorShower":
                 CastMeteorShower();
                 break;
+            case "PlasmaBomb":
+                CastPlasmaBomb(caster);
+                break;
             case "Sacrifice":
                 CastSacrifice(caster);
                 break;
@@ -145,6 +154,31 @@ public class MagickManager : MonoBehaviour
         float rate = 0.1f;
         Dictionary<string, int> elements = new Dictionary<string, int> {{"EAR", 3}, {"FIR", 2}};
         StartCoroutine(RockRain(elements, rate));
+    }
+
+    private void CastPlasmaBomb(GameObject caster)
+    {
+        Dictionary<string, int> elements = new Dictionary<string, int>
+        {
+            {"EAR", 3}, {"ARC", 2}, {"FIR", 25}, {"STE", 25}
+        };
+        int size = elements["EAR"];
+        List<Color> trailColors = spellManager.GetTrailColorsRock(elements);
+
+        Vector3 casterPos = caster.transform.position;
+
+        float minX = casterPos.x - 5;
+        float maxX = casterPos.x + 5;
+        float minZ = casterPos.z - 5;
+        float maxZ = casterPos.z + 5;
+
+        float posX = Random.Range(minX, maxX);
+        float posZ = Random.Range(minZ, maxZ);
+
+        Transform magickTransform = Instantiate(magickTransformPrefab, casterPos, quaternion.identity);
+        magickTransform.position = new Vector3(posX, 5, posZ);
+        spellManager.InstantiateRock(elements, magickTransform, size, 0, 1, "SEL", trailColors);
+        Destroy(magickTransform.gameObject);
     }
 
     private void CastSacrifice(GameObject caster)
