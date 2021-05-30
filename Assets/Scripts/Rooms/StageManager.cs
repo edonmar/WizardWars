@@ -8,9 +8,13 @@ public class StageManager : MonoBehaviour
     private int remainingRooms;
     [HideInInspector] public GameObject currentRoom;
 
+    private MagickManager magickManager;
+
     private void Start()
     {
         gameTime = 0;
+        magickManager = GameObject.Find("Manager").GetComponent<MagickManager>();
+        magickManager.LockAllMagicks();
     }
 
     private void Update()
@@ -64,5 +68,6 @@ public class StageManager : MonoBehaviour
     public void RoomCleared()
     {
         remainingRooms--;
+        magickManager.UnlockRandomMagick();
     }
 }

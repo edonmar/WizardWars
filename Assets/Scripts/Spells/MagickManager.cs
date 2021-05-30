@@ -22,7 +22,7 @@ public class MagickManager : MonoBehaviour
     private Dictionary<string, Tuple<List<string>, bool>> magickDict;
     private int teleportlayerMask;
 
-    private void Start()
+    private void Awake()
     {
         GameObject manager = GameObject.Find("Manager");
         spellManager = manager.GetComponent<SpellManager>();
@@ -379,28 +379,28 @@ public class MagickManager : MonoBehaviour
         magickDict[magickName] = newTuple;
     }
 
-    private void UnlockMagick(string magickName)
+    public void UnlockMagick(string magickName)
     {
         List<string> list = magickDict[magickName].Item1;
         Tuple<List<string>, bool> newTuple = Tuple.Create(list, true);
         magickDict[magickName] = newTuple;
     }
 
-    private void LockAllMagicks()
+    public void LockAllMagicks()
     {
         List<string> unlockedMagics = (from magick in magickDict where magick.Value.Item2 select magick.Key).ToList();
         foreach (string magick in unlockedMagics)
             LockMagick(magick);
     }
 
-    private void UnlockAllMagicks()
+    public void UnlockAllMagicks()
     {
-        List<string> unlockedMagics = (from magick in magickDict where !magick.Value.Item2 select magick.Key).ToList();
-        foreach (string magick in unlockedMagics)
+        List<string> lockedMagics = (from magick in magickDict where !magick.Value.Item2 select magick.Key).ToList();
+        foreach (string magick in lockedMagics)
             UnlockMagick(magick);
     }
 
-    private void UnlockRandomMagick()
+    public void UnlockRandomMagick()
     {
         List<string> lockedMagics = (from magick in magickDict where !magick.Value.Item2 select magick.Key).ToList();
         int lockedMagicsCount = lockedMagics.Count;
