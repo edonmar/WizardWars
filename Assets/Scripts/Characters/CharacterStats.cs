@@ -267,7 +267,7 @@ public class CharacterStats : MonoBehaviour
         return dmgTypes.Where(dt => percDmgTypes[dt.Key] < 0).Sum(dt => -(int) (dt.Value * percDmgTypes[dt.Key] / 100));
     }
 
-    private void ModifyHealth(int amount)
+    public void ModifyHealth(int amount)
     {
         health += amount;
 

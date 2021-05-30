@@ -45,6 +45,12 @@ public class MagickManager : MonoBehaviour
         elementList = new List<string> {"COL", "ICE", "COL"};
         tuple = Tuple.Create(elementList, true);
         magickDict.Add("Hailstorm", tuple);
+
+        // Sacrifice
+        // Reduce la vida del jugador a 1, pero hace mucho daño alrededor
+        elementList = new List<string> {"ARC", "ARC", "ARC", "LIG"};
+        tuple = Tuple.Create(elementList, true);
+        magickDict.Add("Sacrifice", tuple);
     }
 
     // El nombre del magick correspondiente a una lista de elementos determinada
@@ -66,7 +72,7 @@ public class MagickManager : MonoBehaviour
         return magickName;
     }
 
-    public void CastMagick(string magickName)
+    public void CastMagick(string magickName, GameObject caster)
     {
         switch (magickName)
         {
@@ -75,6 +81,9 @@ public class MagickManager : MonoBehaviour
                 break;
             case "MeteorShower":
                 CastMeteorShower();
+                break;
+            case "Sacrifice":
+                CastSacrifice(caster);
                 break;
         }
     }
@@ -93,6 +102,17 @@ public class MagickManager : MonoBehaviour
         float rate = 0.1f;
         Dictionary<string, int> elements = new Dictionary<string, int> {{"EAR", 3}, {"FIR", 2}};
         StartCoroutine(RockRain(elements, rate));
+    }
+
+    private void CastSacrifice(GameObject caster)
+    {
+        CharacterStats characterStats = caster.GetComponent<CharacterStats>();
+        int health = characterStats.health;
+        characterStats.ModifyHealth(-(health - 1));
+
+        int size = 5;
+        Dictionary<string, int> elements = new Dictionary<string, int> {{"ARC", 60}, {"LIG", 60}};
+        spellManager.InstantiateNova(elements, caster.transform, "character", size);
     }
 
     private IEnumerator RockRain(Dictionary<string, int> elements, float rate)

@@ -485,7 +485,7 @@ public class Player : MonoBehaviour
                 print("Magick: " + magickName);
                 if (magickName != "")
                 {
-                    magickManager.CastMagick(magickName);
+                    magickManager.CastMagick(magickName, gameObject);
                     PlayAttackAnimation(castType);
                 }
 
