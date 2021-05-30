@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
 {
     private SpellManager spellManager;
     private MagickManager magickManager;
+    private StageManager stageManager;
     private Camera mainCamera;
 
     [SerializeField] private Animator animator;
@@ -59,6 +60,7 @@ public class Player : MonoBehaviour
         GameObject manager = GameObject.Find("Manager");
         spellManager = manager.GetComponent<SpellManager>();
         magickManager = manager.GetComponent<MagickManager>();
+        stageManager = manager.GetComponent<StageManager>();
         mainCamera = Camera.main;
 
         hashParamMovSpeed = Animator.StringToHash("MovSpeed");
@@ -486,6 +488,7 @@ public class Player : MonoBehaviour
                 if (magickName != "")
                 {
                     magickManager.CastMagick(magickName, gameObject);
+                    stageManager.MagickCasted(magickName);
                     PlayAttackAnimation(castType);
                 }
 
@@ -510,6 +513,7 @@ public class Player : MonoBehaviour
 
         Dictionary<string, int> elements = GetElementDictionary();
         CastSpell(elements, castType, spellType);
+        stageManager.SpellCasted();
         PlayAttackAnimation(castType);
     }
 

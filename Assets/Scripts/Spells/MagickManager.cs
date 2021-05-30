@@ -412,6 +412,7 @@ public class MagickManager : MonoBehaviour
         int magickPos = Random.Range(0, lockedMagicsCount);
         string magickName = lockedMagics[magickPos];
         UnlockMagick(magickName);
+        stageManager.UnlockedMagick(magickName);
         print("Unlocked: " + magickName);
     }
 }
