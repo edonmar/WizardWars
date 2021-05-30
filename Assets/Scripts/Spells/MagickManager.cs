@@ -214,6 +214,8 @@ public class MagickManager : MonoBehaviour
         foreach (Transform e in enemies)
         {
             CharacterStats enemyCharacterStats = e.GetComponent<CharacterStats>();
+            if (enemyCharacterStats.isDead)
+                continue;
             float healthPerc = HealthPercentage(enemyCharacterStats);
             if (healthPerc <= minPerc)
                 targetStats = enemyCharacterStats;
@@ -236,12 +238,12 @@ public class MagickManager : MonoBehaviour
         Transform room = stageManager.currentRoom.transform;
         Transform enemies = room.Find("Enemies");
 
-        int enemyCount = enemies.childCount;
-        if (enemyCount == 0)
-            return;
+        List<Transform> enemiesTransform =
+            enemies.Cast<Transform>().Where(e => !e.GetComponent<CharacterStats>().isDead).ToList();
+        int enemyCount = enemiesTransform.Count;
 
         int randomEnemy = Random.Range(0, enemyCount);
-        GameObject target = enemies.GetChild(randomEnemy).gameObject;
+        GameObject target = enemiesTransform[randomEnemy].gameObject;
 
         // Hago que reciba el hechizo
         CharacterStats targetCharacterStats = target.GetComponent<CharacterStats>();
