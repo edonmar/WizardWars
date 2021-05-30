@@ -102,7 +102,7 @@ MonoBehaviour:
   stunResistant: 0
   burningResistant: 0
   meleeAttackSpeed: 2.5
-  meleePhysicDmg: 0
+  meleePhysicDmg: 300
   meleeWaterDmg: 0
   meleeLifeDmg: 0
   meleeColdDmg: 0

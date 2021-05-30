@@ -18,7 +18,7 @@ public class Enemy : MonoBehaviour
     private int hashParamMovSpeed;
     private int hashStatusAttack1h1;
 
-    private void Start()
+    private void Awake()
     {
         isNavMeshAgentEnabled = true;
         player = GameObject.Find("Player").transform;
@@ -27,6 +27,7 @@ public class Enemy : MonoBehaviour
 
         hashParamMovSpeed = Animator.StringToHash("MovSpeed");
         hashStatusAttack1h1 = Animator.StringToHash("attack1h1");
+        enabled = false;
     }
 
     private void Update()
