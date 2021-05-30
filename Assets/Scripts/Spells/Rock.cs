@@ -10,6 +10,7 @@ public class Rock : MonoBehaviour
     private Dictionary<string, int> novaElements; // Después de eliminar EAR e ICE
     private Dictionary<string, int> dmgTypes;
     public float dmgMultiplier;
+    public bool destroyed;
 
     private void Start()
     {
@@ -18,6 +19,7 @@ public class Rock : MonoBehaviour
             elements.Where(e => e.Key != "EAR" && e.Key != "ICE")
                 .ToDictionary(e => e.Key, e => e.Value);
         dmgTypes = GetDamageTypesDictionary();
+        destroyed = false;
     }
 
     private Dictionary<string, int> GetDamageTypesDictionary()
@@ -36,6 +38,9 @@ public class Rock : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (destroyed)
+            return;
+
         if (CanHitCharacter(other))
             HitCharacter(other);
         else if (CanHitBarrier(other))
@@ -75,6 +80,7 @@ public class Rock : MonoBehaviour
 
     public void DestroyThis()
     {
+        destroyed = true;
         if (novaElements.Count > 0)
             Explode();
         Destroy(gameObject);

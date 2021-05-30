@@ -283,6 +283,9 @@ public class MagickManager : MonoBehaviour
             enemies.Cast<Transform>().Where(e => !e.GetComponent<CharacterStats>().isDead).ToList();
         int enemyCount = enemiesTransform.Count;
 
+        if (enemyCount == 0)
+            return;
+
         int randomEnemy = Random.Range(0, enemyCount);
         GameObject target = enemiesTransform[randomEnemy].gameObject;
 
