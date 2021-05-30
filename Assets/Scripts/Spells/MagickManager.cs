@@ -63,6 +63,13 @@ public class MagickManager : MonoBehaviour
         elementList = new List<string> {"ARC", "ARC", "ARC", "LIG"};
         tuple = Tuple.Create(elementList, true);
         magickDict.Add("Sacrifice", tuple);
+
+        // SummonDeath
+        // Mata instantáneamente al personaje con menor porcentaje de vida que haya en la habitación
+        // (puede ser el jugador)
+        elementList = new List<string> {"ARC", "COL", "ICE", "COL", "ARC"};
+        tuple = Tuple.Create(elementList, true);
+        magickDict.Add("SummonDeath", tuple);
     }
 
     // El nombre del magick correspondiente a una lista de elementos determinada
@@ -102,6 +109,9 @@ public class MagickManager : MonoBehaviour
                 break;
             case "Sacrifice":
                 CastSacrifice(caster);
+                break;
+            case "SummonDeath":
+                CastSummonDeath(caster);
                 break;
         }
     }
@@ -146,6 +156,33 @@ public class MagickManager : MonoBehaviour
         int size = 5;
         Dictionary<string, int> elements = new Dictionary<string, int> {{"ARC", 60}, {"LIG", 60}};
         spellManager.InstantiateNova(elements, caster.transform, "character", size);
+    }
+
+    private void CastSummonDeath(GameObject caster)
+    {
+        Transform room = stageManager.currentRoom.transform;
+        Transform enemies = room.Find("Enemies");
+
+        CharacterStats playerCharacterStats = caster.GetComponent<CharacterStats>();
+        float minPerc = HealthPercentage(playerCharacterStats);
+        CharacterStats targetStats = playerCharacterStats;
+
+        foreach (Transform e in enemies)
+        {
+            CharacterStats enemyCharacterStats = e.GetComponent<CharacterStats>();
+            float healthPerc = HealthPercentage(enemyCharacterStats);
+            if (healthPerc <= minPerc)
+                targetStats = enemyCharacterStats;
+        }
+
+        targetStats.Die();
+
+        float HealthPercentage(CharacterStats characterStats)
+        {
+            int health = characterStats.health;
+            int maxHealth = characterStats.maxHealth;
+            return health * 100 / (float) maxHealth;
+        }
     }
 
     private IEnumerator ActivateGravityIn(Rigidbody casterRb, float time)
