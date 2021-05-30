@@ -12,6 +12,7 @@ public class MagickManager : MonoBehaviour
     private StageManager stageManager;
 
     [SerializeField] private Transform magickTransformPrefab;
+    [SerializeField] private GameObject thunderBoltPrefab;
 
     // Diccionario donde se guardarán todos los magicks existentes
     // La clave (string) será el nombre del magick
@@ -70,12 +71,18 @@ public class MagickManager : MonoBehaviour
         tuple = Tuple.Create(elementList, true);
         magickDict.Add("Sacrifice", tuple);
 
-        // SummonDeath
+        // Summon death
         // Mata instantáneamente al personaje con menor porcentaje de vida que haya en la habitación
         // (puede ser el jugador)
         elementList = new List<string> {"ARC", "COL", "ICE", "COL", "ARC"};
         tuple = Tuple.Create(elementList, true);
         magickDict.Add("SummonDeath", tuple);
+
+        // Thunder bolt
+        // Cae un trueno en un enemigo aleatorio
+        elementList = new List<string> {"STE", "LIG", "ARC", "LIG"};
+        tuple = Tuple.Create(elementList, true);
+        magickDict.Add("ThunderBolt", tuple);
     }
 
     // El nombre del magick correspondiente a una lista de elementos determinada
@@ -121,6 +128,9 @@ public class MagickManager : MonoBehaviour
                 break;
             case "SummonDeath":
                 CastSummonDeath(caster);
+                break;
+            case "ThunderBolt":
+                CastThunderBolt();
                 break;
         }
     }
@@ -217,6 +227,33 @@ public class MagickManager : MonoBehaviour
             int maxHealth = characterStats.maxHealth;
             return health * 100 / (float) maxHealth;
         }
+    }
+
+    private void CastThunderBolt()
+    {
+        // Obtengo un enemigo aleatorio de todos los enemigos de la habitación actual
+        // Si no hay enemigos, no hace nada
+        Transform room = stageManager.currentRoom.transform;
+        Transform enemies = room.Find("Enemies");
+
+        int enemyCount = enemies.childCount;
+        if (enemyCount == 0)
+            return;
+
+        int randomEnemy = Random.Range(0, enemyCount);
+        GameObject target = enemies.GetChild(randomEnemy).gameObject;
+
+        // Hago que reciba el hechizo
+        CharacterStats targetCharacterStats = target.GetComponent<CharacterStats>();
+        Dictionary<string, int> dmgTypesDict = new Dictionary<string, int> {{"LIG", 4500}};
+        targetCharacterStats.TakeSpell(dmgTypesDict);
+
+        // Añado el efecto visual
+        Transform targetTransform = target.transform;
+        GameObject thunderBolt = Instantiate(thunderBoltPrefab, targetTransform.position, quaternion.identity);
+        ThunderBolt thunderBoltScript = thunderBolt.GetComponent<ThunderBolt>();
+        thunderBoltScript.targetTransform = targetTransform;
+        thunderBoltScript.color = spellManager.matLightning.color;
     }
 
     private IEnumerator ActivateGravityIn(Rigidbody casterRb, float time)

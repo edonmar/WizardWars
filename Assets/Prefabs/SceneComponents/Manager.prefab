@@ -112,6 +112,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   magickTransformPrefab: {fileID: 2800699498962673593, guid: 469749d31b3bfd54c8d9007a85096ee0, type: 3}
+  thunderBoltPrefab: {fileID: 8459016341948996305, guid: 29838b4d33eafb8459f875d05efb5fcb, type: 3}
 --- !u!114 &7276869054607881810
 MonoBehaviour:
   m_ObjectHideFlags: 0
