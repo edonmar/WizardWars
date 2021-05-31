@@ -6,6 +6,8 @@ using UnityEngine.AI;
 
 public class WaterIceCube : MonoBehaviour
 {
+    private SpellManager spellManager;
+
     [SerializeField] private NavMeshObstacle navMeshObstacle;
     [SerializeField] private GameObject iceCube;
 
@@ -16,8 +18,9 @@ public class WaterIceCube : MonoBehaviour
     private float freezeTime;
     private float freezeTimeRemaining;
 
-    private void Start()
+    private void Awake()
     {
+        spellManager = GameObject.Find("Manager").GetComponent<SpellManager>();
         isFrozen = false;
         freezeTime = 10;
         enemiesColliding = new HashSet<Collider>();
@@ -51,10 +54,30 @@ public class WaterIceCube : MonoBehaviour
             _ => otherElements
         };
 
+        string effect = "";
         if (otherElements.ContainsKey("COL"))
-            Freeze();
+            effect = "COL";
         if (isFrozen && otherElements.ContainsKey("FIR"))
-            UnFreeze();
+            effect = "FIR";
+
+        if (effect == "")
+            return;
+
+        /*
+        Vector3 position = transform.position + new Vector3(0, 0.5f, 0);
+        if (Physics.Linecast(position, other.gameObject.transform.position, spellManager.layerMaskBarriers))
+            return;
+        */
+
+        switch (effect)
+        {
+            case "COL":
+                Freeze();
+                break;
+            case "FIR":
+                UnFreeze();
+                break;
+        }
     }
 
     private IEnumerator FreezeCoroutine()
