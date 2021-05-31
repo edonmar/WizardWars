@@ -15,6 +15,10 @@ public class GameUIManager : MonoBehaviour
     [SerializeField] private Transform magickElementsImgs;
     [SerializeField] private TMP_Text remainingRoomsText;
 
+    // Información al completar el nivel
+    [SerializeField] private CanvasGroup stageEndInfoCanvasGroup;
+    [SerializeField] private TMP_Text stageEndDetails;
+
     private Sprite spriteEleWater;
     private Sprite spriteEleLife;
     private Sprite spriteEleShield;
@@ -77,6 +81,17 @@ public class GameUIManager : MonoBehaviour
         ShowMagickTitle(magickName);
         ShowElements(magickElementss, imgNewMagickEle);
         StartCoroutine(ShowCanvasGroupDuring(roomClearedInfoCanvasGroup, 4));
+    }
+
+    public void ShowStageEndInfo(string time, string rooms, int castedSpells, int castedMagicksTotal)
+    {
+        string text =
+            "Tiempo: " + time + "\n" +
+            "Habitaciones: " + rooms + "\n" +
+            "Hechizos usados: " + castedSpells + "\n" +
+            "Magicks usados: " + castedMagicksTotal;
+        stageEndDetails.text = text;
+        StartCoroutine(FadeCanvasGroup(stageEndInfoCanvasGroup, 0, 1, 1));
     }
 
     // Muestra los elementos seleccionados actualmente

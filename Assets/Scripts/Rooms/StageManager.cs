@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class StageManager : MonoBehaviour
@@ -60,15 +61,19 @@ public class StageManager : MonoBehaviour
     public void CompleteStage()
     {
         PauseTimer();
+
+        string time = ConvertTime();
+        string rooms = totalRooms - remainingRooms + "/" + totalRooms;
+        int castedMagicksTotal = castedMagicks.Sum(magick => magick.Value);
+        gameUIManager.ShowStageEndInfo(time, rooms, castedSpells, castedMagicksTotal);
+
         print("WIN");
-        print(ConvertTime());
-        print("Rooms: " + (totalRooms - remainingRooms) + "/" + totalRooms);
+        print(time);
+        print(rooms);
         print("Casted spells: " + castedSpells);
         print("Casted magicks:");
         foreach (KeyValuePair<string, int> magick in castedMagicks)
-        {
             print(magick.Key + ": " + magick.Value);
-        }
     }
 
     private string ConvertTime()

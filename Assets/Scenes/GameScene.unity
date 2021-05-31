@@ -358,6 +358,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 13023613226581947, guid: 5ff9b92d098f773479209762d4959373, type: 3}
+      propertyPath: m_fontSize
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 13023613226581947, guid: 5ff9b92d098f773479209762d4959373, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 322102834915960168, guid: 5ff9b92d098f773479209762d4959373, type: 3}
+      propertyPath: m_fontSize
+      value: 36
+      objectReference: {fileID: 0}
+    - target: {fileID: 322102834915960168, guid: 5ff9b92d098f773479209762d4959373, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 36
+      objectReference: {fileID: 0}
     - target: {fileID: 4260134554279703512, guid: 5ff9b92d098f773479209762d4959373, type: 3}
       propertyPath: m_Name
       value: GameUI
