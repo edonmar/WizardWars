@@ -27,7 +27,7 @@ public class MapGeneration : MonoBehaviour
     private Dictionary<(int, int), GameObject> roomPositions; // Posiciones en las que habrá habitación
     private List<Tuple<float, float>> corridorPositions; // Posiciones en las que habrá pasillo
     private GameObject[] roomPrefabs; // Cada habitación entre inicio y fin será una de estas elegida al azar
-    private int roomPrefabsCount; // Número de habitaciones disponibles para elegir
+    private Dictionary<GameObject, int> roomPrefabsDict; // Número de veces que ha salido cada habitación
     private readonly float roomLength = 20; // Tamaño en metros de cada habitación
     private readonly float corridorLength = 12; // Tamaño en metros de cada pasillo
     private float distanceBetweenRoomCenters;
@@ -41,7 +41,7 @@ public class MapGeneration : MonoBehaviour
         roomPositions = new Dictionary<(int, int), GameObject>();
         corridorPositions = new List<Tuple<float, float>>();
         roomPrefabs = Resources.LoadAll<GameObject>("Rooms");
-        roomPrefabsCount = roomPrefabs.Length;
+        roomPrefabsDict = roomPrefabs.ToDictionary(rp => rp, rp => 0);
         distanceBetweenRoomCenters = roomLength + corridorLength;
         remainingFloors = numberOfRooms;
         player = GameObject.Find("Player").gameObject;
@@ -65,8 +65,19 @@ public class MapGeneration : MonoBehaviour
 
     private GameObject GetRandomRoom()
     {
-        int pos = Random.Range(0, roomPrefabsCount);
-        GameObject room = roomPrefabs[pos];
+        // Número de veces que ha salido la habitación menos repetida
+        int min = roomPrefabsDict.Values.Select(s => s).Min();
+
+        // Lista de habitaciones con el valor mínimo de repeticiones
+        List<GameObject> minRooms = (from rp in roomPrefabsDict where rp.Value == min select rp.Key).ToList();
+
+        // Habitación aleatoria entre las menos repetidas
+        int pos = Random.Range(0, minRooms.Count);
+        GameObject room = minRooms[pos];
+
+        // Sumo 1 en el número de veces que ha salido esa habitación
+        roomPrefabsDict[room] += 1;
+
         return room;
     }
 
