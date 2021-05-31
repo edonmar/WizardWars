@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,6 +13,7 @@ public class StageManager : MonoBehaviour
     [HideInInspector] public GameObject currentRoom;
 
     private MagickManager magickManager;
+    private GameUIManager gameUIManager;
 
     private void Start()
     {
@@ -19,6 +21,7 @@ public class StageManager : MonoBehaviour
         castedSpells = 0;
         castedMagicks = new Dictionary<string, int>();
         magickManager = GameObject.Find("Manager").GetComponent<MagickManager>();
+        gameUIManager = GameObject.Find("GameUI").GetComponent<GameUIManager>();
         magickManager.LockAllMagicks();
     }
 
@@ -94,6 +97,21 @@ public class StageManager : MonoBehaviour
     public void RoomCleared()
     {
         remainingRooms--;
-        magickManager.UnlockRandomMagick();
+        Tuple<string, List<string>> magick = magickManager.UnlockRandomMagick();
+        ShowRoomClearedInfo(magick);
+    }
+
+    private void ShowRoomClearedInfo(Tuple<string, List<string>> magick)
+    {
+        string magickName = "";
+        List<string> magickElements = new List<string>();
+
+        if (magick != null)
+        {
+            magickName = magick.Item1;
+            magickElements = magick.Item2;
+        }
+
+        gameUIManager.ShowRoomClearedInfo(magickName, magickElements, remainingRooms);
     }
 }

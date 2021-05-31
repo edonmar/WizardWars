@@ -403,16 +403,21 @@ public class MagickManager : MonoBehaviour
             UnlockMagick(magick);
     }
 
-    public void UnlockRandomMagick()
+    public Tuple<string, List<string>> UnlockRandomMagick()
     {
         List<string> lockedMagics = (from magick in magickDict where !magick.Value.Item2 select magick.Key).ToList();
         int lockedMagicsCount = lockedMagics.Count;
         if (lockedMagicsCount == 0)
-            return;
+            return null;
         int magickPos = Random.Range(0, lockedMagicsCount);
         string magickName = lockedMagics[magickPos];
         UnlockMagick(magickName);
         stageManager.UnlockedMagick(magickName);
         print("Unlocked: " + magickName);
+
+        List<string> magickElements = magickDict[magickName].Item1;
+        Tuple<string, List<string>> tuple = Tuple.Create<string, List<string>>(magickName, magickElements);
+
+        return tuple;
     }
 }

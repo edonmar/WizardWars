@@ -1,10 +1,19 @@
+using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class GameUIManager : MonoBehaviour
 {
-    [SerializeField] private Transform currentElements;
+    // Elementos actuales del jugador
+    [SerializeField] private Transform currentElementsImgs;
+
+    // Informacion al completar una habitación
+    [SerializeField] private CanvasGroup roomClearedInfoCanvasGroup;
+    [SerializeField] private TMP_Text magickNameText;
+    [SerializeField] private Transform magickElementsImgs;
+    [SerializeField] private TMP_Text remainingRoomsText;
 
     private Sprite spriteEleWater;
     private Sprite spriteEleLife;
@@ -18,11 +27,13 @@ public class GameUIManager : MonoBehaviour
     private Sprite spriteEleSteam;
 
     private Image[] imgCurrEle;
+    private Image[] imgNewMagickEle;
 
     private void Awake()
     {
         LoadSprites();
         GetCurrentElementsImages();
+        GetNewMagicksElementsImages();
     }
 
     private void LoadSprites()
@@ -43,11 +54,33 @@ public class GameUIManager : MonoBehaviour
     {
         imgCurrEle = new Image[5];
         for (int i = 0; i < 5; i++)
-            imgCurrEle[i] = currentElements.GetChild(i).GetComponent<Image>();
+            imgCurrEle[i] = currentElementsImgs.GetChild(i).GetComponent<Image>();
+    }
+
+    private void GetNewMagicksElementsImages()
+    {
+        imgNewMagickEle = new Image[5];
+        for (int i = 0; i < 5; i++)
+            imgNewMagickEle[i] = magickElementsImgs.GetChild(i).GetComponent<Image>();
+    }
+
+    public void ShowLoadedElements(List<string> loadedElements)
+    {
+        ShowElements(loadedElements, imgCurrEle);
+    }
+
+    public void ShowRoomClearedInfo(string magickName, List<string> magickElementss, int remainingRooms)
+    {
+        ShowRemainingRooms(remainingRooms);
+        if (magickName == "")
+            return;
+        ShowMagickTitle(magickName);
+        ShowElements(magickElementss, imgNewMagickEle);
+        StartCoroutine(ShowCanvasGroupDuring(roomClearedInfoCanvasGroup, 4));
     }
 
     // Muestra los elementos seleccionados actualmente
-    public void ShowLoadedElements(List<string> loadedElements)
+    private void ShowElements(List<string> loadedElements, Image[] imgArray)
     {
         int len = loadedElements.Count;
         int casillasVacias = 5 - len;
@@ -55,16 +88,16 @@ public class GameUIManager : MonoBehaviour
         // Hace invisibles las casillas vacías
         for (int i = 5; i > 5 - casillasVacias; i--)
         {
-            imgCurrEle[i - 1].sprite = null;
-            imgCurrEle[i - 1].color = new Color(255, 255, 255, 0f);
+            imgArray[i - 1].sprite = null;
+            imgArray[i - 1].color = new Color(255, 255, 255, 0f);
         }
 
         // Muestra las casillas ocupadas
         for (int i = 0; i < len; i++)
         {
-            imgCurrEle[i].color = new Color(255, 255, 255, 1f);
+            imgArray[i].color = new Color(255, 255, 255, 1f);
 
-            imgCurrEle[i].sprite = loadedElements[i] switch
+            imgArray[i].sprite = loadedElements[i] switch
             {
                 "WAT" => spriteEleWater,
                 "LIF" => spriteEleLife,
@@ -76,8 +109,52 @@ public class GameUIManager : MonoBehaviour
                 "FIR" => spriteEleFire,
                 "ICE" => spriteEleIce,
                 "STE" => spriteEleSteam,
-                _ => imgCurrEle[i].sprite
+                _ => imgArray[i].sprite
             };
+        }
+    }
+
+    private void ShowMagickTitle(string magickName)
+    {
+        string magickNameSpanish = magickName switch
+        {
+            "Hailstorm" => "Tormenta de granizo",
+            "Haste" => "Celeridad",
+            "ImmolationAura" => "Aura de inmolación",
+            "Levitation" => "Levitación",
+            "MeteorShower" => "Lluvia de meteoritos",
+            "PlasmaBomb" => "Bomba de plasma",
+            "Sacrifice" => "Sacrificio",
+            "SummonDeath" => "Invocar muerte",
+            "Teleport" => "Teletransporte",
+            "ThunderBolt" => "Trueno",
+            _ => ""
+        };
+
+        magickNameText.text = magickNameSpanish;
+    }
+
+    private void ShowRemainingRooms(int remainingRooms)
+    {
+        remainingRoomsText.text = remainingRooms + " habitaciones restantes";
+    }
+
+    // El valor pasado como duration será el tiempo total que se muestre, contando el tiempo de fadeIn y fadeOut
+    private IEnumerator ShowCanvasGroupDuring(CanvasGroup canvasGroup, float duration)
+    {
+        StartCoroutine(FadeCanvasGroup(canvasGroup, 0, 1, 1));
+        yield return new WaitForSeconds(duration);
+        StartCoroutine(FadeCanvasGroup(canvasGroup, 1, 0, 1));
+    }
+
+    private IEnumerator FadeCanvasGroup(CanvasGroup canvasGroup, float start, float end, float duration)
+    {
+        float counter = 0f;
+        while (counter < duration)
+        {
+            counter += Time.deltaTime;
+            canvasGroup.alpha = Mathf.Lerp(start, end, counter / duration);
+            yield return null;
         }
     }
 }
