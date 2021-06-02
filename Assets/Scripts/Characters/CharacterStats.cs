@@ -108,7 +108,7 @@ public class CharacterStats : MonoBehaviour
     private IEnumerator hasteCoroutine;
     private IEnumerator levitateCoroutine;
 
-    private void Start()
+    private void Awake()
     {
         spellManager = GameObject.Find("Manager").GetComponent<SpellManager>();
 

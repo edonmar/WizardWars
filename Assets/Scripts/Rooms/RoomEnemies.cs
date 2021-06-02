@@ -5,7 +5,7 @@ public class RoomEnemies : MonoBehaviour
     [SerializeField] private Room roomScript;
     [HideInInspector] public int enemyCount;
 
-    private void Start()
+    private void Awake()
     {
         CountEnemies();
     }

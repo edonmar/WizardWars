@@ -89,7 +89,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: bc48fa6c9512ff84082d1cde7668d155, type: 2}
     - target: {fileID: 6237767460543792052, guid: 8dbd4da9bc861f24e86b737c16baea02, type: 3}
       propertyPath: m_Name
-      value: GolemArcane Variant
+      value: GolemArcane
       objectReference: {fileID: 0}
     - target: {fileID: 6540086932971749930, guid: 8dbd4da9bc861f24e86b737c16baea02, type: 3}
       propertyPath: m_Materials.Array.data[0]

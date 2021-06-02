@@ -101,7 +101,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 3e0ba7b7aed2b1d4a80ed294827115c7, type: 2}
     - target: {fileID: 6237767460543792052, guid: 8dbd4da9bc861f24e86b737c16baea02, type: 3}
       propertyPath: m_Name
-      value: GolemLightning Variant
+      value: GolemLightning
       objectReference: {fileID: 0}
     - target: {fileID: 6540086932971749930, guid: 8dbd4da9bc861f24e86b737c16baea02, type: 3}
       propertyPath: m_Materials.Array.data[0]

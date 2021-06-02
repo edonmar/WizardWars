@@ -379,6 +379,12 @@ public class Player : MonoBehaviour
             loadedElements.RemoveAt(5);
     }
 
+    private void ClearElements()
+    {
+        loadedElements.Clear();
+        gameUIManager.ShowLoadedElements(loadedElements);
+    }
+
     private void CastInput()
     {
         string castType = "";
@@ -426,6 +432,7 @@ public class Player : MonoBehaviour
                     magickManager.CastMagick(magickName, gameObject);
                     stageManager.MagickCasted(magickName);
                     PlayAttackAnimation(castType);
+                    ClearElements();
                 }
 
                 return;
@@ -449,6 +456,7 @@ public class Player : MonoBehaviour
 
         Dictionary<string, int> elements = GetElementDictionary();
         CastSpell(elements, castType, spellType);
+        ClearElements();
         stageManager.SpellCasted();
         PlayAttackAnimation(castType);
     }

@@ -105,7 +105,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 26904ec84f79468419ad89e94033c82d, type: 2}
     - target: {fileID: 6237767460543792052, guid: 8dbd4da9bc861f24e86b737c16baea02, type: 3}
       propertyPath: m_Name
-      value: GolemFire Variant
+      value: GolemFire
       objectReference: {fileID: 0}
     - target: {fileID: 6540086932971749930, guid: 8dbd4da9bc861f24e86b737c16baea02, type: 3}
       propertyPath: m_Materials.Array.data[0]

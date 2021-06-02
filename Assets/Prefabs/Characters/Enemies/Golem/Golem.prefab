@@ -82,7 +82,7 @@ MonoBehaviour:
   flamesParticles: {fileID: 8491012001687329669}
   frozenParticles: {fileID: 4070844161791450008}
   stunParticles: {fileID: 8353240307948222864}
-  maxHealth: 5000
+  maxHealth: 3000
   health: 0
   baseMovSpeed: 2
   movSpeed: 0
@@ -102,7 +102,7 @@ MonoBehaviour:
   stunResistant: 0
   burningResistant: 0
   meleeAttackSpeed: 2.5
-  meleePhysicDmg: 300
+  meleePhysicDmg: 0
   meleeWaterDmg: 0
   meleeLifeDmg: 0
   meleeColdDmg: 0

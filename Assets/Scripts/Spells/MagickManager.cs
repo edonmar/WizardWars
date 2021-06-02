@@ -39,7 +39,7 @@ public class MagickManager : MonoBehaviour
 
         // Hailstorm
         // Llueven bolas de hielo, frío y agua explosivas por toda la habitación
-        elementList = new List<string> {"COL", "ICE", "COL"};
+        elementList = new List<string> {"COL", "ICE", "EAR", "ICE", "COL"};
         tuple = Tuple.Create(elementList, true);
         magickDict.Add("Hailstorm", tuple);
 

@@ -1793,7 +1793,7 @@ MonoBehaviour:
   flamesParticles: {fileID: 233897448392794091}
   frozenParticles: {fileID: 5662802791032251375}
   stunParticles: {fileID: 361539066904014717}
-  maxHealth: 1000
+  maxHealth: 750
   health: 0
   baseMovSpeed: 3
   movSpeed: 0
