@@ -15,11 +15,6 @@ public class GameUIManager : MonoBehaviour
     [SerializeField] private Transform magickElementsImgs;
     [SerializeField] private TMP_Text remainingRoomsText;
 
-    // Información al completar el nivel
-    [SerializeField] private CanvasGroup gameEndInfoCanvasGroup;
-    [SerializeField] private TMP_Text gameEndResult;
-    [SerializeField] private TMP_Text gameEndDetails;
-
     private Sprite spriteEleWater;
     private Sprite spriteEleLife;
     private Sprite spriteEleShield;
@@ -82,19 +77,6 @@ public class GameUIManager : MonoBehaviour
         ShowMagickTitle(magickName);
         ShowElements(magickElementss, imgNewMagickEle);
         StartCoroutine(ShowCanvasGroupDuring(roomClearedInfoCanvasGroup, 4));
-    }
-
-    public void ShowGameEndInfo(bool result, string time, string rooms, int castedSpells, int castedMagicksTotal)
-    {
-        gameEndResult.text = result ? "VICTORIA" : "DERROTA";
-
-        string text =
-            "Tiempo: " + time + "\n" +
-            "Habitaciones: " + rooms + "\n" +
-            "Hechizos usados: " + castedSpells + "\n" +
-            "Magicks usados: " + castedMagicksTotal;
-        gameEndDetails.text = text;
-        StartCoroutine(FadeCanvasGroup(gameEndInfoCanvasGroup, 0, 1, 1));
     }
 
     // Muestra los elementos seleccionados actualmente

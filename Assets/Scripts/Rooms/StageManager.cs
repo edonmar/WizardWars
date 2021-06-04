@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class StageManager : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class StageManager : MonoBehaviour
     private Dictionary<string, int> castedMagicks;
     [HideInInspector] public GameObject currentRoom;
 
+    private GameManager gameManager;
     private MagickManager magickManager;
     private GameUIManager gameUIManager;
 
@@ -21,6 +23,7 @@ public class StageManager : MonoBehaviour
         gameTime = 0;
         castedSpells = 0;
         castedMagicks = new Dictionary<string, int>();
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         magickManager = GameObject.Find("Manager").GetComponent<MagickManager>();
         gameUIManager = GameObject.Find("GameUI").GetComponent<GameUIManager>();
         magickManager.LockAllMagicks();
@@ -65,7 +68,7 @@ public class StageManager : MonoBehaviour
         string time = ConvertTime();
         string rooms = totalRooms - remainingRooms + "/" + totalRooms;
         int castedMagicksTotal = castedMagicks.Sum(magick => magick.Value);
-        gameUIManager.ShowGameEndInfo(result, time, rooms, castedSpells, castedMagicksTotal);
+        gameManager.SetGameEndInfo(result, time, rooms, castedSpells, castedMagicksTotal);
 
         print(result ? "WIN" : "LOSE");
         print(time);
@@ -74,6 +77,9 @@ public class StageManager : MonoBehaviour
         print("Casted magicks:");
         foreach (KeyValuePair<string, int> magick in castedMagicks)
             print(magick.Key + ": " + magick.Value);
+
+        gameManager.gameEnded = true;
+        SceneManager.LoadScene("MainMenu");
     }
 
     private string ConvertTime()
