@@ -58,16 +58,16 @@ public class StageManager : MonoBehaviour
         castedMagicks.Add(magickName, 0);
     }
 
-    public void CompleteStage()
+    public void GameEnd(bool result)
     {
         PauseTimer();
 
         string time = ConvertTime();
         string rooms = totalRooms - remainingRooms + "/" + totalRooms;
         int castedMagicksTotal = castedMagicks.Sum(magick => magick.Value);
-        gameUIManager.ShowStageEndInfo(time, rooms, castedSpells, castedMagicksTotal);
+        gameUIManager.ShowGameEndInfo(result, time, rooms, castedSpells, castedMagicksTotal);
 
-        print("WIN");
+        print(result ? "WIN" : "LOSE");
         print(time);
         print(rooms);
         print("Casted spells: " + castedSpells);

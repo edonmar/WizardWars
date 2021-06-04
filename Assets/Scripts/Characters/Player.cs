@@ -938,4 +938,9 @@ public class Player : MonoBehaviour
 
         selfCastParticles.Play();
     }
+
+    public void Die()
+    {
+        stageManager.GameEnd(false);
+    }
 }

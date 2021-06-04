@@ -310,14 +310,16 @@ public class CharacterStats : MonoBehaviour
 
         if (CompareTag("Enemy"))
             transform.parent.gameObject.GetComponent<RoomEnemies>().EnemyKilled();
-
         StartCoroutine(DestroyIn(2));
     }
 
     private IEnumerator DestroyIn(float time)
     {
         yield return new WaitForSeconds(time);
-        Destroy(gameObject);
+        if (CompareTag("Player"))
+            playerScript.Die();
+        else
+            Destroy(gameObject);
     }
 
     public void CastShield()
