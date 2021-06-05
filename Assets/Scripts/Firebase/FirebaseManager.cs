@@ -6,30 +6,32 @@ using UnityEngine;
 
 public class FirebaseManager : MonoBehaviour
 {
-    [SerializeField] private MainMenu mainMenuScript;
+    // Instancia del FirebaseManager a la que accederemos desde fuera
+    private static FirebaseManager instance = null;
+
+    public static FirebaseManager GetInstance()
+    {
+        return instance;
+    }
+
+    [HideInInspector] public MainMenu mainMenuScript;
 
     // Firebase variables
-    [Header("Firebase")]
-    public DependencyStatus dependencyStatus;
+    [Header("Firebase")] public DependencyStatus dependencyStatus;
     public FirebaseAuth auth;
-    private FirebaseUser user;
-
-    // Login variables
-    [Header("Login")]
-    [SerializeField] private TMP_InputField emailLoginField;
-    [SerializeField] private TMP_InputField passwordLoginField;
-    [SerializeField] private TMP_Text infoLoginText;
-
-    // Register variables
-    [Header("Register")]
-    [SerializeField] private TMP_InputField usernameRegisterField;
-    [SerializeField] private TMP_InputField emailRegisterField;
-    [SerializeField] private TMP_InputField passwordRegisterField;
-    [SerializeField] private TMP_InputField passwordRegisterVerifyField;
-    [SerializeField] private TMP_Text infoRegisterText;
+    public FirebaseUser user;
 
     private void Awake()
     {
+        // Si no hay ningún FirebaseManager instanciado
+        if (instance == null)
+            instance = this;
+        // Si hay alguno instanciado pero no soy yo me destruyo porque no soy necesario
+        else if (instance != this)
+            Destroy(gameObject);
+        // Indico que no debo destruirme cuando recargue los niveles
+        DontDestroyOnLoad(gameObject);
+
         // Comprueba que todas las dependencias necesarias para Firebase están presentes
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
         {
@@ -50,12 +52,13 @@ public class FirebaseManager : MonoBehaviour
 
     public void LoginButton()
     {
-        StartCoroutine(Login(emailLoginField.text, passwordLoginField.text));
+        StartCoroutine(Login(mainMenuScript.emailLoginField.text, mainMenuScript.passwordLoginField.text));
     }
 
     public void RegisterButton()
     {
-        StartCoroutine(Register(emailRegisterField.text, passwordRegisterField.text, usernameRegisterField.text));
+        StartCoroutine(Register(mainMenuScript.emailRegisterField.text, mainMenuScript.passwordRegisterField.text,
+            mainMenuScript.usernameRegisterField.text));
     }
 
     public void SignOutButton()
@@ -88,15 +91,15 @@ public class FirebaseManager : MonoBehaviour
                 _ => "No se pudo iniciar sesión"
             };
 
-            infoLoginText.text = message;
+            mainMenuScript.infoLoginText.text = message;
         }
         else
         {
             // El usuario ya está logeado. Obtiene los resultados
             user = LoginTask.Result;
             Debug.LogFormat("User signed in successfully: {0} ({1})", user.DisplayName, user.Email);
-            infoLoginText.text = "";
-            infoLoginText.text = "Sesión iniciada";
+            mainMenuScript.infoLoginText.text = "";
+            mainMenuScript.infoLoginText.text = "Sesión iniciada";
             mainMenuScript.ShowTitleScreen();
         }
     }
@@ -104,9 +107,9 @@ public class FirebaseManager : MonoBehaviour
     private IEnumerator Register(string _email, string _password, string _username)
     {
         if (_username == "")
-            infoRegisterText.text = "Nombre de usuario en blanco";
-        else if (passwordRegisterField.text != passwordRegisterVerifyField.text)
-            infoRegisterText.text = "Las contraseñas no coinciden";
+            mainMenuScript.infoRegisterText.text = "Nombre de usuario en blanco";
+        else if (mainMenuScript.passwordRegisterField.text != mainMenuScript.passwordRegisterVerifyField.text)
+            mainMenuScript.infoRegisterText.text = "Las contraseñas no coinciden";
         else
         {
             // Llama a la función de registro de Firebase
@@ -130,7 +133,7 @@ public class FirebaseManager : MonoBehaviour
                     _ => "No se pudo registrar la cuenta"
                 };
 
-                infoRegisterText.text = message;
+                mainMenuScript.infoRegisterText.text = message;
             }
             else
             {
@@ -153,14 +156,14 @@ public class FirebaseManager : MonoBehaviour
                         Debug.LogWarning(message: $"Failed to register task with {ProfileTask.Exception}");
                         FirebaseException firebaseEx = ProfileTask.Exception.GetBaseException() as FirebaseException;
                         AuthError errorCode = (AuthError) firebaseEx.ErrorCode;
-                        infoRegisterText.text = "No se pudo asignar el nombre de usuario";
+                        mainMenuScript.infoRegisterText.text = "No se pudo asignar el nombre de usuario";
                     }
                     else
                     {
                         // El nombre de usuario ya está establecido. Vuelve a la pantalla de login
-                        infoLoginText.text = "Registrado con éxito";
+                        mainMenuScript.infoLoginText.text = "Registrado con éxito";
                         mainMenuScript.ShowLoginScreen();
-                        infoRegisterText.text = "";
+                        mainMenuScript.infoRegisterText.text = "";
                     }
                 }
             }

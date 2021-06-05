@@ -11,23 +11,30 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private TMP_Text gameEndResult;
     [SerializeField] private TMP_Text gameEndDetails;
 
-    [SerializeField] private TMP_InputField emailLoginField;
-    [SerializeField] private TMP_InputField passwordLoginField;
-    [SerializeField] private TMP_Text infoLoginText;
+    public TMP_InputField emailLoginField;
+    public TMP_InputField passwordLoginField;
+    public TMP_Text infoLoginText;
 
-    [SerializeField] private TMP_InputField usernameRegisterField;
-    [SerializeField] private TMP_InputField emailRegisterField;
-    [SerializeField] private TMP_InputField passwordRegisterField;
-    [SerializeField] private TMP_InputField passwordRegisterVerifyField;
-    [SerializeField] private TMP_Text infoRegisterText;
+    public TMP_InputField usernameRegisterField;
+    public TMP_InputField emailRegisterField;
+    public TMP_InputField passwordRegisterField;
+    public TMP_InputField passwordRegisterVerifyField;
+    public TMP_Text infoRegisterText;
+
+    [SerializeField] private TMP_Text userName;
 
     private GameManager gameManager;
-    [SerializeField] private FirebaseManager firebaseManager;
+    private FirebaseManager firebaseManager;
+
+    private void Awake()
+    {
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        firebaseManager = GameObject.Find("FirebaseManager").GetComponent<FirebaseManager>();
+        firebaseManager.mainMenuScript = GetComponent<MainMenu>();
+    }
 
     private void Start()
     {
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-
         if (!gameManager.gameEnded)
             return;
         SetGameEndInfo();
@@ -57,6 +64,21 @@ public class MainMenu : MonoBehaviour
         gameEndDetails.text = text;
     }
 
+    public void LoginButton()
+    {
+        firebaseManager.LoginButton();
+    }
+
+    public void RegisterButton()
+    {
+        firebaseManager.RegisterButton();
+    }
+
+    public void SignOutButton()
+    {
+        firebaseManager.SignOutButton();
+    }
+
     public void ShowLoginScreen()
     {
         ClearRegisterFields();
@@ -82,6 +104,7 @@ public class MainMenu : MonoBehaviour
     public void ShowTitleScreen()
     {
         ClearLoginFields();
+        userName.text = firebaseManager.user.DisplayName;
         loginScreen.SetActive(false);
         gameEndInfo.SetActive(false);
         titleScreen.SetActive(true);
