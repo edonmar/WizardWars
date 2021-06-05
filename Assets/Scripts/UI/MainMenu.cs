@@ -4,10 +4,22 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    [SerializeField] private GameObject loginScreen;
+    [SerializeField] private GameObject registerScreen;
     [SerializeField] private GameObject titleScreen;
     [SerializeField] private GameObject gameEndInfo;
     [SerializeField] private TMP_Text gameEndResult;
     [SerializeField] private TMP_Text gameEndDetails;
+    
+    [SerializeField] private TMP_InputField emailLoginField;
+    [SerializeField] private TMP_InputField passwordLoginField;
+    [SerializeField] private TMP_Text infoLoginText;
+    
+    [SerializeField] private TMP_InputField usernameRegisterField;
+    [SerializeField] private TMP_InputField emailRegisterField;
+    [SerializeField] private TMP_InputField passwordRegisterField;
+    [SerializeField] private TMP_InputField passwordRegisterVerifyField;
+    [SerializeField] private TMP_Text infoRegisterText;
 
     private GameManager gameManager;
 
@@ -42,6 +54,28 @@ public class MainMenu : MonoBehaviour
             "Hechizos usados: " + gameManager.castedSpells + "\n" +
             "Magicks usados: " + gameManager.castedMagicksTotal;
         gameEndDetails.text = text;
+    }
+
+    public void ShowLoginScreen()
+    {
+        usernameRegisterField.text = "";
+        emailRegisterField.text = "";
+        passwordRegisterField.text = "";
+        passwordRegisterVerifyField.text = "";
+        infoRegisterText.text = "";
+
+        loginScreen.SetActive(true);
+        registerScreen.SetActive(false);
+    }
+
+    public void ShowRegisterScreen()
+    {
+        emailLoginField.text = "";
+        passwordLoginField.text = "";
+        infoLoginText.text = "";
+
+        registerScreen.SetActive(true);
+        loginScreen.SetActive(false);
     }
 
     private void ShowGameEndInfo()
