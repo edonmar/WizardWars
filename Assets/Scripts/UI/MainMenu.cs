@@ -58,12 +58,28 @@ public class MainMenu : MonoBehaviour
         gameEndResult.text = gameManager.result ? "Victoria" : "Derrota";
 
         string text =
-            "Tiempo: " + gameManager.time + "\n" +
+            "Tiempo: " + ConvertTime(gameManager.time) + "\n" +
             "Habitaciones: " + gameManager.rooms + "\n" +
             "Hechizos usados: " + gameManager.castedSpells + "\n" +
             "Magicks usados: " + gameManager.castedMagicksTotal;
         gameEndDetails.text = text;
         gameEndDetailsMagicks.text = gameManager.magickDetails;
+    }
+
+    private string ConvertTime(int seconds)
+    {
+        int minutes = seconds / 60;
+        seconds -= minutes * 60;
+
+        string strSeconds = seconds.ToString();
+        string strMinutes = minutes.ToString();
+
+        if (seconds < 10)
+            strSeconds = "0" + strSeconds;
+        if (minutes < 10)
+            strMinutes = "0" + strMinutes;
+
+        return strMinutes + ":" + strSeconds;
     }
 
     public void LoginButton()

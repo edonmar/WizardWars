@@ -4,9 +4,11 @@ public class GameManager : MonoBehaviour
 {
     private static GameManager instance = null;
 
+    private FirebaseManager firebaseManager;
+
     [HideInInspector] public bool gameEnded;
     [HideInInspector] public bool result;
-    [HideInInspector] public string time;
+    [HideInInspector] public int time;
     [HideInInspector] public string rooms;
     [HideInInspector] public int castedSpells;
     [HideInInspector] public int castedMagicksTotal;
@@ -29,9 +31,20 @@ public class GameManager : MonoBehaviour
 
         // Indico que no debo destruirme cuando recargue los niveles
         DontDestroyOnLoad(gameObject);
+
+
+        firebaseManager = GameObject.Find("FirebaseManager").GetComponent<FirebaseManager>();
     }
 
-    public void SetGameEndInfo(bool result, string time, string rooms, int castedSpells, int castedMagicksTotal,
+    public void GameEnd(bool result, int time, string rooms, int castedSpells, int castedMagicksTotal,
+        string magickDetails)
+    {
+        gameEnded = true;
+        SetGameEndInfo(result, time, rooms, castedSpells, castedMagicksTotal, magickDetails);
+        firebaseManager.SaveData(time, rooms, castedSpells, castedMagicksTotal, magickDetails);
+    }
+
+    private void SetGameEndInfo(bool result, int time, string rooms, int castedSpells, int castedMagicksTotal,
         string magickDetails)
     {
         this.result = result;

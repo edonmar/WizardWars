@@ -1,6 +1,7 @@
 using System.Collections;
 using Firebase;
 using Firebase.Auth;
+using Firebase.Database;
 using TMPro;
 using UnityEngine;
 
@@ -14,12 +15,14 @@ public class FirebaseManager : MonoBehaviour
         return instance;
     }
 
+    private GameManager gameManager;
     [HideInInspector] public MainMenu mainMenuScript;
 
     // Firebase variables
     [Header("Firebase")] public DependencyStatus dependencyStatus;
     public FirebaseAuth auth;
     public FirebaseUser user;
+    public DatabaseReference dbReference;
 
     private void Awake()
     {
@@ -31,6 +34,9 @@ public class FirebaseManager : MonoBehaviour
             Destroy(gameObject);
         // Indico que no debo destruirme cuando recargue los niveles
         DontDestroyOnLoad(gameObject);
+
+
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 
         // Comprueba que todas las dependencias necesarias para Firebase están presentes
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
@@ -48,6 +54,7 @@ public class FirebaseManager : MonoBehaviour
     {
         Debug.Log("Setting up Firebase Auth");
         auth = FirebaseAuth.DefaultInstance;
+        dbReference = FirebaseDatabase.DefaultInstance.RootReference;
     }
 
     public void LoginButton()
@@ -67,18 +74,30 @@ public class FirebaseManager : MonoBehaviour
         mainMenuScript.ShowLoginScreen();
     }
 
-    private IEnumerator Login(string _email, string _password)
+    public void SaveData(int time, string rooms, int castedSpells, int castedMagicksTotal, string magickDetails)
+    {
+        StartCoroutine(UpdateUsernameAuth(user.DisplayName));
+        StartCoroutine(UpdateUsernameDatabase(user.DisplayName));
+
+        StartCoroutine(UpdateTime(time));
+        StartCoroutine(UpdateRooms(rooms));
+        StartCoroutine(UpdateSpells(castedSpells));
+        StartCoroutine(UpdateMagicks(castedMagicksTotal));
+        StartCoroutine(UpdateMagickDetails(magickDetails));
+    }
+
+    private IEnumerator Login(string email, string password)
     {
         // Llama a la función de autenticación de Firebase
-        var LoginTask = auth.SignInWithEmailAndPasswordAsync(_email, _password);
+        var loginTask = auth.SignInWithEmailAndPasswordAsync(email, password);
         // Espera a que se complete la tarea
-        yield return new WaitUntil(predicate: () => LoginTask.IsCompleted);
+        yield return new WaitUntil(predicate: () => loginTask.IsCompleted);
 
-        if (LoginTask.Exception != null)
+        if (loginTask.Exception != null)
         {
             // Si hay errores, los gestiona
-            Debug.LogWarning(message: $"Failed to register task with {LoginTask.Exception}");
-            FirebaseException firebaseEx = LoginTask.Exception.GetBaseException() as FirebaseException;
+            Debug.LogWarning(message: $"Failed to register task with {loginTask.Exception}");
+            FirebaseException firebaseEx = loginTask.Exception.GetBaseException() as FirebaseException;
             AuthError errorCode = (AuthError) firebaseEx.ErrorCode;
 
             string message = errorCode switch
@@ -96,7 +115,7 @@ public class FirebaseManager : MonoBehaviour
         else
         {
             // El usuario ya está logeado. Obtiene los resultados
-            user = LoginTask.Result;
+            user = loginTask.Result;
             Debug.LogFormat("User signed in successfully: {0} ({1})", user.DisplayName, user.Email);
             mainMenuScript.infoLoginText.text = "";
             mainMenuScript.infoLoginText.text = "Sesión iniciada";
@@ -104,24 +123,24 @@ public class FirebaseManager : MonoBehaviour
         }
     }
 
-    private IEnumerator Register(string _email, string _password, string _username)
+    private IEnumerator Register(string email, string password, string username)
     {
-        if (_username == "")
+        if (username == "")
             mainMenuScript.infoRegisterText.text = "Nombre de usuario en blanco";
         else if (mainMenuScript.passwordRegisterField.text != mainMenuScript.passwordRegisterVerifyField.text)
             mainMenuScript.infoRegisterText.text = "Las contraseñas no coinciden";
         else
         {
             // Llama a la función de registro de Firebase
-            var RegisterTask = auth.CreateUserWithEmailAndPasswordAsync(_email, _password);
+            var registerTask = auth.CreateUserWithEmailAndPasswordAsync(email, password);
             // Espera a que se complete la tarea
-            yield return new WaitUntil(predicate: () => RegisterTask.IsCompleted);
+            yield return new WaitUntil(predicate: () => registerTask.IsCompleted);
 
-            if (RegisterTask.Exception != null)
+            if (registerTask.Exception != null)
             {
                 // Si hay errores, los gestiona
-                Debug.LogWarning(message: $"Failed to register task with {RegisterTask.Exception}");
-                FirebaseException firebaseEx = RegisterTask.Exception.GetBaseException() as FirebaseException;
+                Debug.LogWarning(message: $"Failed to register task with {registerTask.Exception}");
+                FirebaseException firebaseEx = registerTask.Exception.GetBaseException() as FirebaseException;
                 AuthError errorCode = (AuthError) firebaseEx.ErrorCode;
 
                 string message = errorCode switch
@@ -138,23 +157,23 @@ public class FirebaseManager : MonoBehaviour
             else
             {
                 // El usuario ya está creado. Obtiene los resultados
-                user = RegisterTask.Result;
+                user = registerTask.Result;
 
                 if (user != null)
                 {
                     // Crea un perfil y asigna su nombre de usuario
-                    UserProfile profile = new UserProfile {DisplayName = _username};
+                    UserProfile profile = new UserProfile {DisplayName = username};
 
                     // Llama a la función de Firebase de actualizar el nombre de usuario
-                    var ProfileTask = user.UpdateUserProfileAsync(profile);
+                    var profileTask = user.UpdateUserProfileAsync(profile);
                     // Espera a que se complete la tarea
-                    yield return new WaitUntil(predicate: () => ProfileTask.IsCompleted);
+                    yield return new WaitUntil(predicate: () => profileTask.IsCompleted);
 
-                    if (ProfileTask.Exception != null)
+                    if (profileTask.Exception != null)
                     {
                         // Si hay errores, los gestiona
-                        Debug.LogWarning(message: $"Failed to register task with {ProfileTask.Exception}");
-                        FirebaseException firebaseEx = ProfileTask.Exception.GetBaseException() as FirebaseException;
+                        Debug.LogWarning(message: $"Failed to register task with {profileTask.Exception}");
+                        FirebaseException firebaseEx = profileTask.Exception.GetBaseException() as FirebaseException;
                         AuthError errorCode = (AuthError) firebaseEx.ErrorCode;
                         mainMenuScript.infoRegisterText.text = "No se pudo asignar el nombre de usuario";
                     }
@@ -168,5 +187,82 @@ public class FirebaseManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    private IEnumerator UpdateUsernameAuth(string username)
+    {
+        // Creado un perfil de usuario y asignado el nombre de usuario
+        UserProfile profile = new UserProfile {DisplayName = username};
+
+        // Llama la función de Firebase de actualizar perfil de usuario, pasando el perfil con el nombre de usuario
+        var profileTask = user.UpdateUserProfileAsync(profile);
+        // Espera a que se complete la tarea
+        yield return new WaitUntil(predicate: () => profileTask.IsCompleted);
+
+        if (profileTask.Exception != null)
+            Debug.LogWarning(message: $"Failed to register task with {profileTask.Exception}");
+    }
+
+    private IEnumerator UpdateUsernameDatabase(string username)
+    {
+        // Guarda en la base de datos el nombre de usuairo del usuario logeado actualmente
+        var dbTask = dbReference.Child("users").Child(user.UserId).Child("username").SetValueAsync(username);
+
+        // Espera a que se complete la tarea
+        yield return new WaitUntil(predicate: () => dbTask.IsCompleted);
+
+        if (dbTask.Exception != null)
+            Debug.LogWarning(message: $"Failed to register task with {dbTask.Exception}");
+    }
+
+    // Asigna datos para el usuario logeado actualmente
+    private IEnumerator UpdateTime(int time)
+    {
+        var dbTask = dbReference.Child("users").Child(user.UserId).Child("time").SetValueAsync(time);
+
+        yield return new WaitUntil(predicate: () => dbTask.IsCompleted);
+
+        if (dbTask.Exception != null)
+            Debug.LogWarning(message: $"Failed to register task with {dbTask.Exception}");
+    }
+
+    private IEnumerator UpdateRooms(string rooms)
+    {
+        var dbTask = dbReference.Child("users").Child(user.UserId).Child("rooms").SetValueAsync(rooms);
+
+        yield return new WaitUntil(predicate: () => dbTask.IsCompleted);
+
+        if (dbTask.Exception != null)
+            Debug.LogWarning(message: $"Failed to register task with {dbTask.Exception}");
+    }
+
+    private IEnumerator UpdateSpells(int spells)
+    {
+        var dbTask = dbReference.Child("users").Child(user.UserId).Child("spells").SetValueAsync(spells);
+
+        yield return new WaitUntil(predicate: () => dbTask.IsCompleted);
+
+        if (dbTask.Exception != null)
+            Debug.LogWarning(message: $"Failed to register task with {dbTask.Exception}");
+    }
+
+    private IEnumerator UpdateMagicks(int magicks)
+    {
+        var dbTask = dbReference.Child("users").Child(user.UserId).Child("magicks").SetValueAsync(magicks);
+
+        yield return new WaitUntil(predicate: () => dbTask.IsCompleted);
+
+        if (dbTask.Exception != null)
+            Debug.LogWarning(message: $"Failed to register task with {dbTask.Exception}");
+    }
+
+    private IEnumerator UpdateMagickDetails(string magickDetails)
+    {
+        var dbTask = dbReference.Child("users").Child(user.UserId).Child("magickDetails").SetValueAsync(magickDetails);
+
+        yield return new WaitUntil(predicate: () => dbTask.IsCompleted);
+
+        if (dbTask.Exception != null)
+            Debug.LogWarning(message: $"Failed to register task with {dbTask.Exception}");
     }
 }
