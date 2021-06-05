@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public string rooms;
     [HideInInspector] public int castedSpells;
     [HideInInspector] public int castedMagicksTotal;
+    [HideInInspector] public string magickDetails;
 
     public static GameManager GetInstance()
     {
@@ -30,12 +31,14 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void SetGameEndInfo(bool result, string time, string rooms, int castedSpells, int castedMagicksTotal)
+    public void SetGameEndInfo(bool result, string time, string rooms, int castedSpells, int castedMagicksTotal,
+        string magickDetails)
     {
         this.result = result;
         this.time = time;
         this.rooms = rooms;
         this.castedSpells = castedSpells;
         this.castedMagicksTotal = castedMagicksTotal;
+        this.magickDetails = magickDetails;
     }
 }

@@ -156,6 +156,24 @@ public class MagickManager : MonoBehaviour
         }
     }
 
+    public string MagickNameInSpanish(string magickName)
+    {
+        return magickName switch
+        {
+            "Hailstorm" => "Tormenta de granizo",
+            "Haste" => "Celeridad",
+            "ImmolationAura" => "Aura de inmolación",
+            "Levitation" => "Levitación",
+            "MeteorShower" => "Lluvia de meteoritos",
+            "PlasmaBomb" => "Bomba de plasma",
+            "Sacrifice" => "Sacrificio",
+            "SummonDeath" => "Invocar muerte",
+            "Teleport" => "Teletransporte",
+            "ThunderBolt" => "Trueno",
+            _ => ""
+        };
+    }
+
     private void CastHailStorm()
     {
         float rate = 0.2f;

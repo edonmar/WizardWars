@@ -10,6 +10,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject gameEndInfo;
     [SerializeField] private TMP_Text gameEndResult;
     [SerializeField] private TMP_Text gameEndDetails;
+    [SerializeField] private TMP_Text gameEndDetailsMagicks;
 
     public TMP_InputField emailLoginField;
     public TMP_InputField passwordLoginField;
@@ -62,6 +63,7 @@ public class MainMenu : MonoBehaviour
             "Hechizos usados: " + gameManager.castedSpells + "\n" +
             "Magicks usados: " + gameManager.castedMagicksTotal;
         gameEndDetails.text = text;
+        gameEndDetailsMagicks.text = gameManager.magickDetails;
     }
 
     public void LoginButton()

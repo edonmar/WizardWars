@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class GameUIManager : MonoBehaviour
 {
+    private MagickManager magickManager;
+
     // Elementos actuales del jugador
     [SerializeField] private Transform currentElementsImgs;
 
@@ -31,6 +33,7 @@ public class GameUIManager : MonoBehaviour
 
     private void Awake()
     {
+        magickManager = GameObject.Find("Manager").GetComponent<MagickManager>();
         LoadSprites();
         GetCurrentElementsImages();
         GetNewMagicksElementsImages();
@@ -116,22 +119,7 @@ public class GameUIManager : MonoBehaviour
 
     private void ShowMagickTitle(string magickName)
     {
-        string magickNameSpanish = magickName switch
-        {
-            "Hailstorm" => "Tormenta de granizo",
-            "Haste" => "Celeridad",
-            "ImmolationAura" => "Aura de inmolación",
-            "Levitation" => "Levitación",
-            "MeteorShower" => "Lluvia de meteoritos",
-            "PlasmaBomb" => "Bomba de plasma",
-            "Sacrifice" => "Sacrificio",
-            "SummonDeath" => "Invocar muerte",
-            "Teleport" => "Teletransporte",
-            "ThunderBolt" => "Trueno",
-            _ => ""
-        };
-
-        magickNameText.text = magickNameSpanish;
+        magickNameText.text = magickManager.MagickNameInSpanish(magickName);
     }
 
     private void ShowRemainingRooms(int remainingRooms)

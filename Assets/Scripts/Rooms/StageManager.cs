@@ -68,17 +68,28 @@ public class StageManager : MonoBehaviour
         string time = ConvertTime();
         string rooms = totalRooms - remainingRooms + "/" + totalRooms;
         int castedMagicksTotal = castedMagicks.Sum(magick => magick.Value);
+        string magickDetails = "";
+
+        for (int i = 0, endI = castedMagicks.Count; i < endI; i++)
+        {
+            string mKey = castedMagicks.ElementAt(i).Key;
+            string magickNameSpanish = magickManager.MagickNameInSpanish(mKey);
+            int mValue = castedMagicks.ElementAt(i).Value;
+
+            magickDetails += magickNameSpanish + " (" + mValue + ")";
+            if (i != endI - 1)
+                magickDetails += ", ";
+        }
 
         print(result ? "WIN" : "LOSE");
         print(time);
         print(rooms);
         print("Casted spells: " + castedSpells);
-        print("Casted magicks:");
-        foreach (KeyValuePair<string, int> magick in castedMagicks)
-            print(magick.Key + ": " + magick.Value);
+        print("Casted magicks: " + castedMagicksTotal);
+        print("Magicks: " + magickDetails);
 
         gameManager.gameEnded = true;
-        gameManager.SetGameEndInfo(result, time, rooms, castedSpells, castedMagicksTotal);
+        gameManager.SetGameEndInfo(result, time, rooms, castedSpells, castedMagicksTotal, magickDetails);
         SceneManager.LoadScene("MainMenu");
     }
 
