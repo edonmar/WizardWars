@@ -68,7 +68,6 @@ public class StageManager : MonoBehaviour
         string time = ConvertTime();
         string rooms = totalRooms - remainingRooms + "/" + totalRooms;
         int castedMagicksTotal = castedMagicks.Sum(magick => magick.Value);
-        gameManager.SetGameEndInfo(result, time, rooms, castedSpells, castedMagicksTotal);
 
         print(result ? "WIN" : "LOSE");
         print(time);
@@ -79,6 +78,7 @@ public class StageManager : MonoBehaviour
             print(magick.Key + ": " + magick.Value);
 
         gameManager.gameEnded = true;
+        gameManager.SetGameEndInfo(result, time, rooms, castedSpells, castedMagicksTotal);
         SceneManager.LoadScene("MainMenu");
     }
 

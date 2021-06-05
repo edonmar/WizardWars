@@ -4,14 +4,14 @@ using Firebase.Auth;
 using TMPro;
 using UnityEngine;
 
-public class AuthManager : MonoBehaviour
+public class FirebaseManager : MonoBehaviour
 {
     [SerializeField] private MainMenu mainMenuScript;
 
     // Firebase variables
     [Header("Firebase")]
     public DependencyStatus dependencyStatus;
-    private FirebaseAuth auth;
+    public FirebaseAuth auth;
     private FirebaseUser user;
 
     // Login variables
@@ -58,6 +58,12 @@ public class AuthManager : MonoBehaviour
         StartCoroutine(Register(emailRegisterField.text, passwordRegisterField.text, usernameRegisterField.text));
     }
 
+    public void SignOutButton()
+    {
+        auth.SignOut();
+        mainMenuScript.ShowLoginScreen();
+    }
+
     private IEnumerator Login(string _email, string _password)
     {
         // Llama a la función de autenticación de Firebase
@@ -91,6 +97,7 @@ public class AuthManager : MonoBehaviour
             Debug.LogFormat("User signed in successfully: {0} ({1})", user.DisplayName, user.Email);
             infoLoginText.text = "";
             infoLoginText.text = "Sesión iniciada";
+            mainMenuScript.ShowTitleScreen();
         }
     }
 
