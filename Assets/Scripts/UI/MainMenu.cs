@@ -8,6 +8,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject registerScreen;
     [SerializeField] private GameObject titleScreen;
     [SerializeField] private GameObject gameEndInfo;
+    [SerializeField] private GameObject scoreboard;
     [SerializeField] private TMP_Text gameEndResult;
     [SerializeField] private TMP_Text gameEndDetails;
     [SerializeField] private TMP_Text gameEndDetailsMagicks;
@@ -125,7 +126,14 @@ public class MainMenu : MonoBehaviour
         userName.text = firebaseManager.user.DisplayName;
         loginScreen.SetActive(false);
         gameEndInfo.SetActive(false);
+        scoreboard.SetActive(false);
         titleScreen.SetActive(true);
+    }
+
+    public void ShowScoreboard()
+    {
+        titleScreen.SetActive(false);
+        scoreboard.SetActive(true);
     }
 
     private void ClearLoginFields()
