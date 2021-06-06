@@ -9,6 +9,8 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject titleScreen;
     [SerializeField] private GameObject gameEndInfo;
     [SerializeField] private GameObject scoreboard;
+    [SerializeField] private Transform scoreTable;
+
     [SerializeField] private TMP_Text gameEndResult;
     [SerializeField] private TMP_Text gameEndDetails;
     [SerializeField] private TMP_Text gameEndDetailsMagicks;
@@ -98,6 +100,11 @@ public class MainMenu : MonoBehaviour
         firebaseManager.SignOutButton();
     }
 
+    public void ScoreboardButton()
+    {
+        StartCoroutine(firebaseManager.LoadScoreboardData());
+    }
+
     public void ShowLoginScreen()
     {
         ClearRegisterFields();
@@ -150,5 +157,50 @@ public class MainMenu : MonoBehaviour
         passwordRegisterField.text = "";
         passwordRegisterVerifyField.text = "";
         infoRegisterText.text = "";
+    }
+
+    public void FillScoreRow(int place, string username, int time, string rooms, int spells, int magicks,
+        string magickDetails)
+    {
+        Transform scoreRow = scoreTable.GetChild(place - 1);
+        Transform tableRow = scoreRow.Find("TableRow");
+
+        TMP_Text placeText = tableRow.Find("Place").GetComponent<TMP_Text>();
+        TMP_Text usernameText = tableRow.Find("Username").GetComponent<TMP_Text>();
+        TMP_Text timeText = tableRow.Find("Time").GetComponent<TMP_Text>();
+        TMP_Text roomsText = tableRow.Find("Rooms").GetComponent<TMP_Text>();
+        TMP_Text spellsText = tableRow.Find("Spells").GetComponent<TMP_Text>();
+        TMP_Text magicksText = tableRow.Find("Magicks").GetComponent<TMP_Text>();
+        TMP_Text magickDetailsText = scoreRow.Find("MagickDetails").GetComponent<TMP_Text>();
+
+        placeText.text = place.ToString();
+        usernameText.text = username;
+        timeText.text = time.ToString();
+        roomsText.text = rooms;
+        spellsText.text = spells.ToString();
+        magicksText.text = magicks.ToString();
+        magickDetailsText.text = magickDetails;
+    }
+
+    public void EmptyScoreRow(int place)
+    {
+        Transform scoreRow = scoreTable.GetChild(place - 1);
+        Transform tableRow = scoreRow.Find("TableRow");
+
+        TMP_Text placeText = tableRow.Find("Place").GetComponent<TMP_Text>();
+        TMP_Text usernameText = tableRow.Find("Username").GetComponent<TMP_Text>();
+        TMP_Text timeText = tableRow.Find("Time").GetComponent<TMP_Text>();
+        TMP_Text roomsText = tableRow.Find("Rooms").GetComponent<TMP_Text>();
+        TMP_Text spellsText = tableRow.Find("Spells").GetComponent<TMP_Text>();
+        TMP_Text magicksText = tableRow.Find("Magicks").GetComponent<TMP_Text>();
+        TMP_Text magickDetailsText = scoreRow.Find("MagickDetails").GetComponent<TMP_Text>();
+
+        placeText.text = "";
+        usernameText.text = "";
+        timeText.text = "";
+        roomsText.text = "";
+        spellsText.text = "";
+        magicksText.text = "";
+        magickDetailsText.text = "";
     }
 }

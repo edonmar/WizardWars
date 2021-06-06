@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 using Firebase;
 using Firebase.Auth;
 using Firebase.Database;
@@ -311,6 +312,43 @@ public class FirebaseManager : MonoBehaviour
             DataSnapshot snapshot = dbTask.Result;
             currentScoreTime = int.Parse(snapshot.Child("time").Value.ToString());
             currentScoreRooms = snapshot.Child("rooms").Value.ToString();
+        }
+    }
+
+    public IEnumerator LoadScoreboardData()
+    {
+        // Obtengo los 3 usuarios con menor tiempo
+        var dbTask = dbReference.Child("users").OrderByChild("time").LimitToLast(3).GetValueAsync();
+
+        yield return new WaitUntil(predicate: () => dbTask.IsCompleted);
+
+        if (dbTask.Exception != null)
+            Debug.LogWarning(message: $"Failed to register task with {dbTask.Exception}");
+        else
+        {
+            DataSnapshot snapshot = dbTask.Result;
+            int place = 0;
+
+            // Bucle a través de las puntuaciones obtenidas
+            foreach (DataSnapshot childSnapshot in snapshot.Children)
+            {
+                place++;
+                string username = childSnapshot.Child("username").Value.ToString();
+                int time = int.Parse(childSnapshot.Child("time").Value.ToString());
+                string rooms = childSnapshot.Child("rooms").Value.ToString();
+                int spells = int.Parse(childSnapshot.Child("spells").Value.ToString());
+                int magicks = int.Parse(childSnapshot.Child("magicks").Value.ToString());
+                string magickDetails = childSnapshot.Child("magickDetails").Value.ToString();
+
+                mainMenuScript.FillScoreRow(place, username, time, rooms, spells, magicks, magickDetails);
+            }
+
+            // Dejo en blanco las filas vacías (si hay menos de 3 puntuaciones en total)
+            int emptyRows = 3 - place;
+            for (int i = emptyRows; i > 0; i--)
+                mainMenuScript.EmptyScoreRow(i);
+
+            mainMenuScript.ShowScoreboard();
         }
     }
 }
