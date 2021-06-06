@@ -1,8 +1,8 @@
+using System;
 using System.Collections;
 using Firebase;
 using Firebase.Auth;
 using Firebase.Database;
-using TMPro;
 using UnityEngine;
 
 public class FirebaseManager : MonoBehaviour
@@ -23,6 +23,9 @@ public class FirebaseManager : MonoBehaviour
     public FirebaseAuth auth;
     public FirebaseUser user;
     public DatabaseReference dbReference;
+
+    private int currentScoreTime;
+    private string currentScoreRooms;
 
     private void Awake()
     {
@@ -74,6 +77,28 @@ public class FirebaseManager : MonoBehaviour
         mainMenuScript.ShowLoginScreen();
     }
 
+    public bool IsBestScore(int time, string rooms)
+    {
+        bool isBestScore = false;
+
+        if (time < currentScoreTime || currentScoreTime == 0)
+            isBestScore = true;
+        else if (time == currentScoreTime)
+        {
+            string[] roomNumStrings = rooms.Split('/');
+            int roomNumber = int.Parse(roomNumStrings[0].Substring(0, roomNumStrings[0].Length));
+
+            string[] currentRoomNumStrings = currentScoreRooms.Split('/');
+            int currentScoreRoomNumber =
+                int.Parse(currentRoomNumStrings[0].Substring(0, currentRoomNumStrings[0].Length));
+
+            if (roomNumber > currentScoreRoomNumber)
+                isBestScore = true;
+        }
+
+        return isBestScore;
+    }
+
     public void SaveData(int time, string rooms, int castedSpells, int castedMagicksTotal, string magickDetails)
     {
         StartCoroutine(UpdateUsernameAuth(user.DisplayName));
@@ -84,6 +109,8 @@ public class FirebaseManager : MonoBehaviour
         StartCoroutine(UpdateSpells(castedSpells));
         StartCoroutine(UpdateMagicks(castedMagicksTotal));
         StartCoroutine(UpdateMagickDetails(magickDetails));
+
+        StartCoroutine(LoadUserBestScore());
     }
 
     private IEnumerator Login(string email, string password)
@@ -120,6 +147,7 @@ public class FirebaseManager : MonoBehaviour
             mainMenuScript.infoLoginText.text = "";
             mainMenuScript.infoLoginText.text = "Sesión iniciada";
             mainMenuScript.ShowTitleScreen();
+            StartCoroutine(LoadUserBestScore());
         }
     }
 
@@ -264,5 +292,25 @@ public class FirebaseManager : MonoBehaviour
 
         if (dbTask.Exception != null)
             Debug.LogWarning(message: $"Failed to register task with {dbTask.Exception}");
+    }
+
+    public IEnumerator LoadUserBestScore()
+    {
+        currentScoreTime = 0;
+        currentScoreRooms = "";
+
+        // Obtiene los datos del usuario logeado actualmente
+        var dbTask = dbReference.Child("users").Child(user.UserId).GetValueAsync();
+
+        yield return new WaitUntil(predicate: () => dbTask.IsCompleted);
+
+        if (dbTask.Exception != null)
+            Debug.LogWarning(message: $"Failed to register task with {dbTask.Exception}");
+        else if (dbTask.Result.Value != null)
+        {
+            DataSnapshot snapshot = dbTask.Result;
+            currentScoreTime = int.Parse(snapshot.Child("time").Value.ToString());
+            currentScoreRooms = snapshot.Child("rooms").Value.ToString();
+        }
     }
 }

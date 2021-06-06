@@ -41,7 +41,10 @@ public class GameManager : MonoBehaviour
     {
         gameEnded = true;
         SetGameEndInfo(result, time, rooms, castedSpells, castedMagicksTotal, magickDetails);
-        firebaseManager.SaveData(time, rooms, castedSpells, castedMagicksTotal, magickDetails);
+        if (!result)
+            return;
+        if (firebaseManager.IsBestScore(time, rooms))
+            firebaseManager.SaveData(time, rooms, castedSpells, castedMagicksTotal, magickDetails);
     }
 
     private void SetGameEndInfo(bool result, int time, string rooms, int castedSpells, int castedMagicksTotal,
