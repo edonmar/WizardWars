@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources tools:keep="@string/firebase_database_url,@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id,@string/default_web_client_id" xmlns:tools="http://schemas.android.com/tools">
+  <string name="firebase_database_url" translatable="false">https://wizardwars-ccead-default-rtdb.europe-west1.firebasedatabase.app</string>
+  <string name="gcm_defaultSenderId" translatable="false">883835360624</string>
+  <string name="google_storage_bucket" translatable="false">wizardwars-ccead.appspot.com</string>
+  <string name="project_id" translatable="false">wizardwars-ccead</string>
+  <string name="google_api_key" translatable="false">AIzaSyA07sTAYThquLbPHJW5rDRIsCHFaqOo3QE</string>
+  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyA07sTAYThquLbPHJW5rDRIsCHFaqOo3QE</string>
+  <string name="google_app_id" translatable="false">1:883835360624:android:9809b3f25715da88d36bb5</string>
+  <string name="default_web_client_id" translatable="false">883835360624-kc3k201osm5r1lh309mrfa53usldsttk.apps.googleusercontent.com</string>
+</resources>
