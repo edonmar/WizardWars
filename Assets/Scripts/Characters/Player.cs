@@ -9,8 +9,16 @@ public class Player : MonoBehaviour
     private SpellManager spellManager;
     private MagickManager magickManager;
     private StageManager stageManager;
+    private GameManager gameManager;
     private GameUIManager gameUIManager;
-    private Camera mainCamera;
+
+    [SerializeField] private ControlsPC controlsPC;
+    [SerializeField] private ControlsMobile controlsMobile;
+    [HideInInspector] public bool moveInput;
+    [HideInInspector] public string elementInput;
+    [HideInInspector] public string startCastInput;
+    [HideInInspector] public bool stopCastInput;
+    [HideInInspector] public Vector3 rotationInput;
 
     [SerializeField] private Animator animator;
     [SerializeField] private Transform shootPoint;
@@ -49,9 +57,8 @@ public class Player : MonoBehaviour
         spellManager = manager.GetComponent<SpellManager>();
         magickManager = manager.GetComponent<MagickManager>();
         stageManager = manager.GetComponent<StageManager>();
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         gameUIManager = GameObject.Find("GameUI").GetComponent<GameUIManager>();
-
-        mainCamera = Camera.main;
 
         hashParamMovSpeed = Animator.StringToHash("MovSpeed");
         hashStatusAttack01 = Animator.StringToHash("attack01");
@@ -70,6 +77,21 @@ public class Player : MonoBehaviour
         chargedSpellDmgMultiplier = 0;
         chargedSpellAngle = 0;
         chargedSpellElements = new Dictionary<string, int>();
+
+        SetControlMode();
+        rotationInput = new Vector3();
+        moveInput = false;
+        elementInput = "";
+        startCastInput = "";
+        stopCastInput = false;
+    }
+
+    private void SetControlMode()
+    {
+        if (gameManager.isMobile)
+            controlsMobile.enabled = true;
+        else
+            controlsPC.enabled = true;
     }
 
     private void Update()
@@ -81,77 +103,38 @@ public class Player : MonoBehaviour
         }
 
         movSpeed = 0;
-        RotatePlayerTowardsCamera();
-        if (Input.GetKey(KeyCode.Mouse0))
+        RotatePlayerTowards();
+        if (moveInput)
         {
             if (isChargingSpell)
                 CastChargingSpell();
             else
                 DestroyCurrentSpells();
             MovePlayerForward();
+            moveInput = false;
         }
 
-        ElementInput();
-        CastInput();
+        if (elementInput != "")
+        {
+            LoadElement(elementInput);
+            gameUIManager.ShowLoadedElements(loadedElements);
+            elementInput = "";
+        }
+        
+        CastInput(startCastInput, stopCastInput);
 
         animator.SetFloat(hashParamMovSpeed, movSpeed);
     }
 
-    private void RotatePlayerTowardsCamera()
+    private void RotatePlayerTowards()
     {
-        // La capa con la que chocará el rayo, ignorando las demás capas
-        int layerMask = LayerMask.GetMask("CameraRayCollider");
-
-        // Lanza un rayo de la cámara a la posición del cursor del ratón
-        Ray cameraRay = mainCamera.ScreenPointToRay(Input.mousePosition);
-
-        // Si el rayo choca con un objeto de esa capa
-        if (!Physics.Raycast(cameraRay, out RaycastHit cameraRayHit, Mathf.Infinity, layerMask))
-            return;
-
-        // Gira al jugador en el eje Y para que mire a la posición donde ha chocado el rayo
-        Vector3 targetPosition = new Vector3(cameraRayHit.point.x, transform.position.y, cameraRayHit.point.z);
-        transform.LookAt(targetPosition);
+        transform.LookAt(rotationInput);
     }
 
     private void MovePlayerForward()
     {
         movSpeed = characterStats.movSpeed;
         transform.Translate(transform.forward * (movSpeed * Time.deltaTime), Space.World);
-    }
-
-    private void ElementInput()
-    {
-        string element = "";
-
-        if (Input.GetKeyDown(KeyCode.Q))
-            element = "WAT";
-        else if (Input.GetKeyDown(KeyCode.W))
-            element = "LIF";
-        else if (Input.GetKeyDown(KeyCode.E))
-            element = "SHI";
-        else if (Input.GetKeyDown(KeyCode.R))
-            element = "COL";
-        else if (Input.GetKeyDown(KeyCode.A))
-            element = "LIG";
-        else if (Input.GetKeyDown(KeyCode.S))
-            element = "ARC";
-        else if (Input.GetKeyDown(KeyCode.D))
-            element = "EAR";
-        else if (Input.GetKeyDown(KeyCode.F))
-            element = "FIR";
-        else if (Input.GetKeyDown(KeyCode.Space))
-        {
-            element = "";
-            loadedElements.Clear();
-            gameUIManager.ShowLoadedElements(loadedElements);
-        }
-
-        if (element == "")
-            return;
-
-        LoadElement(element);
-        gameUIManager.ShowLoadedElements(loadedElements);
     }
 
     // Añade un elemento a la combinación, comprueba sus reacciones con los elementos ya añadidos y si es necesario
@@ -385,35 +368,19 @@ public class Player : MonoBehaviour
         gameUIManager.ShowLoadedElements(loadedElements);
     }
 
-    private void CastInput()
+    private void CastInput(string castType, bool stopCast)
     {
-        string castType = "";
-
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-            castType = "FOC";
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-            castType = "ARE";
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-            castType = "SEL";
-        else if (Input.GetKeyDown(KeyCode.Alpha4))
-            castType = "WEA";
-        else if (Input.GetKeyDown(KeyCode.Alpha5))
-            castType = "MAG";
-
         // Si levanto el botón, desactivo los hechizos que esté lanzando
-        if (Input.GetKeyUp(KeyCode.Alpha1))
+        if (stopCast)
         {
             if (isChargingSpell)
                 CastChargingSpell();
             else
                 DestroyCurrentSpells();
-        }
-
-        // Si levanto el botón, desactivo los hechizos que esté lanzando
-        if (Input.GetKeyUp(KeyCode.Alpha2))
-        {
+            
             if (isLightningActive)
                 DestroyLightning();
+            stopCastInput = false;
         }
 
         switch (castType)

@@ -483,6 +483,8 @@ GameObject:
   - component: {fileID: 916608899314260866}
   - component: {fileID: 916608899314260865}
   - component: {fileID: 916608899314260879}
+  - component: {fileID: 310888288646129409}
+  - component: {fileID: 8944876027609212966}
   - component: {fileID: 916608899314260864}
   m_Layer: 8
   m_Name: Player
@@ -571,12 +573,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4ed2b205d4549e4b8cc754aaa892fd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  controlsPC: {fileID: 310888288646129409}
+  controlsMobile: {fileID: 8944876027609212966}
+  moveInput: 0
+  elementInput: 
+  castInput: 
   animator: {fileID: 1002701142681534542}
   shootPoint: {fileID: 916608900692564358}
   characterStats: {fileID: 916608899314260864}
   selfCastParticles: {fileID: 938449304301069186}
   chargingParticles: {fileID: 7536565268268040721}
   chargingFullParticles: {fileID: 6403328912216693634}
+--- !u!114 &310888288646129409
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 917933778675627840}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0320426482d6f8c4ba2817c1a97e9f6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerScript: {fileID: 916608899314260879}
+--- !u!114 &8944876027609212966
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 917933778675627840}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44ab4411100e8864cb882b2abe4722ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerScript: {fileID: 916608899314260879}
 --- !u!114 &916608899314260864
 MonoBehaviour:
   m_ObjectHideFlags: 0

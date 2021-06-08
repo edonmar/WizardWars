@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -5,6 +6,8 @@ public class GameManager : MonoBehaviour
     private static GameManager instance = null;
 
     private FirebaseManager firebaseManager;
+
+    [HideInInspector] public bool isMobile; // Si el juego se está ejecutando en un móvil
 
     [HideInInspector] public bool gameEnded;
     [HideInInspector] public bool result;
@@ -34,6 +37,7 @@ public class GameManager : MonoBehaviour
 
 
         firebaseManager = GameObject.Find("FirebaseManager").GetComponent<FirebaseManager>();
+        isMobile = IsTouchInterface;
     }
 
     public void GameEnd(bool result, int time, string rooms, int castedSpells, int castedMagicksTotal,
@@ -56,5 +60,37 @@ public class GameManager : MonoBehaviour
         this.castedSpells = castedSpells;
         this.castedMagicksTotal = castedMagicksTotal;
         this.magickDetails = magickDetails;
+    }
+    
+    private RuntimePlatform platform
+    {
+        get
+        {
+            #if UNITY_ANDROID
+    			return RuntimePlatform.Android;
+            #elif UNITY_IOS
+    			return RuntimePlatform.IPhonePlayer;
+            #elif UNITY_STANDALONE_OSX
+			    return RuntimePlatform.OSXPlayer;
+            #elif UNITY_STANDALONE_WIN
+                return RuntimePlatform.WindowsPlayer;
+            #endif
+        }
+    }
+
+    private bool IsTouchInterface
+    {
+        get
+        {
+            #if UNITY_EDITOR
+                // Si el juego se está ejecutando en el editor y la BuildTarget es Android o iOS
+                if (EditorUserBuildSettings.activeBuildTarget == BuildTarget.Android ||
+                    EditorUserBuildSettings.activeBuildTarget == BuildTarget.iOS)
+                    return true;
+            #endif
+
+            // Si el juego se está ejecutando en un dispositivo Android o iOS
+            return platform == RuntimePlatform.Android || platform == RuntimePlatform.IPhonePlayer;
+        }
     }
 }
