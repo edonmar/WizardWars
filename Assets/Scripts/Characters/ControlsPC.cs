@@ -3,13 +3,13 @@ using UnityEngine;
 
 public class ControlsPC : MonoBehaviour
 {
-    [SerializeField] private Player playerScript;
+    public Player playerScript;
     private string elementInput = "";
     private string castInput = "";
 
     private Camera mainCamera;
 
-    private void Awake()
+    private void Start()
     {
         mainCamera = Camera.main;
     }
@@ -76,7 +76,7 @@ public class ControlsPC : MonoBehaviour
     private void StartCastInput()
     {
         castInput = "";
-        
+
         if (Input.GetKeyDown(KeyCode.Alpha1))
             castInput = "FOC";
         else if (Input.GetKeyDown(KeyCode.Alpha2))
@@ -90,7 +90,7 @@ public class ControlsPC : MonoBehaviour
 
         playerScript.startCastInput = castInput;
     }
-    
+
     private void StopCastInput()
     {
         if (Input.GetKeyUp(KeyCode.Alpha1) || Input.GetKeyUp(KeyCode.Alpha2))

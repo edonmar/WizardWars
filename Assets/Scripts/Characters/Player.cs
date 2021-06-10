@@ -13,7 +13,6 @@ public class Player : MonoBehaviour
     private GameUIManager gameUIManager;
 
     [SerializeField] private ControlsPC controlsPC;
-    [SerializeField] private ControlsMobile controlsMobile;
     [HideInInspector] public bool moveInput;
     [HideInInspector] public string elementInput;
     [HideInInspector] public string startCastInput;
@@ -88,9 +87,7 @@ public class Player : MonoBehaviour
 
     private void SetControlMode()
     {
-        if (gameManager.isMobile)
-            controlsMobile.enabled = true;
-        else
+        if (!gameManager.isMobile)
             controlsPC.enabled = true;
     }
 
@@ -120,7 +117,7 @@ public class Player : MonoBehaviour
             gameUIManager.ShowLoadedElements(loadedElements);
             elementInput = "";
         }
-        
+
         CastInput(startCastInput, stopCastInput);
 
         animator.SetFloat(hashParamMovSpeed, movSpeed);
@@ -377,7 +374,7 @@ public class Player : MonoBehaviour
                 CastChargingSpell();
             else
                 DestroyCurrentSpells();
-            
+
             if (isLightningActive)
                 DestroyLightning();
             stopCastInput = false;

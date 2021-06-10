@@ -18,6 +18,10 @@ public class StageManager : MonoBehaviour
     private MagickManager magickManager;
     private GameUIManager gameUIManager;
 
+    // Partes de la interfaz que sólo se muestran en PC o en móvil
+    private GameObject pcUI;
+    private GameObject mobileUI;
+
     private void Start()
     {
         gameTime = 0;
@@ -26,7 +30,18 @@ public class StageManager : MonoBehaviour
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         magickManager = GameObject.Find("Manager").GetComponent<MagickManager>();
         gameUIManager = GameObject.Find("GameUI").GetComponent<GameUIManager>();
+        pcUI = GameObject.Find("PCUI");
+        mobileUI = GameObject.Find("MobileUI");
         magickManager.LockAllMagicks();
+        SetUIMode();
+    }
+
+    private void SetUIMode()
+    {
+        if (gameManager.isMobile)
+            pcUI.SetActive(false);
+        else
+            mobileUI.SetActive(false);
     }
 
     private void Update()
