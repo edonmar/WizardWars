@@ -77,15 +77,15 @@ public class ControlsPC : MonoBehaviour
     {
         castInput = "";
 
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Mouse1))
             castInput = "FOC";
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        else if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.LeftShift))
             castInput = "ARE";
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        else if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Mouse2))
             castInput = "SEL";
-        else if (Input.GetKeyDown(KeyCode.Alpha4))
-            castInput = "WEA";
         else if (Input.GetKeyDown(KeyCode.Alpha5))
+            castInput = "WEA";
+        else if (Input.GetKeyDown(KeyCode.Alpha4) || Input.GetKeyDown(KeyCode.Space))
             castInput = "MAG";
 
         playerScript.startCastInput = castInput;
@@ -93,7 +93,8 @@ public class ControlsPC : MonoBehaviour
 
     private void StopCastInput()
     {
-        if (Input.GetKeyUp(KeyCode.Alpha1) || Input.GetKeyUp(KeyCode.Alpha2))
+        if (Input.GetKeyUp(KeyCode.Alpha1) || Input.GetKeyUp(KeyCode.Alpha2) || Input.GetKeyUp(KeyCode.Mouse1) ||
+            Input.GetKeyUp(KeyCode.LeftShift))
             playerScript.stopCastInput = true;
     }
 }
