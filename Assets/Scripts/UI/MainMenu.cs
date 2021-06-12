@@ -8,6 +8,8 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject registerScreen;
     [SerializeField] private GameObject titleScreen;
     [SerializeField] private GameObject gameEndInfo;
+    [SerializeField] private GameObject pcControlsInfo;
+    [SerializeField] private GameObject buttonPcControlsInfo;
     [SerializeField] private GameObject scoreboard;
     [SerializeField] private GameObject myScore;
     [SerializeField] private Transform scoreTable;
@@ -37,6 +39,9 @@ public class MainMenu : MonoBehaviour
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         firebaseManager = GameObject.Find("FirebaseManager").GetComponent<FirebaseManager>();
         firebaseManager.mainMenuScript = GetComponent<MainMenu>();
+
+        if (gameManager.isMobile)
+            buttonPcControlsInfo.SetActive(false);
     }
 
     private void Start()
@@ -113,6 +118,7 @@ public class MainMenu : MonoBehaviour
         registerScreen.SetActive(false);
         titleScreen.SetActive(false);
         gameEndInfo.SetActive(false);
+        pcControlsInfo.SetActive(false);
         loginScreen.SetActive(true);
     }
 
@@ -128,6 +134,12 @@ public class MainMenu : MonoBehaviour
         loginScreen.SetActive(false);
         titleScreen.SetActive(false);
         gameEndInfo.SetActive(true);
+    }
+
+    public void ShowPcControlsInfo()
+    {
+        loginScreen.SetActive(false);
+        pcControlsInfo.SetActive(true);
     }
 
     public void ShowTitleScreen()
