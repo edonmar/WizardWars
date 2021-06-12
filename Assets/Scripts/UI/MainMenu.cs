@@ -110,6 +110,7 @@ public class MainMenu : MonoBehaviour
         ClearRegisterFields();
         registerScreen.SetActive(false);
         titleScreen.SetActive(false);
+        gameEndInfo.SetActive(false);
         loginScreen.SetActive(true);
     }
 
@@ -141,6 +142,14 @@ public class MainMenu : MonoBehaviour
     {
         titleScreen.SetActive(false);
         scoreboard.SetActive(true);
+    }
+
+    public void FinishGame()
+    {
+        if (gameManager.isLogged)
+            ShowTitleScreen();
+        else
+            ShowLoginScreen();
     }
 
     private void ClearLoginFields()

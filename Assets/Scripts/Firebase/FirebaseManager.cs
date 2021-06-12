@@ -75,6 +75,7 @@ public class FirebaseManager : MonoBehaviour
     public void SignOutButton()
     {
         auth.SignOut();
+        gameManager.isLogged = false;
         mainMenuScript.ShowLoginScreen();
     }
 
@@ -145,6 +146,7 @@ public class FirebaseManager : MonoBehaviour
             // El usuario ya está logeado. Obtiene los resultados
             user = loginTask.Result;
             Debug.LogFormat("User signed in successfully: {0} ({1})", user.DisplayName, user.Email);
+            gameManager.isLogged = true;
             mainMenuScript.infoLoginText.text = "";
             mainMenuScript.infoLoginText.text = "Sesión iniciada";
             mainMenuScript.ShowTitleScreen();
