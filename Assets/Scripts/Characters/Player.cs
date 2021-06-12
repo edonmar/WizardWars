@@ -406,8 +406,14 @@ public class Player : MonoBehaviour
         OrderLoadedElements(priorityList);
         string spellType = GetSpellType(castType);
 
+        /*
         // Si intento hacer lanzamiento propio sin cargar ningún elemento, no hace nada
         if (castType == "SEL" && spellType == "force")
+            return;
+            */
+
+        // Si lanzar un hechizo sin cargar ningún elemento, no hace nada
+        if (spellType == "force")
             return;
 
         // Si estoy congelado, sólo puedo realizar el tipo de lanzamiento SelfCast
@@ -695,9 +701,11 @@ public class Player : MonoBehaviour
                 spellManager.CastNova(elements, transform, "character");
                 break;
 
+            /*
             case "force":
 
                 break;
+                */
 
             case "shield":
                 characterStats.CastShield();
@@ -713,6 +721,7 @@ public class Player : MonoBehaviour
                 PlaySelfCastParticles(elements);
                 break;
 
+            /*
             case "imbuedVerticalSwing":
 
                 break;
@@ -724,6 +733,7 @@ public class Player : MonoBehaviour
             case "imbuedStab":
 
                 break;
+                */
         }
     }
 

@@ -83,8 +83,8 @@ public class ControlsPC : MonoBehaviour
             castInput = "ARE";
         else if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Mouse2))
             castInput = "SEL";
-        else if (Input.GetKeyDown(KeyCode.Alpha5))
-            castInput = "WEA";
+        //else if (Input.GetKeyDown(KeyCode.Alpha5))
+            //castInput = "WEA";
         else if (Input.GetKeyDown(KeyCode.Alpha4) || Input.GetKeyDown(KeyCode.Space))
             castInput = "MAG";
 
