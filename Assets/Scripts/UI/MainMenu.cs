@@ -9,7 +9,9 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject titleScreen;
     [SerializeField] private GameObject gameEndInfo;
     [SerializeField] private GameObject scoreboard;
+    [SerializeField] private GameObject myScore;
     [SerializeField] private Transform scoreTable;
+    [SerializeField] private Transform myScoreRow;
 
     [SerializeField] private TMP_Text gameEndResult;
     [SerializeField] private TMP_Text gameEndDetails;
@@ -135,6 +137,7 @@ public class MainMenu : MonoBehaviour
         loginScreen.SetActive(false);
         gameEndInfo.SetActive(false);
         scoreboard.SetActive(false);
+        myScore.SetActive(false);
         titleScreen.SetActive(true);
     }
 
@@ -142,6 +145,12 @@ public class MainMenu : MonoBehaviour
     {
         titleScreen.SetActive(false);
         scoreboard.SetActive(true);
+    }
+
+    public void ShowMyScore()
+    {
+        titleScreen.SetActive(false);
+        myScore.SetActive(true);
     }
 
     public void FinishGame()
@@ -211,5 +220,25 @@ public class MainMenu : MonoBehaviour
         spellsText.text = "";
         magicksText.text = "";
         magickDetailsText.text = "";
+    }
+
+    public void FillMyScoreRow(string username, int time, string rooms, int spells, int magicks,
+        string magickDetails)
+    {
+        Transform myTableRow = myScoreRow.Find("MyTableRow");
+
+        TMP_Text usernameText = myTableRow.Find("Username").GetComponent<TMP_Text>();
+        TMP_Text timeText = myTableRow.Find("Time").GetComponent<TMP_Text>();
+        TMP_Text roomsText = myTableRow.Find("Rooms").GetComponent<TMP_Text>();
+        TMP_Text spellsText = myTableRow.Find("Spells").GetComponent<TMP_Text>();
+        TMP_Text magicksText = myTableRow.Find("Magicks").GetComponent<TMP_Text>();
+        TMP_Text magickDetailsText = myScoreRow.Find("MagickDetails").GetComponent<TMP_Text>();
+
+        usernameText.text = username;
+        timeText.text = time.ToString();
+        roomsText.text = rooms;
+        spellsText.text = spells.ToString();
+        magicksText.text = magicks.ToString();
+        magickDetailsText.text = magickDetails;
     }
 }

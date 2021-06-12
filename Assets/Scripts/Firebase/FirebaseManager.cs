@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Linq;
 using Firebase;
 using Firebase.Auth;
 using Firebase.Database;
@@ -312,8 +310,15 @@ public class FirebaseManager : MonoBehaviour
         else if (dbTask.Result.Value != null)
         {
             DataSnapshot snapshot = dbTask.Result;
+
             currentScoreTime = int.Parse(snapshot.Child("time").Value.ToString());
             currentScoreRooms = snapshot.Child("rooms").Value.ToString();
+            int spells = int.Parse(snapshot.Child("spells").Value.ToString());
+            int magicks = int.Parse(snapshot.Child("magicks").Value.ToString());
+            string magickDetails = snapshot.Child("magickDetails").Value.ToString();
+
+            mainMenuScript.FillMyScoreRow(user.DisplayName, currentScoreTime, currentScoreRooms, spells, magicks,
+                magickDetails);
         }
     }
 
