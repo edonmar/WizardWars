@@ -10,18 +10,18 @@ public class ControlsMobile : MonoBehaviour
     [SerializeField] private Joystick movementJoystick;
 
     // Si en este mismo frame se han pulsado o dejado de pulsar los botones
-    private bool castForcePressed;
+    private bool castFocusPressed;
     private bool castAreaPressed;
     private bool castSelfPressed;
     private bool castMagickPressed;
-    private bool castForceUnpressed;
+    private bool castFocusUnpressed;
     private bool castAreaUnpressed;
 
     private void Start()
     {
         playerTransform = GameObject.Find("Player").transform;
         playerScript = playerTransform.GetComponent<Player>();
-        castForcePressed = false;
+        castFocusPressed = false;
         castAreaPressed = false;
     }
 
@@ -109,14 +109,14 @@ public class ControlsMobile : MonoBehaviour
         playerScript.elementInput = "FIR";
     }
 
-    public void CastForceDown()
+    public void CastFocusDown()
     {
-        castForcePressed = true;
+        castFocusPressed = true;
     }
 
-    public void CastForceUp()
+    public void CastFocusUp()
     {
-        castForceUnpressed = true;
+        castFocusUnpressed = true;
     }
 
     public void CastAreaDown()
@@ -143,7 +143,7 @@ public class ControlsMobile : MonoBehaviour
     {
         string castInput = "";
 
-        if (castForcePressed)
+        if (castFocusPressed)
             castInput = "FOC";
         else if (castAreaPressed)
             castInput = "ARE";
@@ -157,17 +157,17 @@ public class ControlsMobile : MonoBehaviour
 
     private void StopCastInput()
     {
-        if (castForceUnpressed || castAreaUnpressed)
+        if (castFocusUnpressed || castAreaUnpressed)
             playerScript.stopCastInput = true;
     }
 
     private void ResetCastInput()
     {
-        castForcePressed = false;
+        castFocusPressed = false;
         castAreaPressed = false;
         castSelfPressed = false;
         castMagickPressed = false;
-        castForceUnpressed = false;
+        castFocusUnpressed = false;
         castAreaUnpressed = false;
     }
 }

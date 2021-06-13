@@ -41,16 +41,16 @@ public class GameUIManager : MonoBehaviour
 
     private void LoadSprites()
     {
-        spriteEleWater = Resources.Load<Sprite>("Images/ElementIcons/EleWater");
-        spriteEleLife = Resources.Load<Sprite>("Images/ElementIcons/EleLife");
-        spriteEleShield = Resources.Load<Sprite>("Images/ElementIcons/EleShield");
-        spriteEleCold = Resources.Load<Sprite>("Images/ElementIcons/EleCold");
-        spriteEleLightning = Resources.Load<Sprite>("Images/ElementIcons/EleLightning");
-        spriteEleArcane = Resources.Load<Sprite>("Images/ElementIcons/EleArcane");
-        spriteEleEarth = Resources.Load<Sprite>("Images/ElementIcons/EleEarth");
-        spriteEleFire = Resources.Load<Sprite>("Images/ElementIcons/EleFire");
-        spriteEleIce = Resources.Load<Sprite>("Images/ElementIcons/EleIce");
-        spriteEleSteam = Resources.Load<Sprite>("Images/ElementIcons/EleSteam");
+        spriteEleWater = Resources.Load<Sprite>("Images/ElementIcons/IconWater");
+        spriteEleLife = Resources.Load<Sprite>("Images/ElementIcons/IconLife");
+        spriteEleShield = Resources.Load<Sprite>("Images/ElementIcons/IconShield");
+        spriteEleCold = Resources.Load<Sprite>("Images/ElementIcons/IconCold");
+        spriteEleLightning = Resources.Load<Sprite>("Images/ElementIcons/IconLightning");
+        spriteEleArcane = Resources.Load<Sprite>("Images/ElementIcons/IconArcane");
+        spriteEleEarth = Resources.Load<Sprite>("Images/ElementIcons/IconEarth");
+        spriteEleFire = Resources.Load<Sprite>("Images/ElementIcons/IconFire");
+        spriteEleIce = Resources.Load<Sprite>("Images/ElementIcons/IconIce");
+        spriteEleSteam = Resources.Load<Sprite>("Images/ElementIcons/IconSteam");
     }
 
     private void GetCurrentElementsImages()
