@@ -148,6 +148,7 @@ public class FirebaseManager : MonoBehaviour
             mainMenuScript.infoLoginText.text = "";
             mainMenuScript.infoLoginText.text = "Sesión iniciada";
             mainMenuScript.ShowTitleScreen();
+            mainMenuScript.EmptyMyScoreRow();
             StartCoroutine(LoadUserBestScore());
         }
     }

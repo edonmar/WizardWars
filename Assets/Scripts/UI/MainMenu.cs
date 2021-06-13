@@ -40,8 +40,8 @@ public class MainMenu : MonoBehaviour
         firebaseManager = GameObject.Find("FirebaseManager").GetComponent<FirebaseManager>();
         firebaseManager.mainMenuScript = GetComponent<MainMenu>();
 
-        if (gameManager.isMobile)
-            buttonPcControlsInfo.SetActive(false);
+        if (!gameManager.isMobile)
+            buttonPcControlsInfo.SetActive(true);
     }
 
     private void Start()
@@ -59,7 +59,7 @@ public class MainMenu : MonoBehaviour
 
     public void ExitGame()
     {
-        firebaseManager.auth.SignOut();
+        //firebaseManager.auth.SignOut();
         Application.Quit();
     }
 
@@ -252,5 +252,24 @@ public class MainMenu : MonoBehaviour
         spellsText.text = spells.ToString();
         magicksText.text = magicks.ToString();
         magickDetailsText.text = magickDetails;
+    }
+    
+    public void EmptyMyScoreRow()
+    {
+        Transform myTableRow = myScoreRow.Find("MyTableRow");
+
+        TMP_Text usernameText = myTableRow.Find("Username").GetComponent<TMP_Text>();
+        TMP_Text timeText = myTableRow.Find("Time").GetComponent<TMP_Text>();
+        TMP_Text roomsText = myTableRow.Find("Rooms").GetComponent<TMP_Text>();
+        TMP_Text spellsText = myTableRow.Find("Spells").GetComponent<TMP_Text>();
+        TMP_Text magicksText = myTableRow.Find("Magicks").GetComponent<TMP_Text>();
+        TMP_Text magickDetailsText = myScoreRow.Find("MagickDetails").GetComponent<TMP_Text>();
+
+        usernameText.text = "";
+        timeText.text = "";
+        roomsText.text = "";
+        spellsText.text = "";
+        magicksText.text = "";
+        magickDetailsText.text = "";
     }
 }
