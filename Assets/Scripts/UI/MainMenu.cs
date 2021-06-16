@@ -205,7 +205,7 @@ public class MainMenu : MonoBehaviour
 
         placeText.text = place.ToString();
         usernameText.text = username;
-        timeText.text = time.ToString();
+        timeText.text = ConvertTime(time);
         roomsText.text = rooms;
         spellsText.text = spells.ToString();
         magicksText.text = magicks.ToString();
@@ -247,7 +247,7 @@ public class MainMenu : MonoBehaviour
         TMP_Text magickDetailsText = myScoreRow.Find("MagickDetails").GetComponent<TMP_Text>();
 
         usernameText.text = username;
-        timeText.text = time.ToString();
+        timeText.text = ConvertTime(time);
         roomsText.text = rooms;
         spellsText.text = spells.ToString();
         magicksText.text = magicks.ToString();
