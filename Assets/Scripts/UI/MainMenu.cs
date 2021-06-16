@@ -39,13 +39,13 @@ public class MainMenu : MonoBehaviour
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         firebaseManager = GameObject.Find("FirebaseManager").GetComponent<FirebaseManager>();
         firebaseManager.mainMenuScript = GetComponent<MainMenu>();
-
-        if (!gameManager.isMobile)
-            buttonPcControlsInfo.SetActive(true);
     }
 
     private void Start()
     {
+        if (!gameManager.isMobile)
+            buttonPcControlsInfo.SetActive(true);
+
         if (!gameManager.gameEnded)
             return;
         SetGameEndInfo();
@@ -253,7 +253,7 @@ public class MainMenu : MonoBehaviour
         magicksText.text = magicks.ToString();
         magickDetailsText.text = magickDetails;
     }
-    
+
     public void EmptyMyScoreRow()
     {
         Transform myTableRow = myScoreRow.Find("MyTableRow");
