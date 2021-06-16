@@ -326,7 +326,7 @@ public class FirebaseManager : MonoBehaviour
     public IEnumerator LoadScoreboardData()
     {
         // Obtengo los 3 usuarios con menor tiempo
-        var dbTask = dbReference.Child("users").OrderByChild("time").LimitToLast(3).GetValueAsync();
+        var dbTask = dbReference.Child("users").OrderByChild("time").LimitToFirst(3).GetValueAsync();
 
         yield return new WaitUntil(predicate: () => dbTask.IsCompleted);
 
