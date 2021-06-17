@@ -9,9 +9,13 @@ public class ControlsPC : MonoBehaviour
 
     private Camera mainCamera;
 
+    private Transform playerTransform;
+    private Vector3 targetPosition;
+
     private void Start()
     {
         mainCamera = Camera.main;
+        playerTransform = playerScript.transform;
     }
 
     private void Update()
@@ -37,14 +41,14 @@ public class ControlsPC : MonoBehaviour
             return;
 
         // Gira al jugador en el eje Y para que mire a la posición donde ha chocado el rayo
-        Vector3 targetPosition = new Vector3(cameraRayHit.point.x, transform.position.y, cameraRayHit.point.z);
+        targetPosition = new Vector3(cameraRayHit.point.x, transform.position.y, cameraRayHit.point.z);
 
         playerScript.rotationInput = targetPosition;
     }
 
     private void MovementInput()
     {
-        if (Input.GetKey(KeyCode.Mouse0))
+        if (Input.GetKey(KeyCode.Mouse0) && Vector3.Distance(playerTransform.position, targetPosition) > 0.125f)
             playerScript.moveInput = true;
     }
 
@@ -84,7 +88,7 @@ public class ControlsPC : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Mouse2))
             castInput = "SEL";
         //else if (Input.GetKeyDown(KeyCode.Alpha5))
-            //castInput = "WEA";
+        //castInput = "WEA";
         else if (Input.GetKeyDown(KeyCode.Alpha4) || Input.GetKeyDown(KeyCode.Space))
             castInput = "MAG";
 
